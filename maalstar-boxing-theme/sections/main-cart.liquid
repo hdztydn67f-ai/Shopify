@@ -1,0 +1,103 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SECTION: main-cart
+  Full cart page. The drawer handles most journeys, but this is
+  where customers land from /cart links, saved tabs and email.
+  ------------------------------------------------------------
+{%- endcomment -%}
+<div class="cart-page section" data-cart-page>
+  <div class="page-width">
+    <h1 class="cart-page__title h1">{{ 'sections.cart.title' | t }}</h1>
+    <hr class="rule-accent">
+
+    {%- if cart.item_count > 0 -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate class="cart-page__layout">
+        <div class="cart-page__items">
+          {%- if settings.cart_free_shipping_threshold > 0 -%}
+            <div class="cart-page__shipping-bar" data-free-shipping-bar>
+              {% render 'free-shipping-bar', cart: cart %}
+            </div>
+          {%- endif -%}
+
+          {%- for item in cart.items -%}
+            {% render 'cart-drawer-item', item: item, forloop: forloop %}
+          {%- endfor -%}
+
+          <a class="cart-page__continue" href="{{ routes.all_products_collection_url }}">
+            {{ 'general.continue_shopping' | t }}
+          </a>
+        </div>
+
+        <aside class="cart-page__summary">
+          <h2 class="h4">{{ 'sections.cart.order_summary' | t }}</h2>
+
+          {%- if settings.cart_show_note -%}
+            <details class="cart-tool">
+              <summary class="cart-tool__summary">
+                {% render 'icon', name: 'note' %}
+                <span>{{ 'sections.cart.note_toggle' | t }}</span>
+                {% render 'icon', name: 'chevron-down', class: 'cart-tool__chevron' %}
+              </summary>
+              <div class="cart-tool__panel">
+                <label class="visually-hidden" for="CartPageNote">{{ 'sections.cart.note' | t }}</label>
+                <textarea
+                  id="CartPageNote"
+                  name="note"
+                  class="field__input field__input--textarea"
+                  rows="3"
+                  placeholder="{{ 'sections.cart.note_placeholder' | t }}"
+                  data-cart-note
+                >{{ cart.note }}</textarea>
+                <p class="cart-tool__status" data-note-status aria-live="polite"></p>
+              </div>
+            </details>
+          {%- endif -%}
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            <ul class="cart-page__discounts" role="list">
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <li>
+                  {% render 'icon', name: 'tag', size: 14 %}
+                  {{ discount.title }} (&minus;{{ discount.total_allocated_amount | money }})
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <div class="cart-page__total">
+            <span>{{ 'sections.cart.subtotal' | t }}</span>
+            <strong data-cart-subtotal>{{ cart.total_price | money_with_currency }}</strong>
+          </div>
+          <p class="cart-drawer__tax">{{ 'sections.cart.taxes_and_shipping' | t }}</p>
+
+          <button type="submit" name="checkout" class="button button--primary button--full button--lg">
+            {% render 'icon', name: 'lock' %}
+            {{ 'sections.cart.checkout' | t }}
+          </button>
+
+          {%- if additional_checkout_buttons -%}
+            <div class="cart-drawer__dynamic-checkout">{{ content_for_additional_checkout_buttons }}</div>
+          {%- endif -%}
+        </aside>
+      </form>
+    {%- else -%}
+      <div class="collection-empty">
+        <span class="cart-drawer__empty-icon">{% render 'icon', name: 'cart', size: 56 %}</span>
+        <p class="collection-empty__title h3">{{ 'sections.cart.empty' | t }}</p>
+        <a class="button button--primary" href="{{ routes.all_products_collection_url }}">
+          {{ 'general.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "class": "section-main-cart",
+  "tag": "div",
+  "settings": [],
+  "enabled_on": { "templates": ["cart"] }
+}
+{% endschema %}

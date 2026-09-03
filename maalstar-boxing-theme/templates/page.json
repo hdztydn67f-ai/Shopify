@@ -1,4 +1,9 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "settings": {"show_breadcrumbs": true}
+    }
+  },
+  "order": ["main"]
 }

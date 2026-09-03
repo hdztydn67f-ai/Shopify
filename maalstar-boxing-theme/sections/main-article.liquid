@@ -1,0 +1,129 @@
+{%- comment -%}
+  SECTION: main-article — single post. BlogPosting structured data
+  is already emitted in layout/theme.liquid.
+{%- endcomment -%}
+<article class="article section">
+  <div class="page-width page-width--narrow">
+    {%- if section.settings.show_breadcrumbs -%}
+      {% render 'breadcrumbs' %}
+    {%- endif -%}
+
+    <header class="article__header">
+      <h1 class="article__title h1">{{ article.title }}</h1>
+      <p class="article__meta">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: format: 'date' }}
+        </time>
+        {%- if section.settings.show_author and article.author != blank -%}
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ article.author }}</span>
+        {%- endif -%}
+        {%- if article.tags.size > 0 -%}
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ article.tags | join: ', ' }}</span>
+        {%- endif -%}
+      </p>
+      <hr class="rule-accent">
+    </header>
+
+    {%- if article.image and section.settings.show_image -%}
+      <div class="article__media">
+        {{
+          article.image
+          | image_url: width: 1400
+          | image_tag:
+            class: 'article__image',
+            widths: '600, 900, 1400',
+            sizes: '(min-width: 990px) 780px, 100vw',
+            loading: 'eager',
+            fetchpriority: 'high',
+            alt: article.image.alt | default: article.title
+        }}
+      </div>
+    {%- endif -%}
+
+    <div class="rte article__content">{{ article.content }}</div>
+
+    {%- if section.settings.show_share -%}
+      <div class="product__share article__share">
+        <button
+          type="button"
+          class="product__share-button js-only"
+          data-share
+          data-share-url="{{ shop.url }}{{ article.url }}"
+          data-share-title="{{ article.title | escape }}"
+        >
+          {% render 'icon', name: 'arrow-right', size: 16 %}
+          {{ 'general.share' | t }}
+        </button>
+        <span class="product__share-status" data-share-status aria-live="polite"></span>
+      </div>
+    {%- endif -%}
+
+    {%- if blog.comments_enabled? -%}
+      <section class="article__comments">
+        <h2 class="h3">{{ 'blogs.comments.title' | t }} ({{ article.comments_count }})</h2>
+
+        {%- if article.comments_count > 0 -%}
+          <ul class="article__comment-list" role="list">
+            {%- for comment in article.comments -%}
+              <li class="article__comment">
+                <p class="article__comment-meta">
+                  <strong>{{ comment.author }}</strong>
+                  <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">
+                    {{ comment.created_at | date: format: 'date' }}
+                  </time>
+                </p>
+                <div class="rte">{{ comment.content }}</div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- form 'new_comment', article, class: 'article__comment-form' -%}
+          {%- if form.errors -%}
+            <p class="newsletter__message newsletter__message--error" role="alert">
+              {% render 'icon', name: 'alert', size: 16 %}
+              {{ 'blogs.comments.error' | t }}
+            </p>
+          {%- endif -%}
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter__message newsletter__message--success" role="status">
+              {% render 'icon', name: 'check', size: 16 %}
+              {{ 'blogs.comments.success' | t }}
+            </p>
+          {%- endif -%}
+
+          <div class="field">
+            <label class="field__label" for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
+            <input type="text" id="CommentAuthor" class="field__input" name="comment[author]" value="{{ form.author }}" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
+            <input type="email" id="CommentEmail" class="field__input" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+            <textarea id="CommentBody" class="field__input field__input--textarea" name="comment[body]" rows="4" required>{{ form.body }}</textarea>
+          </div>
+          <button type="submit" class="button button--primary">{{ 'blogs.comments.post' | t }}</button>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Blog post",
+  "class": "section-main-article",
+  "tag": "div",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show featured image", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show share button", "default": true }
+  ],
+  "enabled_on": { "templates": ["article"] }
+}
+{% endschema %}

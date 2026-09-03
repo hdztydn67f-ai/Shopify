@@ -27,7 +27,11 @@
           }
         }
       },
-      "block_order": ["announcement-1", "announcement-2", "announcement-3"],
+      "block_order": [
+        "announcement-1",
+        "announcement-2",
+        "announcement-3"
+      ],
       "settings": {
         "show_topbar": true,
         "topbar_background": "#111114",
@@ -47,9 +51,12 @@
         "show_account": true,
         "show_wishlist": true,
         "show_icon_labels": false,
-        "mobile_cta_text": "Shop all gear"
+        "mobile_cta_text": "Shop all gear",
+        "enable_predictive_search": true
       }
     }
   },
-  "order": ["header"]
+  "order": [
+    "header"
+  ]
 }

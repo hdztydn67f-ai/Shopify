@@ -1,4 +1,18 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "main": {
+      "type": "main-search",
+      "settings": {
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "results_per_page": 24,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "square",
+        "popular_searches": "Boxing gloves, Sparring set, Headgear, Groin guard",
+        "fallback_heading": "Best sellers"
+      }
+    }
+  },
+  "order": ["main"]
 }

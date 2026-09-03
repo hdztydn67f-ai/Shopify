@@ -1,0 +1,31 @@
+{%- comment -%}
+  SECTION: main-page — standard content page.
+{%- endcomment -%}
+<div class="section">
+  <div class="page-width page-width--narrow">
+    {%- if section.settings.show_breadcrumbs -%}
+      {% render 'breadcrumbs' %}
+    {%- endif -%}
+
+    <header class="page-header">
+      <h1 class="h1">{{ page.title }}</h1>
+      <hr class="rule-accent">
+    </header>
+
+    <div class="rte page-content">
+      {{ page.content }}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page",
+  "class": "section-main-page",
+  "tag": "div",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true }
+  ],
+  "enabled_on": { "templates": ["page"] }
+}
+{% endschema %}

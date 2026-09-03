@@ -18,9 +18,10 @@ SEO-hardened markup.
 
 | **5** | Product page: gallery, variant picker, Ajax add to cart, related products | ✅ Done |
 | **6** | Collection page: faceted filtering, sorting, pagination, SEO blocks; collections index | ✅ Done |
+| **7** | Search (predictive dropdown + results page), cart page, blog, article, page, 404 | ✅ Done |
 
-Homepage, product and collection pages are built. Cart, search, blog, page
-and 404 templates are still placeholders — see **Next up**.
+**Every template is now built.** No placeholders remain — the theme can be
+uploaded and taken through a full purchase journey.
 
 ---
 
@@ -51,6 +52,11 @@ maalstar-boxing-theme/
 │   ├── related-products.liquid # Recommendations API, loaded after paint
 │   ├── main-collection.liquid  # Facets, sorting, grid, pagination, SEO blocks
 │   ├── main-list-collections.liquid # The /collections index
+│   ├── main-search.liquid    # Search results with the same facets as a collection
+│   ├── predictive-search.liquid # Fragment for the header dropdown
+│   ├── main-cart.liquid      # Full cart page
+│   ├── main-blog.liquid / main-article.liquid / main-page.liquid
+│   ├── main-404.liquid       # 404 with search and a route back in
 │   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
 │   └── footer-group.json     # Footer group, pre-populated with four columns
 ├── snippets/
@@ -184,18 +190,6 @@ causes conflicting signals.
 
 ---
 
-## Next up
-
-The four steps of the brief are complete. To actually take orders, the
-remaining templates need building:
-
-1. **`cart.json`** — full cart page (the drawer already handles most journeys).
-2. **`search.json`** + predictive search dropdown.
-3. **`page.json` / `blog.json` / `article.json` / `404.json`** — content templates. Blog
-   posts are where you win long-tail search traffic like "how to choose
-   boxing glove weight".
-
----
 
 ## Product page notes
 
@@ -239,3 +233,21 @@ remaining templates need building:
 - **SEO blocks sit below the grid.** Add "SEO text" and "FAQ" blocks per
   collection: products stay above the fold, and the FAQ blocks emit `FAQPage`
   structured data, which is what earns expandable rows in search results.
+
+---
+
+## Search notes
+
+- **Predictive dropdown** in the header queries `/search/suggest` and renders
+  `sections/predictive-search.liquid`, covering products, collections, pages
+  and articles. Full keyboard support: arrow keys move through results, Enter
+  opens, Escape closes, and it is wired as an ARIA combobox.
+- **Results page reuses the collection facets**, so a customer who searches
+  "gloves" can then filter by weight and colour. On-site searchers convert far
+  better than browsers, which is why this page gets the full treatment rather
+  than a flat list.
+- **A zero-result search is not a dead end.** It offers the popular searches
+  you configure plus a fallback collection of best sellers, so the visit has
+  somewhere to go.
+- **Results are cached per term** in memory for the session, so backspacing
+  through a query does not re-hit the network.

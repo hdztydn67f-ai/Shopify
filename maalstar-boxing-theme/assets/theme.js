@@ -1746,6 +1746,122 @@
   };
   MSB.facets = Facets;
 
+
+  /* ---------------------------------------------------------
+     11h. PREDICTIVE SEARCH
+     Hits /search/suggest and renders sections/predictive-search.
+     --------------------------------------------------------- */
+  var PredictiveSearch = {
+    cache: {},
+
+    init: function () {
+      var input = $('[data-predictive-input]');
+      var panel = $('[data-predictive-panel]');
+      if (!input || !panel || this.bound) return;
+      this.bound = true;
+
+      var self = this;
+      var activeIndex = -1;
+
+      function close() {
+        panel.hidden = true;
+        input.setAttribute('aria-expanded', 'false');
+        activeIndex = -1;
+      }
+
+      function items() {
+        return $$('[data-predictive-item]', panel);
+      }
+
+      function highlight(index) {
+        var list = items();
+        if (!list.length) return;
+        activeIndex = (index + list.length) % list.length;
+        list.forEach(function (item, i) {
+          item.classList.toggle('is-active', i === activeIndex);
+          if (i === activeIndex) {
+            item.setAttribute('aria-selected', 'true');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.removeAttribute('aria-selected');
+          }
+        });
+      }
+
+      var search = debounce(function () {
+        var term = input.value.trim();
+
+        if (term.length < 2) {
+          close();
+          return;
+        }
+
+        if (self.cache[term]) {
+          panel.innerHTML = self.cache[term];
+          panel.hidden = false;
+          input.setAttribute('aria-expanded', 'true');
+          return;
+        }
+
+        var url =
+          routes.predictiveSearch +
+          '?q=' + encodeURIComponent(term) +
+          '&resources[type]=product,collection,page,article' +
+          '&resources[limit]=6' +
+          '&section_id=predictive-search';
+
+        fetch(url, { credentials: 'same-origin' })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Predictive search failed');
+            return response.text();
+          })
+          .then(function (html) {
+            var parsed = new DOMParser().parseFromString(html, 'text/html');
+            var results = parsed.querySelector('[data-predictive-results]');
+            var markup = results ? results.outerHTML : '';
+
+            self.cache[term] = markup;
+            panel.innerHTML = markup;
+            panel.hidden = !markup;
+            input.setAttribute('aria-expanded', markup ? 'true' : 'false');
+            activeIndex = -1;
+          })
+          .catch(function () {
+            close();
+          });
+      }, 250);
+
+      on(input, 'input', search);
+      on(input, 'focus', function () {
+        if (input.value.trim().length >= 2 && panel.innerHTML) {
+          panel.hidden = false;
+          input.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      on(input, 'keydown', function (event) {
+        if (panel.hidden) return;
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          highlight(activeIndex + 1);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          highlight(activeIndex - 1);
+        } else if (event.key === 'Enter' && activeIndex > -1) {
+          event.preventDefault();
+          items()[activeIndex].click();
+        } else if (event.key === 'Escape') {
+          close();
+        }
+      });
+
+      on(document, 'click', function (event) {
+        if (!panel.contains(event.target) && event.target !== input) close();
+      });
+    }
+  };
+  MSB.predictiveSearch = PredictiveSearch;
+
   /* ---------------------------------------------------------
      12. WISHLIST (localStorage)
      --------------------------------------------------------- */
@@ -1845,6 +1961,7 @@
     ProductPage.init();
     Recommendations.init();
     Facets.init();
+    PredictiveSearch.init();
     Wishlist.init();
   }
 

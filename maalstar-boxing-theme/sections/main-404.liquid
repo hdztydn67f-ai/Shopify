@@ -1,0 +1,58 @@
+{%- comment -%}
+  SECTION: main-404 — a 404 is a customer who still wants something.
+  Give them search and a route back into the catalogue.
+{%- endcomment -%}
+<div class="section error-404">
+  <div class="page-width">
+    <div class="error-404__inner">
+      <p class="eyebrow">{{ 'general.404.code' | t }}</p>
+      <h1 class="h0">{{ section.settings.heading | default: 'DOWN BUT NOT OUT' | escape }}</h1>
+      <hr class="rule-accent">
+      <p class="text-muted">{{ 'general.404.subtext' | t }}</p>
+
+      <form class="search-header__form error-404__search" action="{{ routes.search_url }}" method="get" role="search">
+        <input type="hidden" name="options[prefix]" value="last">
+        <label class="visually-hidden" for="Search404">{{ 'general.search.search' | t }}</label>
+        <input type="search" id="Search404" class="field__input" name="q" placeholder="{{ 'general.search.placeholder' | t }}">
+        <button type="submit" class="button button--primary">{{ 'general.search.submit' | t }}</button>
+      </form>
+
+      <a class="button button--secondary" href="{{ routes.all_products_collection_url }}">
+        {{ 'general.404.shop_all' | t }}
+      </a>
+    </div>
+
+    {%- if section.settings.collection != blank -%}
+      {%- assign fallback = collections[section.settings.collection] -%}
+      {%- if fallback.products.size > 0 -%}
+        <div class="error-404__products">
+          <div class="section-header section-header--center">
+            <h2 class="h2">{{ section.settings.products_heading | escape }}</h2>
+            <hr class="rule-accent">
+          </div>
+          <ul class="product-grid" role="list">
+            {%- for product in fallback.products limit: 4 -%}
+              <li class="product-grid__item">
+                {% render 'product-card', product: product, index: forloop.index %}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404 page",
+  "class": "section-main-404",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "DOWN BUT NOT OUT" },
+    { "type": "text", "id": "products_heading", "label": "Products heading", "default": "PICK UP WHERE YOU LEFT OFF" },
+    { "type": "collection", "id": "collection", "label": "Suggested collection" }
+  ],
+  "enabled_on": { "templates": ["404"] }
+}
+{% endschema %}

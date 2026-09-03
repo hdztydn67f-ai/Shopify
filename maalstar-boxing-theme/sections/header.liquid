@@ -327,6 +327,14 @@
             placeholder="{{ 'general.search.placeholder' | t }}"
             autocomplete="off"
             data-search-input
+            {%- if section.settings.enable_predictive_search %}
+              role="combobox"
+              aria-expanded="false"
+              aria-owns="PredictiveResults"
+              aria-controls="PredictiveResults"
+              aria-autocomplete="list"
+              data-predictive-input
+            {%- endif -%}
           >
           <button type="submit" class="button button--primary" aria-label="{{ 'general.search.submit' | t }}">
             {% render 'icon', name: 'search' %}
@@ -340,6 +348,19 @@
             {% render 'icon', name: 'close' %}
           </button>
         </form>
+
+        {%- if section.settings.enable_predictive_search -%}
+          <div class="page-width">
+            <div
+              class="predictive-wrap"
+              id="PredictiveResults"
+              data-predictive-panel
+              role="listbox"
+              aria-label="{{ 'general.search.results_label' | t }}"
+              hidden
+            ></div>
+          </div>
+        {%- endif -%}
       </div>
     {%- endif -%}
   </header>
@@ -575,6 +596,12 @@
       "type": "checkbox",
       "id": "show_search",
       "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_predictive_search",
+      "label": "Show search suggestions as you type",
       "default": true
     },
     {

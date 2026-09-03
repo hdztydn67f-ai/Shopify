@@ -1,4 +1,9 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "main": {
+      "type": "main-404",
+      "settings": {"heading": "DOWN BUT NOT OUT", "products_heading": "PICK UP WHERE YOU LEFT OFF"}
+    }
+  },
+  "order": ["main"]
 }

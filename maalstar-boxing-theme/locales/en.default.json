@@ -9,7 +9,19 @@
     "search": {
       "search": "Search",
       "submit": "Search",
-      "placeholder": "Search gloves, sets, headgear…"
+      "placeholder": "Search gloves, sets, headgear…",
+      "title": "Search",
+      "results_for": "Results for \"{{ terms }}\"",
+      "results_label": "Search suggestions",
+      "no_results": "No results for \"{{ terms }}\"",
+      "try_again": "Check the spelling or try a broader term.",
+      "popular": "Popular searches",
+      "view_all_results": "View all results",
+      "products": "Products",
+      "collections": "Collections",
+      "pages": "Pages and articles",
+      "article": "Article",
+      "page": "Page"
     },
     "cookies": {
       "label": "Cookie consent",
@@ -35,6 +47,11 @@
       "previous": "Previous page",
       "next": "Next page",
       "page": "Page {{ number }}"
+    },
+    "404": {
+      "code": "Error 404",
+      "subtext": "That page took one too many hits. The gear is still here.",
+      "shop_all": "Shop all gear"
     }
   },
   "accessibility": {
@@ -96,7 +113,8 @@
       "discount_error": "That code could not be applied.",
       "free_shipping_remaining_html": "You are {{ amount }} away from free shipping",
       "free_shipping_remaining_js": "You are {amount} away from free shipping",
-      "free_shipping_unlocked": "Free shipping unlocked"
+      "free_shipping_unlocked": "Free shipping unlocked",
+      "order_summary": "Order summary"
     },
     "collection": {
       "view_all": "View all",
@@ -163,5 +181,20 @@
   "newsletter": {
     "email_label": "Email address",
     "success": "Thanks for subscribing."
+  },
+  "blogs": {
+    "article": {
+      "read_more": "Read more",
+      "no_articles": "No posts yet."
+    },
+    "comments": {
+      "title": "Comments",
+      "name": "Name",
+      "email": "Email",
+      "message": "Comment",
+      "post": "Post comment",
+      "success": "Thanks — your comment is awaiting moderation.",
+      "error": "Please check the fields below and try again."
+    }
   }
 }
