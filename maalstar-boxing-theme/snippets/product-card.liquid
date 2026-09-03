@@ -30,12 +30,8 @@
     eagerly — everything below stays lazy to protect LCP and bandwidth.
   endcomment
   assign loading_attr = 'lazy'
-  assign fetch_priority = 'auto'
   if card_index <= 4
     assign loading_attr = 'eager'
-  endif
-  if card_index == 1
-    assign fetch_priority = 'high'
   endif
 
   assign sizes = sizes_attr | default: '(min-width: 1200px) 22vw, (min-width: 750px) 30vw, 45vw'
@@ -93,9 +89,7 @@
             class: 'card__image card__image--primary',
             widths: '200, 300, 400, 600, 800, 900',
             sizes: sizes,
-            loading: loading_attr,
-            fetchpriority: fetch_priority,
-            alt: product.featured_media.alt | default: product.title
+            loading: loading_attr
         }}
         {%- if show_second -%}
           {{

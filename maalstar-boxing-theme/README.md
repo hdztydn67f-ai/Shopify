@@ -251,3 +251,42 @@ causes conflicting signals.
   somewhere to go.
 - **Results are cached per term** in memory for the session, so backspacing
   through a query does not re-hit the network.
+
+---
+
+## Corrections made during review
+
+A self-review pass after the templates were complete found and fixed nine
+real defects. Recording them here so the reasoning is not lost:
+
+1. **`fetchpriority` passed to `image_tag`** (7 places). It is not a
+   documented parameter of that filter. LCP images (hero, collection banner,
+   article) are now hand-written `<img>` tags where the attribute is
+   guaranteed; elsewhere it was dropped.
+2. **Dates rendered empty.** `date: format: 'date'` resolves against
+   `date_formats` in the locale file, which did not exist. Every blog and
+   comment date was blank. Added.
+3. **Cart page quantity and Remove buttons did nothing.** The handlers were
+   delegated on the drawer element, but `/cart` renders the same line-item
+   markup outside it. Delegation moved to `document`, and the cart page now
+   re-renders through the Section Rendering API after a change.
+4. **Order note and free-shipping bar bound to the first match only**, so
+   whichever of drawer/cart page came second was inert. Both now bind to
+   every instance.
+5. **Search result count rendered blank.** The facets snippet read
+   `products_count`, which exists on a collection but not on the search
+   object (`results_count`). Resolved once for both.
+6. **"Clear all" on search cleared the search itself**, dropping `?q=`.
+   It now keeps the query and drops only the facets.
+7. **A mixed `and`/`or` condition** in the price-filter pill. Liquid has no
+   operator precedence and evaluates right to left, so it did not mean what
+   it read. Rewritten as an explicit boolean.
+8. **Predictive search claimed `role="listbox"`** but its items had no
+   `role="option"`, breaking the combobox contract for screen readers.
+9. **Age gate "remember for 0 days"** documented as "ask every session" but
+   treated 0 as falsy and remembered forever. Now uses `sessionStorage`.
+
+Also removed `| default:` chains from `image_tag` alt arguments: `image_tag`
+already defaults alt to the media alt text or resource title, and a filter
+inside a named argument is ambiguous. Where a specific fallback was wanted
+(header logo, split banner) the value is resolved into a variable first.

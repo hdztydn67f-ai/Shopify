@@ -3,7 +3,7 @@
   theme editor in the store's currency (e.g. 150 = $150.00).
 {%- endcomment -%}
 {%- liquid
-  assign threshold = settings.cart_free_shipping_threshold | times: 100
+  assign threshold = settings.cart_free_shipping_threshold | default: 0 | times: 100
   assign remaining = threshold | minus: cart.total_price
   assign remaining_money = remaining | money
   assign progress = 0

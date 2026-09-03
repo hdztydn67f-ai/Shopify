@@ -28,17 +28,21 @@
 
     {%- if article.image and section.settings.show_image -%}
       <div class="article__media">
-        {{
-          article.image
-          | image_url: width: 1400
-          | image_tag:
-            class: 'article__image',
-            widths: '600, 900, 1400',
-            sizes: '(min-width: 990px) 780px, 100vw',
-            loading: 'eager',
-            fetchpriority: 'high',
-            alt: article.image.alt | default: article.title
-        }}
+        <img
+          class="article__image"
+          src="{{ article.image | image_url: width: 1400 }}"
+          srcset="
+            {{ article.image | image_url: width: 600 }} 600w,
+            {{ article.image | image_url: width: 900 }} 900w,
+            {{ article.image | image_url: width: 1400 }} 1400w
+          "
+          sizes="(min-width: 990px) 780px, 100vw"
+          width="{{ article.image.width }}"
+          height="{{ article.image.height }}"
+          alt="{{ article.image.alt | default: article.title | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
       </div>
     {%- endif -%}
 

@@ -60,17 +60,22 @@
       {%- comment -%} Poster carries the LCP image while the video buffers. {%- endcomment -%}
       {%- if section.settings.image != blank -%}
         <div class="hero__poster" aria-hidden="true">
-          {{
-            section.settings.image
-            | image_url: width: 1920
-            | image_tag:
-              class: 'hero__image',
-              widths: '750, 1100, 1500, 1920, 2400',
-              sizes: '100vw',
-              loading: 'eager',
-              fetchpriority: 'high',
-              alt: ''
-          }}
+          <img
+            class="hero__image"
+            src="{{ section.settings.image | image_url: width: 1920 }}"
+            srcset="
+              {{ section.settings.image | image_url: width: 750 }} 750w,
+              {{ section.settings.image | image_url: width: 1100 }} 1100w,
+              {{ section.settings.image | image_url: width: 1500 }} 1500w,
+              {{ section.settings.image | image_url: width: 1920 }} 1920w
+            "
+            sizes="100vw"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            alt=""
+            loading="eager"
+            fetchpriority="high"
+          >
         </div>
       {%- endif -%}
     {%- elsif section.settings.image != blank -%}
@@ -110,17 +115,23 @@
           >
         </picture>
       {%- else -%}
-        {{
-          section.settings.image
-          | image_url: width: 2400
-          | image_tag:
-            class: 'hero__image',
-            widths: '750, 1100, 1500, 1920, 2400',
-            sizes: '100vw',
-            loading: 'eager',
-            fetchpriority: 'high',
-            alt: section.settings.image.alt | default: section.settings.heading
-        }}
+        <img
+          class="hero__image"
+          src="{{ section.settings.image | image_url: width: 1920 }}"
+          srcset="
+            {{ section.settings.image | image_url: width: 750 }} 750w,
+            {{ section.settings.image | image_url: width: 1100 }} 1100w,
+            {{ section.settings.image | image_url: width: 1500 }} 1500w,
+            {{ section.settings.image | image_url: width: 1920 }} 1920w,
+            {{ section.settings.image | image_url: width: 2400 }} 2400w
+          "
+          sizes="100vw"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
       {%- endif -%}
     {%- else -%}
       <div class="hero__placeholder">

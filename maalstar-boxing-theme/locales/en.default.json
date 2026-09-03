@@ -196,5 +196,13 @@
       "success": "Thanks — your comment is awaiting moderation.",
       "error": "Please check the fields below and try again."
     }
+  },
+  "date_formats": {
+    "month_day_year": "%B %-d, %Y",
+    "month_day_year_time": "%B %-d, %Y at %-I:%M%p",
+    "date": "%b %-d, %Y",
+    "date_at_time": "%b %-d, %Y at %-I:%M%p",
+    "default": "%b %-d, %Y",
+    "abbreviated_date": "%b %-d, %Y"
   }
 }

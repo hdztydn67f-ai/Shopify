@@ -25,17 +25,26 @@
       <header class="collection-banner{% if collection.image and section.settings.show_collection_image %} collection-banner--with-image{% endif %}">
         {%- if collection.image and section.settings.show_collection_image -%}
           <div class="collection-banner__media">
-            {{
-              collection.image
-              | image_url: width: 1800
-              | image_tag:
-                class: 'collection-banner__image',
-                widths: '600, 900, 1200, 1800',
-                sizes: '100vw',
-                loading: 'eager',
-                fetchpriority: 'high',
-                alt: collection.image.alt | default: collection.title
-            }}
+            {%- comment -%}
+              Raw <img> rather than image_tag: fetchpriority is not an
+              image_tag parameter, and this is the LCP element.
+            {%- endcomment -%}
+            <img
+              class="collection-banner__image"
+              src="{{ collection.image | image_url: width: 1800 }}"
+              srcset="
+                {{ collection.image | image_url: width: 600 }} 600w,
+                {{ collection.image | image_url: width: 900 }} 900w,
+                {{ collection.image | image_url: width: 1200 }} 1200w,
+                {{ collection.image | image_url: width: 1800 }} 1800w
+              "
+              sizes="100vw"
+              width="{{ collection.image.width }}"
+              height="{{ collection.image.height }}"
+              alt="{{ collection.image.alt | default: collection.title | escape }}"
+              loading="eager"
+              fetchpriority="high"
+            >
             <span class="collection-banner__overlay" aria-hidden="true"></span>
           </div>
         {%- endif -%}

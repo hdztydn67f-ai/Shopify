@@ -5,7 +5,7 @@
   where customers land from /cart links, saved tabs and email.
   ------------------------------------------------------------
 {%- endcomment -%}
-<div class="cart-page section" data-cart-page>
+<div class="cart-page section" data-cart-page data-section-id="{{ section.id }}">
   <div class="page-width">
     <h1 class="cart-page__title h1">{{ 'sections.cart.title' | t }}</h1>
     <hr class="rule-accent">
@@ -13,7 +13,8 @@
     {%- if cart.item_count > 0 -%}
       <form action="{{ routes.cart_url }}" method="post" novalidate class="cart-page__layout">
         <div class="cart-page__items">
-          {%- if settings.cart_free_shipping_threshold > 0 -%}
+          {%- assign free_shipping_threshold = settings.cart_free_shipping_threshold | default: 0 -%}
+          {%- if free_shipping_threshold > 0 -%}
             <div class="cart-page__shipping-bar" data-free-shipping-bar>
               {% render 'free-shipping-bar', cart: cart %}
             </div>

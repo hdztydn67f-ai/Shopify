@@ -177,15 +177,20 @@
     <div class="header__logo">
       <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} &mdash; {{ 'general.home' | t }}">
         {%- if section.settings.logo != blank -%}
+          {%- comment -%}
+            A settings image has no resource title for image_tag to fall back
+            on, so resolve the alt text first rather than chaining a filter
+            inside the argument.
+          {%- endcomment -%}
+          {%- assign logo_alt = section.settings.logo.alt | default: shop.name -%}
           {{
             section.settings.logo
             | image_url: width: 600
             | image_tag:
               class: 'header__logo-image',
               widths: '150, 300, 450, 600',
-              alt: section.settings.logo.alt | default: shop.name,
-              loading: 'eager',
-              fetchpriority: 'high'
+              alt: logo_alt,
+              loading: 'eager'
           }}
         {%- else -%}
           {%- liquid

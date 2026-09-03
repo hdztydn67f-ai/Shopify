@@ -242,10 +242,11 @@
       if (loader) loader.hidden = !state;
     },
 
-    // Delegated so re-rendered line items keep working.
+    // Delegated on document, not on the drawer: the same line-item markup
+    // is used on the /cart page, where drawer-scoped listeners never fire.
     bindItemEvents: function () {
       var self = this;
-      on(this.el, 'click', function (event) {
+      on(document, 'click', function (event) {
         var minus = event.target.closest('[data-quantity-minus]');
         var plus = event.target.closest('[data-quantity-plus]');
         var remove = event.target.closest('[data-cart-remove]');
@@ -265,7 +266,7 @@
       });
 
       on(
-        this.el,
+        document,
         'change',
         debounce(function (event) {
           var input = event.target.closest('[data-quantity-input]');
@@ -370,10 +371,37 @@
       this.renderItems(cart);
       this.renderTotals(cart);
       this.renderFreeShipping(cart);
+      this.renderCartPage();
 
       var live = $('[data-cart-live-region]');
       if (live) live.textContent = (strings.cartTitle || 'Cart') + ': ' + cart.item_count;
       document.dispatchEvent(new CustomEvent('cart:updated', { detail: { cart: cart } }));
+    },
+
+    // The /cart page renders its own line items, so refresh it through the
+    // Section Rendering API rather than leaving stale rows on screen.
+    renderCartPage: function () {
+      var page = $('[data-cart-page]');
+      if (!page) return;
+      var sectionId = page.dataset.sectionId;
+      if (!sectionId) return;
+
+      fetch(window.location.pathname + '?section_id=' + sectionId, { credentials: 'same-origin' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Cart section render failed');
+          return response.text();
+        })
+        .then(function (html) {
+          var parsed = new DOMParser().parseFromString(html, 'text/html');
+          var fresh = parsed.querySelector('[data-cart-page]');
+          if (fresh) {
+            page.innerHTML = fresh.innerHTML;
+            CartTools.init();
+          }
+        })
+        .catch(function () {
+          window.location.reload();
+        });
     },
 
     renderCount: function (count) {
@@ -406,26 +434,28 @@
     },
 
     renderFreeShipping: function (cart) {
-      var bar = $('[data-free-shipping-bar]');
-      if (!bar) return;
       var threshold = (config.freeShippingThreshold || 0) * 100;
       if (!threshold) return;
 
       var remaining = threshold - cart.total_price;
       var progress = Math.min(100, (cart.total_price / threshold) * 100);
-      var text = bar.querySelector('.free-shipping-bar__text');
-      var fill = bar.querySelector('.free-shipping-bar__fill');
 
-      if (fill) fill.style.width = progress + '%';
-      if (text) {
-        text.textContent =
-          remaining > 0
-            ? (strings.freeShippingRemaining || 'You are {amount} away from free shipping').replace(
-                '{amount}',
-                formatMoney(remaining)
-              )
-            : strings.freeShippingUnlocked || 'Free shipping unlocked';
-      }
+      // Drawer and cart page can both show a bar.
+      $$('[data-free-shipping-bar]').forEach(function (bar) {
+        var text = bar.querySelector('.free-shipping-bar__text');
+        var fill = bar.querySelector('.free-shipping-bar__fill');
+
+        if (fill) fill.style.width = progress + '%';
+        if (text) {
+          text.textContent =
+            remaining > 0
+              ? (strings.freeShippingRemaining || 'You are {amount} away from free shipping').replace(
+                  '{amount}',
+                  formatMoney(remaining)
+                )
+              : strings.freeShippingUnlocked || 'Free shipping unlocked';
+        }
+      });
     },
 
     renderItems: function (cart) {
@@ -531,29 +561,33 @@
     },
 
     initNote: function () {
-      var note = $('[data-cart-note]');
-      var status = $('[data-note-status]');
-      if (!note) return;
+      // Both the drawer and the cart page render a note field.
+      $$('[data-cart-note]').forEach(function (note) {
+        if (note.dataset.bound === 'true') return;
+        note.dataset.bound = 'true';
 
-      on(
-        note,
-        'input',
-        debounce(function () {
-          Cart.updateNote(note.value)
-            .then(function () {
-              if (status) {
-                status.textContent = strings.noteSaved || 'Note saved';
-                status.className = 'cart-tool__status is-success';
-              }
-            })
-            .catch(function () {
-              if (status) {
-                status.textContent = strings.error || 'Could not save note';
-                status.className = 'cart-tool__status is-error';
-              }
-            });
-        }, 600)
-      );
+        var status = $('[data-note-status]', note.closest('.cart-tool__panel') || document);
+
+        on(
+          note,
+          'input',
+          debounce(function () {
+            Cart.updateNote(note.value)
+              .then(function () {
+                if (status) {
+                  status.textContent = strings.noteSaved || 'Note saved';
+                  status.className = 'cart-tool__status is-success';
+                }
+              })
+              .catch(function () {
+                if (status) {
+                  status.textContent = strings.error || 'Could not save note';
+                  status.className = 'cart-tool__status is-error';
+                }
+              });
+          }, 600)
+        );
+      });
     },
 
     initShipping: function () {
@@ -708,6 +742,9 @@
       on($('[data-age-gate-accept]', gate), 'click', function () {
         storage('msb:age-verified', 'true');
         storage('msb:age-verified-at', String(Date.now()));
+        try {
+          sessionStorage.setItem('msb:age-verified-session', 'true');
+        } catch (e) {}
         document.documentElement.classList.add('age-verified');
         scrollLock.unlock();
         releaseFocus();
@@ -722,10 +759,24 @@
       });
     },
 
-    // Expiry check runs on every load so the gate returns after N days.
+    // Runs on every load so the gate returns once the answer expires.
     expireIfNeeded: function () {
       var days = parseInt(config.ageGateDays, 10);
       var at = parseInt(storage('msb:age-verified-at'), 10);
+
+      // 0 days means ask once per browser session, as the setting says.
+      if (days === 0) {
+        var sessionOk = false;
+        try {
+          sessionOk = sessionStorage.getItem('msb:age-verified-session') === 'true';
+        } catch (e) {}
+        if (!sessionOk) {
+          storage('msb:age-verified', 'false');
+          document.documentElement.classList.remove('age-verified');
+        }
+        return;
+      }
+
       if (!days || !at) return;
       if (Date.now() - at > days * 86400000) {
         storage('msb:age-verified', 'false');
@@ -1618,9 +1669,23 @@
           form.classList.contains('is-open') ? closePanel() : openPanel();
         });
         on(closeButton, 'click', closePanel);
-        on(document, 'keydown', function (event) {
-          if (event.key === 'Escape' && form.classList.contains('is-open')) closePanel();
-        });
+
+        // Bound once on document, not per re-render, so filtering repeatedly
+        // does not stack a new handler every time the section is swapped.
+        if (!Facets.escapeBound) {
+          Facets.escapeBound = true;
+          on(document, 'keydown', function (event) {
+            if (event.key !== 'Escape') return;
+            var openForm = $('[data-facets-form].is-open');
+            if (openForm) {
+              openForm.classList.remove('is-open');
+              var toggle = $('[data-facets-open]', openForm.closest('[data-facets]'));
+              if (toggle) toggle.setAttribute('aria-expanded', 'false');
+              scrollLock.unlock();
+              releaseFocus(true);
+            }
+          });
+        }
 
         function apply(url, updateHistory) {
           Facets.render(url, sectionId, updateHistory !== false);

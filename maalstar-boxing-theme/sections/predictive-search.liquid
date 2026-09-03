@@ -10,10 +10,10 @@
     {%- if predictive_search.resources.products.size > 0 -%}
       <div class="predictive__group">
         <h2 class="predictive__heading">{{ 'general.search.products' | t }}</h2>
-        <ul class="predictive__list" role="list">
+        <ul class="predictive__list" role="presentation">
           {%- for product in predictive_search.resources.products -%}
             <li>
-              <a class="predictive__item" href="{{ product.url }}" data-predictive-item>
+              <a class="predictive__item" href="{{ product.url }}" role="option" data-predictive-item>
                 <span class="predictive__media media media--square">
                   {%- if product.featured_media -%}
                     <img
@@ -44,10 +44,10 @@
     {%- if predictive_search.resources.collections.size > 0 -%}
       <div class="predictive__group">
         <h2 class="predictive__heading">{{ 'general.search.collections' | t }}</h2>
-        <ul class="predictive__list" role="list">
+        <ul class="predictive__list" role="presentation">
           {%- for collection in predictive_search.resources.collections -%}
             <li>
-              <a class="predictive__item predictive__item--text" href="{{ collection.url }}" data-predictive-item>
+              <a class="predictive__item predictive__item--text" href="{{ collection.url }}" role="option" data-predictive-item>
                 {% render 'icon', name: 'tag', size: 16 %}
                 <span>{{ collection.title }}</span>
               </a>
@@ -60,10 +60,10 @@
     {%- if predictive_search.resources.pages.size > 0 or predictive_search.resources.articles.size > 0 -%}
       <div class="predictive__group">
         <h2 class="predictive__heading">{{ 'general.search.pages' | t }}</h2>
-        <ul class="predictive__list" role="list">
+        <ul class="predictive__list" role="presentation">
           {%- for page in predictive_search.resources.pages -%}
             <li>
-              <a class="predictive__item predictive__item--text" href="{{ page.url }}" data-predictive-item>
+              <a class="predictive__item predictive__item--text" href="{{ page.url }}" role="option" data-predictive-item>
                 {% render 'icon', name: 'note', size: 16 %}
                 <span>{{ page.title }}</span>
               </a>
@@ -71,7 +71,7 @@
           {%- endfor -%}
           {%- for article in predictive_search.resources.articles -%}
             <li>
-              <a class="predictive__item predictive__item--text" href="{{ article.url }}" data-predictive-item>
+              <a class="predictive__item predictive__item--text" href="{{ article.url }}" role="option" data-predictive-item>
                 {% render 'icon', name: 'note', size: 16 %}
                 <span>{{ article.title }}</span>
               </a>
