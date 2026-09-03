@@ -446,7 +446,8 @@
         cartAdd: {{ routes.cart_add_url | json }},
         cartChange: {{ routes.cart_change_url | json }},
         cartUpdate: {{ routes.cart_update_url | json }},
-        predictiveSearch: {{ routes.predictive_search_url | json }}
+        predictiveSearch: {{ routes.predictive_search_url | json }},
+        productRecommendations: {{ routes.product_recommendations_url | json }}
       };
       window.MSB.strings = {
         addToCart: {{ 'products.product.add_to_cart' | t | json }},
@@ -467,6 +468,9 @@
         discountError: {{ 'sections.cart.discount_error' | t | json }},
         freeShippingRemaining: {{ 'sections.cart.free_shipping_remaining_js' | t | json }},
         freeShippingUnlocked: {{ 'sections.cart.free_shipping_unlocked' | t | json }},
+        inStock: {{ 'products.product.in_stock' | t | json }},
+        unavailable: {{ 'products.product.unavailable' | t | json }},
+        linkCopied: {{ 'general.link_copied' | t | json }},
         wishlistAdded: {{ 'general.wishlist.added' | t | json }},
         wishlistRemoved: {{ 'general.wishlist.removed' | t | json }}
       };

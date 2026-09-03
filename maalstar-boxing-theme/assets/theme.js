@@ -1283,6 +1283,299 @@
   };
   MSB.quickView = QuickView;
 
+
+  /* ---------------------------------------------------------
+     11e. PRODUCT PAGE — gallery, variant picker, Ajax add
+     --------------------------------------------------------- */
+  var ProductPage = {
+    init: function (scope) {
+      this.initGallery(scope);
+      this.initForm(scope);
+      this.initShare(scope);
+    },
+
+    initGallery: function (scope) {
+      $$('[data-product-gallery]', scope || document).forEach(function (gallery) {
+        if (gallery.dataset.bound === 'true') return;
+        gallery.dataset.bound = 'true';
+
+        var slides = $$('[data-gallery-slide]', gallery);
+        var thumbs = $$('[data-gallery-thumb]', gallery);
+
+        function show(mediaId) {
+          slides.forEach(function (slide) {
+            var active = slide.dataset.mediaId === String(mediaId);
+            slide.hidden = !active;
+            slide.classList.toggle('is-active', active);
+
+            // Pause any video we just navigated away from.
+            if (!active) {
+              var video = slide.querySelector('video');
+              if (video && !video.paused) video.pause();
+            }
+          });
+          thumbs.forEach(function (thumb) {
+            var active = thumb.dataset.mediaId === String(mediaId);
+            thumb.classList.toggle('is-active', active);
+            if (active) {
+              thumb.setAttribute('aria-current', 'true');
+            } else {
+              thumb.removeAttribute('aria-current');
+            }
+          });
+        }
+
+        thumbs.forEach(function (thumb) {
+          on(thumb, 'click', function () {
+            show(thumb.dataset.mediaId);
+          });
+        });
+
+        gallery.showMedia = show;
+
+        // Hover zoom: translate the pointer position into transform-origin.
+        $$('.product-gallery__image--zoom', gallery).forEach(function (image) {
+          on(image, 'mousemove', function (event) {
+            var rect = image.getBoundingClientRect();
+            var x = ((event.clientX - rect.left) / rect.width) * 100;
+            var y = ((event.clientY - rect.top) / rect.height) * 100;
+            image.style.transformOrigin = x + '% ' + y + '%';
+          });
+          on(image, 'mouseleave', function () {
+            image.style.transformOrigin = 'center center';
+          });
+        });
+      });
+    },
+
+    initForm: function (scope) {
+      $$('[data-product-info]', scope || document).forEach(function (info) {
+        if (info.dataset.bound === 'true') return;
+        info.dataset.bound = 'true';
+
+        var variants = [];
+        var json = $('[data-variant-json]', info);
+        try {
+          variants = JSON.parse(json.textContent);
+        } catch (e) {
+          variants = [];
+        }
+
+        var wrapper = $('[data-product-form]', info);
+        var form = wrapper ? $('form', wrapper) : null;
+        var idInput = $('[data-product-variant-id]', info);
+        var submit = $('[data-product-submit]', info);
+        var submitText = $('[data-product-submit-text]', info);
+        var spinner = $('[data-product-spinner]', info);
+        var priceHost = $('[data-product-price]', info);
+        var inventory = $('[data-product-inventory]', info);
+        var skuHost = $('[data-product-sku]', info);
+        var quantity = $('[data-product-quantity]', info);
+        var gallery = $('[data-product-gallery]', document);
+        var optionInputs = $$('[data-option-input]', info);
+
+        function selectedOptions() {
+          var values = [];
+          $$('[data-option-position]', info).forEach(function (el) {
+            if (el.tagName !== 'INPUT' || !el.checked) return;
+            values[parseInt(el.dataset.optionPosition, 10) - 1] = el.value;
+          });
+          return values;
+        }
+
+        function findVariant() {
+          if (!optionInputs.length) return variants[0];
+          var chosen = selectedOptions();
+          return variants.filter(function (variant) {
+            return chosen.every(function (value, i) {
+              return variant.options[i] === value;
+            });
+          })[0];
+        }
+
+        // Grey out option values that cannot be combined with the rest
+        // of the current selection, so nobody picks a dead end.
+        function markUnavailable() {
+          var chosen = selectedOptions();
+          $$('[data-option-input]', info).forEach(function (input) {
+            var position = parseInt(input.dataset.optionPosition, 10) - 1;
+            var candidate = chosen.slice();
+            candidate[position] = input.value;
+
+            var match = variants.filter(function (variant) {
+              return candidate.every(function (value, i) {
+                return value === undefined || variant.options[i] === value;
+              });
+            })[0];
+
+            var label = $('label[for="' + input.id + '"]', info);
+            if (!label) return;
+            label.classList.toggle('is-unavailable', !match || !match.available);
+          });
+        }
+
+        function updateUrl(variant) {
+          if (!window.history || !window.history.replaceState) return;
+          try {
+            var url = new URL(window.location.href);
+            url.searchParams.set('variant', variant.id);
+            window.history.replaceState({ variant: variant.id }, '', url.toString());
+          } catch (e) {}
+        }
+
+        function sync() {
+          var variant = findVariant();
+          markUnavailable();
+
+          $$('[data-option-selected]', info).forEach(function (el) {
+            var position = parseInt(el.dataset.optionSelected, 10) - 1;
+            var values = selectedOptions();
+            if (values[position]) el.textContent = values[position];
+          });
+
+          if (!variant) {
+            if (submit) submit.disabled = true;
+            if (submitText) submitText.textContent = strings.unavailable || 'Unavailable';
+            if (idInput) idInput.disabled = true;
+            return;
+          }
+
+          if (idInput) {
+            idInput.value = variant.id;
+            idInput.disabled = !variant.available;
+          }
+          if (submit) submit.disabled = !variant.available;
+          if (submitText) {
+            submitText.textContent = variant.available
+              ? strings.addToCart || 'Add to cart'
+              : strings.soldOut || 'Sold out';
+          }
+
+          if (priceHost) {
+            var onSale = variant.compare_at_price > variant.price;
+            var markup = '<div class="price' + (onSale ? ' price--on-sale' : '') + '">';
+            markup += onSale
+              ? '<s class="price__compare">' + formatMoney(variant.compare_at_price) + '</s>' +
+                '<span class="price__sale">' + formatMoney(variant.price) + '</span>'
+              : '<span class="price__regular">' + formatMoney(variant.price) + '</span>';
+            priceHost.innerHTML = markup + '</div>';
+          }
+
+          if (skuHost) skuHost.textContent = variant.sku || '';
+
+          if (inventory) {
+            var dot = '<span class="product__inventory-dot' + (variant.available ? '' : ' product__inventory-dot--out') + '"></span>';
+            inventory.innerHTML =
+              dot + ' ' + (variant.available ? strings.inStock || 'In stock' : strings.soldOut || 'Sold out');
+          }
+
+          if (gallery && gallery.showMedia && variant.featured_media) {
+            gallery.showMedia(variant.featured_media.id);
+          }
+
+          updateUrl(variant);
+          document.dispatchEvent(new CustomEvent('variant:changed', { detail: { variant: variant } }));
+        }
+
+        optionInputs.forEach(function (input) {
+          on(input, 'change', sync);
+        });
+
+        on($('[data-product-quantity-minus]', info), 'click', function () {
+          quantity.value = Math.max(1, parseInt(quantity.value, 10) - 1);
+        });
+        on($('[data-product-quantity-plus]', info), 'click', function () {
+          quantity.value = parseInt(quantity.value, 10) + 1;
+        });
+
+        if (form) {
+          on(form, 'submit', function (event) {
+            event.preventDefault();
+            if (submit.disabled) return;
+
+            submit.classList.add('is-loading');
+            if (spinner) spinner.hidden = false;
+
+            Cart.add({
+              id: Number(idInput.value),
+              quantity: parseInt(quantity ? quantity.value : 1, 10) || 1
+            })
+              .catch(function () {})
+              .finally(function () {
+                submit.classList.remove('is-loading');
+                if (spinner) spinner.hidden = true;
+              });
+          });
+        }
+
+        sync();
+      });
+    },
+
+    initShare: function (scope) {
+      $$('[data-share]', scope || document).forEach(function (button) {
+        if (button.dataset.bound === 'true') return;
+        button.dataset.bound = 'true';
+
+        on(button, 'click', function () {
+          var url = button.dataset.shareUrl;
+          var title = button.dataset.shareTitle;
+          var status = $('[data-share-status]', button.parentNode);
+
+          if (navigator.share) {
+            navigator.share({ title: title, url: url }).catch(function () {});
+            return;
+          }
+
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function () {
+              if (status) {
+                status.textContent = strings.linkCopied || 'Link copied';
+                setTimeout(function () {
+                  status.textContent = '';
+                }, 2500);
+              }
+            });
+          }
+        });
+      });
+    }
+  };
+  MSB.product = ProductPage;
+
+  /* ---------------------------------------------------------
+     11f. RELATED PRODUCTS (Recommendations API)
+     --------------------------------------------------------- */
+  var Recommendations = {
+    init: function (scope) {
+      $$('[data-related-products]', scope || document).forEach(function (container) {
+        if (container.dataset.loaded === 'true') return;
+        container.dataset.loaded = 'true';
+
+        var url = container.dataset.url;
+        if (!url) return;
+        if (container.dataset.intent) url += '&intent=' + container.dataset.intent;
+
+        fetch(url, { credentials: 'same-origin' })
+          .then(function (response) {
+            if (!response.ok) throw new Error('Recommendations request failed');
+            return response.text();
+          })
+          .then(function (html) {
+            var parsed = new DOMParser().parseFromString(html, 'text/html');
+            var fresh = parsed.querySelector('[data-related-products]');
+            if (fresh && fresh.innerHTML.trim()) {
+              container.innerHTML = fresh.innerHTML;
+              Wishlist.syncButtons(container);
+            }
+          })
+          .catch(function () {
+            /* Recommendations are an enhancement — fail quietly. */
+          });
+      });
+    }
+  };
+
   /* ---------------------------------------------------------
      12. WISHLIST (localStorage)
      --------------------------------------------------------- */
@@ -1379,6 +1672,8 @@
     Tabs.init();
     QuickAdd.init();
     QuickView.init();
+    ProductPage.init();
+    Recommendations.init();
     Wishlist.init();
   }
 
@@ -1393,6 +1688,8 @@
     Header.init();
     MobileNav.init();
     Tabs.init(event.target);
+    ProductPage.init(event.target);
+    Recommendations.init(event.target);
     Wishlist.renderCount();
     Wishlist.syncButtons(event.target);
   });

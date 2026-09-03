@@ -24,6 +24,11 @@
     "footer": {
       "rights_reserved": "All rights reserved.",
       "payment_methods": "Payment methods"
+    },
+    "share": "Share",
+    "link_copied": "Link copied",
+    "breadcrumbs": {
+      "label": "Breadcrumbs"
     }
   },
   "accessibility": {
@@ -122,7 +127,10 @@
         "sale_price": "Sale price",
         "unit_price": "Unit price",
         "from_price_html": "From {{ price }}"
-      }
+      },
+      "in_stock": "In stock",
+      "sku": "SKU",
+      "tax_note": "Tax included. Shipping calculated at checkout."
     }
   },
   "onboarding": {

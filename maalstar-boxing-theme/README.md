@@ -16,8 +16,10 @@ SEO-hardened markup.
 | **3** | Secondary split banner, newsletter section | ✅ Done |
 | **4** | Footer section, policies, payment icons | ✅ Done |
 
-All four steps of the original brief are built. Product, collection, cart,
-search and blog templates are still placeholders — see **Next up** below.
+| **5** | Product page: gallery, variant picker, Ajax add to cart, related products | ✅ Done |
+
+The original four-step brief plus the product page are built. Collection,
+cart, search and blog templates are still placeholders — see **Next up**.
 
 ---
 
@@ -44,6 +46,8 @@ maalstar-boxing-theme/
 │   ├── split-banner.liquid   # "HANDMADE GEAR. FIGHTER APPROVED."
 │   ├── newsletter.liquid     # "LET'S GET IN TOUCH" — Shopify customer form
 │   ├── footer.liquid         # Multi-column: brand, links, policies, contact
+│   ├── main-product.liquid   # Block-driven product page
+│   ├── related-products.liquid # Recommendations API, loaded after paint
 │   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
 │   └── footer-group.json     # Footer group, pre-populated with four columns
 ├── snippets/
@@ -53,6 +57,9 @@ maalstar-boxing-theme/
 │   ├── price.liquid          # Compare-at + unit pricing
 │   ├── quick-view.liquid     # Quick view body with variant picker
 │   ├── social-links.liquid   # Social icons from the global settings
+│   ├── breadcrumbs.liquid    # Visual breadcrumbs (JSON-LD lives in theme.liquid)
+│   ├── product-media-gallery.liquid
+│   ├── product-variant-picker.liquid
 │   ├── cart-drawer-item.liquid
 │   └── free-shipping-bar.liquid
 └── templates/
@@ -177,11 +184,32 @@ causes conflicting signals.
 The four steps of the brief are complete. To actually take orders, the
 remaining templates need building:
 
-1. **`product.json`** — gallery, variant picker, add to cart, trust badges,
-   description tabs, related products.
-2. **`collection.json`** — filtering, sorting, pagination, collection SEO copy.
-3. **`cart.json`** — full cart page (the drawer already handles most journeys).
-4. **`search.json`** + predictive search dropdown.
-5. **`page.json` / `blog.json` / `article.json`** — content templates. Blog
+1. **`collection.json`** — filtering, sorting, pagination, collection SEO copy.
+2. **`cart.json`** — full cart page (the drawer already handles most journeys).
+3. **`search.json`** + predictive search dropdown.
+4. **`page.json` / `blog.json` / `article.json`** — content templates. Blog
    posts are where you win long-tail search traffic like "how to choose
    boxing glove weight".
+
+---
+
+## Product page notes
+
+- **Block-driven.** Vendor, title, rating, price, inventory, variant picker,
+  quantity, buy buttons, trust badges, description, accordion rows, text and
+  share are all blocks — reorder or remove any of them in the theme editor
+  without touching code. `@app` blocks are supported, so review and upsell
+  apps drop straight in.
+- **Dead combinations are marked, not hidden.** Picking a size that does not
+  exist (or is sold out) with the current colour shows it struck through
+  rather than removing it, so customers can still see you make that size —
+  they just cannot add it and hit an error at checkout.
+- **The URL tracks the variant.** Selecting an option rewrites
+  `?variant=` via `history.replaceState`, so a customer sharing the link
+  shares the exact glove they were looking at.
+- **Related products load after paint.** The section renders empty and
+  `theme.js` fetches the Recommendations API, so recommendations never delay
+  the product page's own LCP. Switch between related and complementary
+  products in the editor (complementary needs the Search & Discovery app).
+- **Add to cart is Ajax** and opens the drawer — the customer never leaves
+  the product page, which is where the upsells are.

@@ -1,0 +1,354 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SECTION: main-product
+  Block-driven product page. Merchants reorder every element in the
+  theme editor; Ajax add-to-cart hands off to the drawer.
+  ------------------------------------------------------------
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign section_id = 'MainProduct-' | append: section.id
+  assign product_form_id = 'ProductForm-' | append: section.id
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .product { --gallery-width: {{ section.settings.gallery_width }}%; }
+{% endstyle %}
+
+<section class="product-section section--tight">
+  <div class="page-width">
+    {%- if section.settings.show_breadcrumbs -%}
+      {% render 'breadcrumbs' %}
+    {%- endif -%}
+
+    <div class="product product--gallery-{{ section.settings.gallery_position }}">
+      <div class="product__gallery-col">
+        {% render 'product-media-gallery', product: product, enable_zoom: section.settings.enable_zoom %}
+      </div>
+
+      <div class="product__info-col">
+        <div class="product__info" data-product-info data-product-id="{{ product.id }}">
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+
+              {%- when 'vendor' -%}
+                {%- if product.vendor != blank -%}
+                  <p class="product__vendor" {{ block.shopify_attributes }}>
+                    <a href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>
+                  </p>
+                {%- endif -%}
+
+              {%- when 'title' -%}
+                <h1 class="product__title h2" {{ block.shopify_attributes }}>{{ product.title }}</h1>
+
+              {%- when 'rating' -%}
+                {%- if product.metafields.reviews.rating.value != blank -%}
+                  {%- liquid
+                    assign rating = product.metafields.reviews.rating.value.rating
+                    assign rating_count = product.metafields.reviews.rating_count.value
+                  -%}
+                  <div class="product__rating" {{ block.shopify_attributes }}>
+                    <span class="card__stars" style="--rating: {{ rating }};" aria-hidden="true"></span>
+                    <span>{{ 'products.product.rating_label' | t: rating: rating }} ({{ rating_count }})</span>
+                  </div>
+                {%- endif -%}
+
+              {%- when 'price' -%}
+                <div class="product__price" data-product-price {{ block.shopify_attributes }}>
+                  {% render 'price', variant: current_variant, show_unit_price: true %}
+                </div>
+                {%- if block.settings.show_tax_note -%}
+                  <p class="product__tax-note text-muted">{{ 'products.product.tax_note' | t }}</p>
+                {%- endif -%}
+
+              {%- when 'inventory' -%}
+                <p class="product__inventory" data-product-inventory {{ block.shopify_attributes }}>
+                  {%- if current_variant.available -%}
+                    {%- if current_variant.inventory_management != blank
+                      and current_variant.inventory_policy == 'deny'
+                      and current_variant.inventory_quantity > 0
+                      and current_variant.inventory_quantity <= block.settings.low_stock_threshold
+                    -%}
+                      <span class="product__inventory-dot product__inventory-dot--low"></span>
+                      {{ 'products.product.only_left' | t: quantity: current_variant.inventory_quantity }}
+                    {%- else -%}
+                      <span class="product__inventory-dot"></span>
+                      {{ 'products.product.in_stock' | t }}
+                    {%- endif -%}
+                  {%- else -%}
+                    <span class="product__inventory-dot product__inventory-dot--out"></span>
+                    {{ 'products.product.sold_out' | t }}
+                  {%- endif -%}
+                </p>
+
+              {%- when 'variant_picker' -%}
+                <div {{ block.shopify_attributes }}>
+                  {% render 'product-variant-picker', product: product, section_id: section_id %}
+                </div>
+
+              {%- when 'quantity_selector' -%}
+                <div class="product__quantity" {{ block.shopify_attributes }}>
+                  <label class="field__label" for="Quantity-{{ section.id }}">
+                    {{ 'products.product.quantity.label' | t }}
+                  </label>
+                  <div class="quantity" data-quantity>
+                    <button type="button" class="quantity__button" data-product-quantity-minus aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
+                      {% render 'icon', name: 'minus', size: 14 %}
+                    </button>
+                    <input
+                      class="quantity__input"
+                      type="number"
+                      id="Quantity-{{ section.id }}"
+                      name="quantity"
+                      value="1"
+                      min="1"
+                      form="{{ product_form_id }}"
+                      data-product-quantity
+                    >
+                    <button type="button" class="quantity__button" data-product-quantity-plus aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
+                      {% render 'icon', name: 'plus', size: 14 %}
+                    </button>
+                  </div>
+                </div>
+
+              {%- when 'buy_buttons' -%}
+                {%- comment -%}
+                  The data hook lives on the wrapper: Liquid named arguments
+                  cannot contain hyphens, so it cannot go on the form tag.
+                {%- endcomment -%}
+                <div class="product__buy" data-product-form {{ block.shopify_attributes }}>
+                  {%- form 'product', product, id: product_form_id, class: 'product__form', novalidate: 'novalidate' -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{ current_variant.id }}"
+                      data-product-variant-id
+                      {% unless current_variant.available %}disabled{% endunless %}
+                    >
+
+                    <button
+                      type="submit"
+                      name="add"
+                      class="button button--primary button--full button--lg"
+                      data-product-submit
+                      {% unless current_variant.available %}disabled{% endunless %}
+                    >
+                      <span data-product-submit-text>
+                        {%- if current_variant.available -%}
+                          {{ 'products.product.add_to_cart' | t }}
+                        {%- else -%}
+                          {{ 'products.product.sold_out' | t }}
+                        {%- endif -%}
+                      </span>
+                      <span class="spinner" data-product-spinner hidden aria-hidden="true"></span>
+                    </button>
+
+                    {%- if block.settings.show_dynamic_checkout -%}
+                      {{ form | payment_button }}
+                    {%- endif -%}
+                  {%- endform -%}
+
+                  {%- if block.settings.show_wishlist -%}
+                    <button
+                      type="button"
+                      class="button button--ghost button--full js-only product__wishlist"
+                      data-wishlist-toggle
+                      data-product-id="{{ product.id }}"
+                      aria-pressed="false"
+                    >
+                      <span class="card__wishlist-off">{% render 'icon', name: 'heart', size: 18 %}</span>
+                      <span class="card__wishlist-on">{% render 'icon', name: 'heart-filled', size: 18 %}</span>
+                      {{ 'general.wishlist.title' | t }}
+                    </button>
+                  {%- endif -%}
+                </div>
+
+              {%- when 'description' -%}
+                {%- if product.description != blank -%}
+                  <div class="product__description rte" {{ block.shopify_attributes }}>
+                    {{ product.description }}
+                  </div>
+                {%- endif -%}
+
+              {%- when 'accordion' -%}
+                <details class="accordion" {{ block.shopify_attributes }}>
+                  <summary class="accordion__summary">
+                    {%- if block.settings.icon != 'none' -%}
+                      {% render 'icon', name: block.settings.icon, size: 18 %}
+                    {%- endif -%}
+                    <span>{{ block.settings.heading | escape }}</span>
+                    {% render 'icon', name: 'chevron-down', class: 'accordion__chevron' %}
+                  </summary>
+                  <div class="accordion__panel rte">
+                    {{ block.settings.content }}
+                    {%- if block.settings.page != blank -%}
+                      {{ pages[block.settings.page].content }}
+                    {%- endif -%}
+                  </div>
+                </details>
+
+              {%- when 'trust_badges' -%}
+                <ul class="product__trust" role="list" {{ block.shopify_attributes }}>
+                  {%- assign badge_labels = block.settings.badges | split: ',' -%}
+                  {%- for label in badge_labels -%}
+                    <li>
+                      {% render 'icon', name: 'check', size: 16 %}
+                      <span>{{ label | strip }}</span>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+
+              {%- when 'text' -%}
+                <div class="product__text rte" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+
+              {%- when 'share' -%}
+                <div class="product__share" {{ block.shopify_attributes }}>
+                  <button
+                    type="button"
+                    class="product__share-button js-only"
+                    data-share
+                    data-share-url="{{ shop.url }}{{ product.url }}"
+                    data-share-title="{{ product.title | escape }}"
+                  >
+                    {% render 'icon', name: 'arrow-right', size: 16 %}
+                    {{ 'general.share' | t }}
+                  </button>
+                  <span class="product__share-status" data-share-status aria-live="polite"></span>
+                </div>
+
+              {%- when '@app' -%}
+                {% render block %}
+
+            {%- endcase -%}
+          {%- endfor -%}
+
+          {%- if section.settings.show_sku and current_variant.sku != blank -%}
+            <p class="product__sku text-muted">
+              {{ 'products.product.sku' | t }}: <span data-product-sku>{{ current_variant.sku }}</span>
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product information",
+  "class": "section-main-product",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "select",
+      "id": "gallery_position",
+      "label": "Gallery position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "gallery_width",
+      "min": 40,
+      "max": 60,
+      "step": 5,
+      "unit": "%",
+      "label": "Gallery width on desktop",
+      "default": 55
+    },
+    { "type": "checkbox", "id": "enable_zoom", "label": "Zoom image on hover", "default": true },
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "checkbox", "id": "show_sku", "label": "Show SKU", "default": true }
+  ],
+  "blocks": [
+    { "type": "@app" },
+    { "type": "vendor", "name": "Vendor", "limit": 1, "settings": [] },
+    { "type": "title", "name": "Title", "limit": 1, "settings": [] },
+    { "type": "rating", "name": "Rating", "limit": 1, "settings": [] },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_tax_note", "label": "Show tax and shipping note", "default": true }
+      ]
+    },
+    {
+      "type": "inventory",
+      "name": "Inventory status",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "range",
+          "id": "low_stock_threshold",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "label": "Show 'only N left' at or below",
+          "default": 5
+        }
+      ]
+    },
+    { "type": "variant_picker", "name": "Variant picker", "limit": 1, "settings": [] },
+    { "type": "quantity_selector", "name": "Quantity selector", "limit": 1, "settings": [] },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show accelerated checkout buttons", "default": true },
+        { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist button", "default": true }
+      ]
+    },
+    { "type": "description", "name": "Description", "limit": 1, "settings": [] },
+    {
+      "type": "accordion",
+      "name": "Accordion row",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shipping & returns" },
+        { "type": "richtext", "id": "content", "label": "Content" },
+        { "type": "page", "id": "page", "label": "Content from page" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "truck", "label": "Shipping" },
+            { "value": "lock", "label": "Secure" },
+            { "value": "note", "label": "Note" },
+            { "value": "check", "label": "Check" },
+            { "value": "tag", "label": "Tag" }
+          ],
+          "default": "truck"
+        }
+      ]
+    },
+    {
+      "type": "trust_badges",
+      "name": "Trust badges",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "badges",
+          "label": "Badges",
+          "default": "Handmade genuine leather, Free shipping over $150, 30-day returns, Secure checkout",
+          "info": "Separate each badge with a comma."
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [{ "type": "richtext", "id": "text", "label": "Text" }]
+    },
+    { "type": "share", "name": "Share", "limit": 1, "settings": [] }
+  ],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}
