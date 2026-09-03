@@ -1,0 +1,55 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header": {
+      "type": "header",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free worldwide shipping on orders over $150",
+            "show_icon": true
+          }
+        },
+        "announcement-2": {
+          "type": "announcement",
+          "settings": {
+            "text": "Handmade in genuine leather — built for fighters",
+            "show_icon": true
+          }
+        },
+        "announcement-3": {
+          "type": "announcement",
+          "settings": {
+            "text": "30-day returns on all gear",
+            "show_icon": true
+          }
+        }
+      },
+      "block_order": ["announcement-1", "announcement-2", "announcement-3"],
+      "settings": {
+        "show_topbar": true,
+        "topbar_background": "#111114",
+        "topbar_text": "#F5F5F5",
+        "announcement_speed": 5,
+        "show_country_selector": true,
+        "show_country_flag": false,
+        "show_locale_selector": true,
+        "logo_width": 160,
+        "logo_height": 46,
+        "logo_position": "left",
+        "menu": "main-menu",
+        "header_height": 76,
+        "sticky_header": true,
+        "hide_on_scroll": false,
+        "show_search": true,
+        "show_account": true,
+        "show_wishlist": true,
+        "show_icon_labels": false,
+        "mobile_cta_text": "Shop all gear"
+      }
+    }
+  },
+  "order": ["header"]
+}

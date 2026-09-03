@@ -1,0 +1,98 @@
+{
+  "general": {
+    "home": "Home",
+    "loading": "Loading",
+    "continue_shopping": "Continue shopping",
+    "errors": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "search": {
+      "search": "Search",
+      "submit": "Search",
+      "placeholder": "Search gloves, sets, headgear…"
+    },
+    "cookies": {
+      "label": "Cookie consent",
+      "learn_more": "Learn more"
+    },
+    "wishlist": {
+      "title": "Wishlist",
+      "added": "Added to wishlist",
+      "removed": "Removed from wishlist"
+    }
+  },
+  "accessibility": {
+    "skip_to_text": "Skip to content",
+    "close": "Close",
+    "refresh_page": "Choosing a selection results in a full page refresh.",
+    "link_messages": {
+      "new_window": "Opens in a new window."
+    }
+  },
+  "customer": {
+    "log_in": "Log in",
+    "account_fallback": "Account",
+    "account": {
+      "title": "Account"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "primary_navigation": "Primary navigation",
+      "secondary_navigation": "Secondary navigation",
+      "mobile_navigation": "Mobile navigation",
+      "view_all": "View all",
+      "cart_count": {
+        "one": "Cart, {{ count }} item",
+        "other": "Cart, {{ count }} items"
+      }
+    },
+    "cart": {
+      "title": "Cart",
+      "empty": "Your cart is empty.",
+      "subtotal": "Subtotal",
+      "taxes_and_shipping": "Taxes and shipping calculated at checkout.",
+      "checkout": "Secure checkout",
+      "view_cart": "View full cart",
+      "remove": "Remove",
+      "remove_title": "Remove {{ title }}",
+      "only_left": "Only {{ quantity }} left in stock.",
+      "note_toggle": "Add note for seller",
+      "note": "Order note",
+      "note_placeholder": "Special instructions, glove sizing, custom colours…",
+      "note_saved": "Note saved",
+      "shipping_estimate": "Shipping rate estimator",
+      "country": "Country / region",
+      "province": "State / province",
+      "zip": "Postal / ZIP code",
+      "calculate_shipping": "Calculate shipping",
+      "calculating": "Calculating…",
+      "rates_found": "rate(s) available",
+      "no_shipping_rates": "No shipping rates found for this address.",
+      "discount_toggle": "Discount code",
+      "discount": "Discount code",
+      "discount_placeholder": "Enter code",
+      "apply": "Apply",
+      "applying_discount": "Applying…",
+      "discount_applied": "Discount applied",
+      "discount_at_checkout": "Code saved — it will be applied at checkout.",
+      "discount_error": "That code could not be applied.",
+      "free_shipping_remaining_html": "You are {{ amount }} away from free shipping",
+      "free_shipping_remaining_js": "You are {amount} away from free shipping",
+      "free_shipping_unlocked": "Free shipping unlocked"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "added": "Added to cart",
+      "quantity": {
+        "label": "Quantity",
+        "increase": "Increase quantity for {{ product }}",
+        "decrease": "Decrease quantity for {{ product }}"
+      }
+    }
+  }
+}

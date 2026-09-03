@@ -1,0 +1,11 @@
+{%- comment -%}
+  Shopify's default robots rules, plus explicit sitemap declaration.
+  Editing this file lets us block low-value crawl paths later (filters,
+  sort params) without touching Shopify's protected defaults.
+{%- endcomment -%}
+{% for group in robots.default_groups %}
+{{- group.user_agent }}
+{% for rule in group.rules %}{{ rule }}
+{% endfor %}
+{%- if group.sitemap != blank %}{{ group.sitemap }}{% endif %}
+{% endfor %}

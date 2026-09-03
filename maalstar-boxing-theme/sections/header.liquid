@@ -1,0 +1,646 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SECTION: header
+  Top bar (announcements + currency/language) + sticky main header
+  with search, account, wishlist and Ajax cart badge.
+  ------------------------------------------------------------
+{%- endcomment -%}
+
+{%- liquid
+  assign announcements = section.blocks | where: 'type', 'announcement'
+  assign show_localization = false
+  if section.settings.show_country_selector and localization.available_countries.size > 1
+    assign show_localization = true
+  endif
+  if section.settings.show_locale_selector and localization.available_languages.size > 1
+    assign show_localization = true
+  endif
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --color-topbar-bg: {{ section.settings.topbar_background }};
+    --color-topbar-text: {{ section.settings.topbar_text }};
+    --header-height: {{ section.settings.header_height }}px;
+  }
+  #shopify-section-{{ section.id }} .header__logo-image {
+    max-height: {{ section.settings.logo_height }}px;
+    width: {{ section.settings.logo_width }}px;
+  }
+{% endstyle %}
+
+<div
+  class="header-wrapper{% if section.settings.sticky_header %} header-wrapper--sticky{% endif %}"
+  data-header-wrapper
+  data-sticky="{{ section.settings.sticky_header }}"
+  data-hide-on-scroll="{{ section.settings.hide_on_scroll }}"
+>
+  {%- comment -%} ==================== TOP BAR ==================== {%- endcomment -%}
+  {%- if section.settings.show_topbar -%}
+    <div class="topbar" data-topbar>
+      <div class="page-width topbar__inner">
+        <div class="topbar__slot topbar__slot--start">
+          {%- if section.settings.topbar_menu != blank -%}
+            <nav class="topbar__links" aria-label="{{ 'sections.header.secondary_navigation' | t }}">
+              {%- for link in section.settings.topbar_menu.links limit: 4 -%}
+                <a href="{{ link.url }}">{{ link.title }}</a>
+              {%- endfor -%}
+            </nav>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} Rotating announcements (blocks) {%- endcomment -%}
+        <div
+          class="topbar__announcements"
+          data-announcement-bar
+          data-rotate-speed="{{ section.settings.announcement_speed | times: 1000 }}"
+          aria-live="polite"
+        >
+          {%- if announcements.size > 0 -%}
+            {%- for block in announcements -%}
+              <p
+                class="topbar__announcement{% if forloop.first %} is-active{% endif %}"
+                data-announcement
+                {{ block.shopify_attributes }}
+              >
+                {%- if block.settings.show_icon -%}
+                  {% render 'icon', name: 'bolt' %}
+                {%- endif -%}
+                {%- if block.settings.link != blank -%}
+                  <a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>
+                {%- else -%}
+                  <span>{{ block.settings.text | escape }}</span>
+                {%- endif -%}
+              </p>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        <div class="topbar__slot topbar__slot--end">
+          {%- if show_localization -%}
+            {%- comment -%} ---- Currency / country ---- {%- endcomment -%}
+            {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+              <localization-selector class="localization" data-localization>
+                {%- form 'localization', id: 'HeaderCountryForm', class: 'localization__form' -%}
+                  <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-localization-input>
+                  <button
+                    type="button"
+                    class="localization__toggle"
+                    aria-expanded="false"
+                    aria-controls="HeaderCountryList"
+                    data-localization-toggle
+                  >
+                    {%- if section.settings.show_country_flag -%}
+                      <span class="localization__flag" aria-hidden="true">{{ localization.country.iso_code }}</span>
+                    {%- endif -%}
+                    <span>{{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }}</span>
+                    {% render 'icon', name: 'chevron-down' %}
+                  </button>
+                  <ul class="localization__list" id="HeaderCountryList" role="list" data-localization-list>
+                    {%- for country in localization.available_countries -%}
+                      <li class="localization__item">
+                        <button
+                          type="submit"
+                          name="country_code"
+                          value="{{ country.iso_code }}"
+                          {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %}
+                        >
+                          <span>{{ country.name }}</span>
+                          <span class="text-muted">({{ country.currency.iso_code }} {{ country.currency.symbol }})</span>
+                        </button>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endform -%}
+              </localization-selector>
+            {%- endif -%}
+
+            {%- comment -%} ---- Language ---- {%- endcomment -%}
+            {%- if section.settings.show_locale_selector and localization.available_languages.size > 1 -%}
+              <localization-selector class="localization" data-localization>
+                {%- form 'localization', id: 'HeaderLocaleForm', class: 'localization__form' -%}
+                  <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}" data-localization-input>
+                  <button
+                    type="button"
+                    class="localization__toggle"
+                    aria-expanded="false"
+                    aria-controls="HeaderLocaleList"
+                    data-localization-toggle
+                  >
+                    {% render 'icon', name: 'globe' %}
+                    <span>{{ localization.language.endonym_name | capitalize }}</span>
+                    {% render 'icon', name: 'chevron-down' %}
+                  </button>
+                  <ul class="localization__list" id="HeaderLocaleList" role="list" data-localization-list>
+                    {%- for language in localization.available_languages -%}
+                      <li class="localization__item">
+                        <button
+                          type="submit"
+                          name="locale_code"
+                          value="{{ language.iso_code }}"
+                          lang="{{ language.iso_code }}"
+                          {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %}
+                        >
+                          {{ language.endonym_name | capitalize }}
+                        </button>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endform -%}
+              </localization-selector>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ==================== MAIN HEADER ==================== {%- endcomment -%}
+  <header class="header page-width{% if section.settings.logo_position == 'center' %} header--center-logo{% endif %}" data-header>
+    {%- comment -%} Mobile menu toggle {%- endcomment -%}
+    <button
+      type="button"
+      class="icon-button header__menu-toggle js-only"
+      aria-controls="MobileNav"
+      aria-expanded="false"
+      aria-label="{{ 'sections.header.menu' | t }}"
+      data-mobile-nav-toggle
+    >
+      {% render 'icon', name: 'menu' %}
+    </button>
+
+    {%- comment -%} Logo: h1 on the homepage for on-page SEO hierarchy {%- endcomment -%}
+    {%- if request.page_type == 'index' -%}<h1 class="header__logo">{%- else -%}<div class="header__logo">{%- endif -%}
+      <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} &mdash; {{ 'general.home' | t }}">
+        {%- if section.settings.logo != blank -%}
+          {{
+            section.settings.logo
+            | image_url: width: 600
+            | image_tag:
+              class: 'header__logo-image',
+              widths: '150, 300, 450, 600',
+              alt: section.settings.logo.alt | default: shop.name,
+              loading: 'eager',
+              fetchpriority: 'high'
+          }}
+        {%- else -%}
+          {%- liquid
+            assign brand_first = shop.name | split: ' ' | first
+            assign brand_rest = shop.name | remove_first: brand_first | strip
+          -%}
+          <span class="header__logo-text">
+            {{- brand_first -}}
+            {%- if brand_rest != blank -%}
+              <span class="accent">&nbsp;{{ brand_rest }}</span>
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+      </a>
+    {%- if request.page_type == 'index' -%}</h1>{%- else -%}</div>{%- endif -%}
+
+    {%- comment -%} Desktop navigation {%- endcomment -%}
+    <nav class="header__nav" aria-label="{{ 'sections.header.primary_navigation' | t }}">
+      <ul class="header__menu" role="list">
+        {%- for link in section.settings.menu.links -%}
+          <li class="header__menu-item{% if link.active or link.child_active %} is-active{% endif %}">
+            <a
+              class="header__menu-link"
+              href="{{ link.url }}"
+              {% if link.current %}aria-current="page"{% endif %}
+            >
+              {{ link.title }}
+              {%- if link.links.size > 0 -%}
+                {% render 'icon', name: 'chevron-down' %}
+              {%- endif -%}
+            </a>
+
+            {%- if link.links.size > 0 -%}
+              <ul class="header__submenu" role="list">
+                {%- for child in link.links -%}
+                  <li>
+                    <a href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.title }}</a>
+                    {%- if child.links.size > 0 -%}
+                      <ul class="header__submenu header__submenu--nested" role="list">
+                        {%- for grandchild in child.links -%}
+                          <li><a href="{{ grandchild.url }}">{{ grandchild.title }}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    {%- comment -%} Icon actions {%- endcomment -%}
+    <div class="header__actions{% if section.settings.show_icon_labels %} header__actions--labelled{% endif %}">
+      {%- if section.settings.show_search -%}
+        <div class="header__action">
+          <button
+            type="button"
+            class="icon-button js-only"
+            aria-controls="HeaderSearch"
+            aria-expanded="false"
+            aria-label="{{ 'general.search.search' | t }}"
+            data-search-toggle
+          >
+            {% render 'icon', name: 'search' %}
+            <span class="header__action-label">{{ 'general.search.search' | t }}</span>
+          </button>
+          <noscript>
+            <a class="icon-button" href="{{ routes.search_url }}" aria-label="{{ 'general.search.search' | t }}">
+              {% render 'icon', name: 'search' %}
+            </a>
+          </noscript>
+        </div>
+      {%- endif -%}
+
+      {%- if shop.customer_accounts_enabled and section.settings.show_account -%}
+        <div class="header__action">
+          <a
+            class="icon-button"
+            href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}"
+            aria-label="{%- if customer -%}{{ 'customer.account.title' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}"
+            rel="nofollow"
+          >
+            {% render 'icon', name: 'user' %}
+            <span class="header__action-label">
+              {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+            </span>
+          </a>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_wishlist -%}
+        <div class="header__action">
+          <a
+            class="icon-button"
+            href="{{ section.settings.wishlist_url | default: routes.root_url }}"
+            aria-label="{{ 'general.wishlist.title' | t }}"
+            data-wishlist-link
+            rel="nofollow"
+          >
+            {% render 'icon', name: 'heart' %}
+            <span class="header__action-label">{{ 'general.wishlist.title' | t }}</span>
+            <span class="header__badge header__badge--blood" data-wishlist-count hidden>0</span>
+          </a>
+        </div>
+      {%- endif -%}
+
+      <div class="header__action">
+        <a
+          class="icon-button"
+          href="{{ routes.cart_url }}"
+          aria-label="{{ 'sections.header.cart_count' | t: count: cart.item_count }}"
+          data-cart-toggle
+        >
+          {% render 'icon', name: 'cart' %}
+          <span class="header__action-label">{{ 'sections.cart.title' | t }}</span>
+          <span
+            class="header__badge"
+            data-cart-count-badge
+            {% if cart.item_count == 0 %}hidden{% endif %}
+          >{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+
+    {%- comment -%} Search panel {%- endcomment -%}
+    {%- if section.settings.show_search -%}
+      <div class="header__search" id="HeaderSearch" data-search-panel>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="page-width header__search-form">
+          <input type="hidden" name="options[prefix]" value="last">
+          <label class="visually-hidden" for="HeaderSearchInput">{{ 'general.search.search' | t }}</label>
+          <input
+            type="search"
+            id="HeaderSearchInput"
+            class="field__input"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'general.search.placeholder' | t }}"
+            autocomplete="off"
+            data-search-input
+          >
+          <button type="submit" class="button button--primary" aria-label="{{ 'general.search.submit' | t }}">
+            {% render 'icon', name: 'search' %}
+          </button>
+          <button
+            type="button"
+            class="icon-button"
+            aria-label="{{ 'accessibility.close' | t }}"
+            data-search-close
+          >
+            {% render 'icon', name: 'close' %}
+          </button>
+        </form>
+      </div>
+    {%- endif -%}
+  </header>
+
+  {%- comment -%} ==================== MOBILE NAV ==================== {%- endcomment -%}
+  <nav
+    class="mobile-nav"
+    id="MobileNav"
+    aria-label="{{ 'sections.header.mobile_navigation' | t }}"
+    data-mobile-nav
+    aria-hidden="true"
+  >
+    <div class="mobile-nav__header">
+      <span class="header__logo-text">{{ shop.name }}</span>
+      <button type="button" class="icon-button" aria-label="{{ 'accessibility.close' | t }}" data-mobile-nav-close>
+        {% render 'icon', name: 'close' %}
+      </button>
+    </div>
+
+    <ul class="mobile-nav__list" role="list">
+      {%- for link in section.settings.menu.links -%}
+        <li>
+          {%- if link.links.size > 0 -%}
+            <details class="mobile-nav__disclosure">
+              <summary>
+                {{ link.title }}
+                {% render 'icon', name: 'chevron-down' %}
+              </summary>
+              <ul class="mobile-nav__sublist" role="list">
+                <li><a href="{{ link.url }}">{{ 'sections.header.view_all' | t }} {{ link.title }}</a></li>
+                {%- for child in link.links -%}
+                  <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            </details>
+          {%- else -%}
+            <a href="{{ link.url }}">
+              {{ link.title }}
+              {% render 'icon', name: 'arrow-right' %}
+            </a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <div class="mobile-nav__footer">
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="button button--ghost button--full" href="{%- if customer -%}{{ routes.account_url }}{%- else -%}{{ routes.account_login_url }}{%- endif -%}" rel="nofollow">
+          {% render 'icon', name: 'user' %}
+          {%- if customer -%}{{ 'customer.account_fallback' | t }}{%- else -%}{{ 'customer.log_in' | t }}{%- endif -%}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.show_wishlist -%}
+        <a class="button button--ghost button--full" href="{{ section.settings.wishlist_url | default: routes.root_url }}" rel="nofollow">
+          {% render 'icon', name: 'heart' %}
+          {{ 'general.wishlist.title' | t }}
+        </a>
+      {%- endif -%}
+      {%- if section.settings.mobile_cta_text != blank -%}
+        <a class="button button--primary button--full" href="{{ section.settings.mobile_cta_link }}">
+          {{ section.settings.mobile_cta_text }}
+        </a>
+      {%- endif -%}
+    </div>
+  </nav>
+</div>
+
+{%- comment -%} Sitewide navigation schema helps Google build sitelinks. {%- endcomment -%}
+{%- if request.page_type == 'index' and section.settings.menu != blank -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SiteNavigationElement",
+      "name": [
+        {%- for link in section.settings.menu.links -%}
+          {{ link.title | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ],
+      "url": [
+        {%- for link in section.settings.menu.links -%}
+          {{ shop.url | append: link.url | json }}{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Top bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_topbar",
+      "label": "Show top bar",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "topbar_background",
+      "label": "Top bar background",
+      "default": "#111114"
+    },
+    {
+      "type": "color",
+      "id": "topbar_text",
+      "label": "Top bar text",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "link_list",
+      "id": "topbar_menu",
+      "label": "Top bar menu",
+      "info": "Shown on the left. Max 4 links (e.g. Track order, Size guide)."
+    },
+    {
+      "type": "range",
+      "id": "announcement_speed",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "label": "Announcement rotation speed",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Currency and language"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country/currency selector",
+      "default": true,
+      "info": "Requires more than one country in Settings > Markets."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_flag",
+      "label": "Show country code next to currency",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "Show language selector",
+      "default": true,
+      "info": "Requires more than one published language."
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 320,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "label": "Maximum logo height",
+      "default": 46
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "Desktop logo position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "range",
+      "id": "header_height",
+      "min": 56,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Header height",
+      "default": 76
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_header",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_scroll",
+      "label": "Hide header when scrolling down",
+      "default": false,
+      "info": "Reveals the header again as soon as the customer scrolls up."
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "wishlist_url",
+      "label": "Wishlist page",
+      "info": "Create a page with the 'wishlist' template, then link it here."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon_labels",
+      "label": "Show labels under icons on large screens",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Mobile menu call to action"
+    },
+    {
+      "type": "text",
+      "id": "mobile_cta_text",
+      "label": "Button label",
+      "default": "Shop all gear"
+    },
+    {
+      "type": "url",
+      "id": "mobile_cta_link",
+      "label": "Button link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "Announcement",
+      "limit": 5,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free worldwide shipping on orders over $150"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show bolt icon",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

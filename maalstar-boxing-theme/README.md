@@ -1,0 +1,115 @@
+# Maalstar Boxing — Custom Shopify Theme
+
+A hand-built, conversion-focused Online Store 2.0 theme for a premium boxing
+equipment store. Dark, high-contrast, gold-on-black "built for the fight"
+aesthetic with an Ajax cart drawer, age verification, cookie consent and
+SEO-hardened markup.
+
+---
+
+## Build progress
+
+| Step | Scope | Status |
+| --- | --- | --- |
+| **1** | `theme.liquid`, global CSS variables, `header.liquid` (+ top bar), cart drawer, age gate, cookie banner | ✅ Done |
+| 2 | Hero banner, tabbed product grid, `product-card.liquid` | Pending |
+| 3 | Full `theme.js` (tabs, quick add, quick view), split banner, newsletter | Pending |
+| 4 | Footer section, policies, payment icons | Pending |
+
+---
+
+## Folder structure
+
+```
+maalstar-boxing-theme/
+├── assets/
+│   ├── base.css              # Design system: layout, buttons, fields, header, drawer, modals
+│   └── theme.js              # Ajax cart, drawer, age gate, cookie banner, header, wishlist
+├── config/
+│   ├── settings_schema.json  # Theme editor settings (colors, type, cart, age gate, SEO)
+│   └── settings_data.json    # Default values for a fresh install
+├── layout/
+│   └── theme.liquid          # HTML shell, SEO/meta/JSON-LD, CSS tokens, cart drawer, modals
+├── locales/
+│   └── en.default.json       # All UI strings (translatable)
+├── sections/
+│   ├── header.liquid         # Top bar + sticky header + mobile nav
+│   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
+│   └── footer-group.json     # Empty until Step 4
+├── snippets/
+│   ├── icon-sprite.liquid    # One inline SVG sprite for every icon
+│   ├── icon.liquid           # {% render 'icon', name: 'cart' %}
+│   ├── cart-drawer-item.liquid
+│   └── free-shipping-bar.liquid
+└── templates/
+    ├── *.json                # Placeholders — filled in Steps 2–4
+    └── robots.txt.liquid
+```
+
+---
+
+## Running it locally with Shopify CLI
+
+```bash
+# 1. Install the CLI (macOS/Linux via Homebrew, or npm anywhere)
+npm install -g @shopify/cli@latest
+
+# 2. Log in to your store
+shopify auth logout
+shopify theme dev --store your-store.myshopify.com --path ./maalstar-boxing-theme
+```
+
+`shopify theme dev` gives you a hot-reloading preview URL. Other useful commands:
+
+```bash
+shopify theme check  --path ./maalstar-boxing-theme   # Lint Liquid + schema
+shopify theme push   --path ./maalstar-boxing-theme --unpublished   # Upload as a draft theme
+shopify theme pull   --path ./maalstar-boxing-theme   # Pull editor changes back down
+```
+
+### Starting from an empty theme instead
+
+```bash
+shopify theme init maalstar-boxing-theme --clone-url https://github.com/Shopify/dawn
+# or scaffold the bare directories yourself:
+mkdir -p my-theme/{assets,config,layout,locales,sections,snippets,templates/customers}
+```
+
+Shopify requires at minimum `layout/theme.liquid`, `config/settings_schema.json`
+and `templates/index.json` for a theme to upload.
+
+---
+
+## First-run setup in the admin
+
+1. **Online Store → Navigation** — create a `main-menu` with: Home, Boxing
+   Gloves, Boxing Sets, Winning, Contact.
+2. **Theme editor → Header** — pick the menu, upload the logo, toggle the
+   country/language selectors.
+3. **Settings → Markets** — add the countries you sell to so the currency
+   dropdown has more than one entry (it hides itself otherwise).
+4. **Theme settings → SEO** — set the homepage tagline, meta description and
+   business phone/email (these feed the Organization schema).
+5. **Theme settings → Cart** — set the free-shipping threshold in store currency.
+
+---
+
+## SEO built into Step 1
+
+- Page-type-aware `<title>` and meta description with sane fallbacks
+- Canonical URL, `rel=prev/next` pagination hints, `noindex` on search/cart/account
+- `max-image-preview:large` robots directive for bigger SERP thumbnails
+- Open Graph + Twitter Card tags, including `product:price` on product pages
+- JSON-LD: `Organization`, `WebSite` + `SearchAction` (sitelinks search box),
+  `Product` with per-variant offers, `BlogPosting`, `BreadcrumbList`,
+  `SiteNavigationElement`
+- `<h1>` reserved for the logo on the homepage only, so section headings keep a
+  clean hierarchy on every other template
+- `preconnect`/`dns-prefetch` to the Shopify CDN, `font-display: swap`,
+  deferred JS, `fetchpriority="high"` on the logo — all Core Web Vitals inputs
+- `rel="nofollow"` on account/wishlist links to keep crawl budget on products
+- Editable `robots.txt.liquid` for later crawl-budget tuning
+
+hreflang tags are intentionally *not* hand-written — Shopify emits them inside
+`content_for_header` for every published market/language, and duplicating them
+causes conflicting signals.
