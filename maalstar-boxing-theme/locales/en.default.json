@@ -29,6 +29,12 @@
     "link_copied": "Link copied",
     "breadcrumbs": {
       "label": "Breadcrumbs"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous page",
+      "next": "Next page",
+      "page": "Page {{ number }}"
     }
   },
   "accessibility": {
@@ -94,7 +100,13 @@
     },
     "collection": {
       "view_all": "View all",
-      "add_tabs": "Add a tab block and pick a collection to display products here."
+      "add_tabs": "Add a tab block and pick a collection to display products here.",
+      "empty": "No products match these filters.",
+      "use_fewer_filters": "Try removing a filter or two.",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
     }
   },
   "products": {
@@ -131,6 +143,18 @@
       "in_stock": "In stock",
       "sku": "SKU",
       "tax_note": "Tax included. Shipping calculated at checkout."
+    },
+    "facets": {
+      "filter_and_sort": "Filter and sort",
+      "sort_by": "Sort by",
+      "from": "From",
+      "to": "To",
+      "apply": "Apply",
+      "clear_all": "Clear all",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
     }
   },
   "onboarding": {

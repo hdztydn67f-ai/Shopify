@@ -1576,6 +1576,176 @@
     }
   };
 
+
+  /* ---------------------------------------------------------
+     11g. FACETED FILTERING
+     Filter changes update the URL and re-render the section via
+     the Section Rendering API — no page reload, but every filtered
+     view stays a real, shareable, crawlable URL.
+     --------------------------------------------------------- */
+  var Facets = {
+    init: function (scope) {
+      $$('[data-facets]', scope || document).forEach(function (root) {
+        if (root.dataset.bound === 'true') return;
+        root.dataset.bound = 'true';
+
+        var form = $('[data-facets-form]', root);
+        var sectionId = root.dataset.sectionId;
+        if (!form) return;
+
+        var openButton = $('[data-facets-open]', root);
+        var closeButton = $('[data-facets-close]', root);
+
+        function openPanel() {
+          form.classList.add('is-open');
+          if (openButton) openButton.setAttribute('aria-expanded', 'true');
+          if (window.matchMedia('(max-width: 989px)').matches) {
+            scrollLock.lock();
+            trapFocus(form);
+          }
+        }
+
+        function closePanel() {
+          form.classList.remove('is-open');
+          if (openButton) openButton.setAttribute('aria-expanded', 'false');
+          if (window.matchMedia('(max-width: 989px)').matches) {
+            scrollLock.unlock();
+            releaseFocus(true);
+          }
+        }
+
+        on(openButton, 'click', function () {
+          form.classList.contains('is-open') ? closePanel() : openPanel();
+        });
+        on(closeButton, 'click', closePanel);
+        on(document, 'keydown', function (event) {
+          if (event.key === 'Escape' && form.classList.contains('is-open')) closePanel();
+        });
+
+        function apply(url, updateHistory) {
+          Facets.render(url, sectionId, updateHistory !== false);
+        }
+
+        // Checkbox and sort changes apply immediately on desktop; on mobile
+        // the panel is a drawer, so the Apply button commits them.
+        var isDesktop = function () {
+          return window.matchMedia('(min-width: 990px)').matches;
+        };
+
+        on(form, 'change', function (event) {
+          if (!isDesktop() && event.target.type === 'checkbox') return;
+          apply(Facets.urlFromForm(form));
+        });
+
+        on(
+          form,
+          'input',
+          debounce(function (event) {
+            if (event.target.type !== 'number') return;
+            apply(Facets.urlFromForm(form));
+          }, 700)
+        );
+
+        on(form, 'submit', function (event) {
+          event.preventDefault();
+          closePanel();
+          apply(Facets.urlFromForm(form));
+        });
+
+        // Active-filter pills and "clear all" are plain links; intercept them
+        // so they re-render instead of reloading.
+        $$('[href]', root).forEach(function (link) {
+          if (!link.classList.contains('facets__pill') && !link.hasAttribute('data-facets-clear')) return;
+          on(link, 'click', function (event) {
+            event.preventDefault();
+            apply(link.getAttribute('href'));
+          });
+        });
+      });
+
+      // Numbered pagination inside a filtered grid.
+      $$('[data-product-grid-container] .pagination a', scope || document).forEach(function (link) {
+        if (link.dataset.bound === 'true') return;
+        link.dataset.bound = 'true';
+        var section = link.closest('[data-collection-section]');
+        var facets = section ? $('[data-facets]', section) : null;
+        if (!facets) return;
+
+        on(link, 'click', function (event) {
+          event.preventDefault();
+          Facets.render(link.getAttribute('href'), facets.dataset.sectionId, true);
+          var top = section.getBoundingClientRect().top + window.pageYOffset - 100;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        });
+      });
+
+      // Back/forward through filtered views.
+      if (!this.popstateBound) {
+        this.popstateBound = true;
+        on(window, 'popstate', function () {
+          var facets = $('[data-facets]');
+          if (facets) Facets.render(window.location.href, facets.dataset.sectionId, false);
+        });
+      }
+    },
+
+    urlFromForm: function (form) {
+      var params = new URLSearchParams(new FormData(form));
+      // Drop empty values so the URL stays clean and cacheable.
+      Array.from(params.keys()).forEach(function (key) {
+        if (params.getAll(key).every(function (v) { return v === ''; })) params.delete(key);
+      });
+      var query = params.toString();
+      return form.getAttribute('action') + (query ? '?' + query : '');
+    },
+
+    render: function (url, sectionId, updateHistory) {
+      var section = $('[data-collection-section]');
+      if (section) section.classList.add('is-loading');
+
+      var separator = url.indexOf('?') === -1 ? '?' : '&';
+      var fetchUrl = url + separator + 'section_id=' + sectionId;
+
+      fetch(fetchUrl, { credentials: 'same-origin' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Facet render failed');
+          return response.text();
+        })
+        .then(function (html) {
+          var parsed = new DOMParser().parseFromString(html, 'text/html');
+
+          ['[data-product-grid-container]', '[data-facets]'].forEach(function (selector) {
+            var fresh = parsed.querySelector(selector);
+            var current = document.querySelector(selector);
+            if (fresh && current) current.innerHTML = fresh.innerHTML;
+          });
+
+          if (updateHistory && window.history.pushState) {
+            window.history.pushState({ facets: true }, '', url);
+          }
+
+          // Re-bind everything inside the swapped markup.
+          var root = $('[data-collection-section]');
+          if (root) {
+            $$('[data-facets]', root).forEach(function (el) {
+              el.dataset.bound = 'false';
+            });
+            Facets.init(root);
+            Wishlist.syncButtons(root);
+          }
+        })
+        .catch(function () {
+          // If the Ajax path fails, fall back to a normal navigation
+          // rather than leaving the customer with a stale grid.
+          window.location.href = url;
+        })
+        .finally(function () {
+          if (section) section.classList.remove('is-loading');
+        });
+    }
+  };
+  MSB.facets = Facets;
+
   /* ---------------------------------------------------------
      12. WISHLIST (localStorage)
      --------------------------------------------------------- */
@@ -1674,6 +1844,7 @@
     QuickView.init();
     ProductPage.init();
     Recommendations.init();
+    Facets.init();
     Wishlist.init();
   }
 
@@ -1690,6 +1861,7 @@
     Tabs.init(event.target);
     ProductPage.init(event.target);
     Recommendations.init(event.target);
+    Facets.init(event.target);
     Wishlist.renderCount();
     Wishlist.syncButtons(event.target);
   });

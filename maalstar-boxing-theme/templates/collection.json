@@ -1,4 +1,32 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "faq-1": {
+          "type": "faq",
+          "settings": {
+            "question": "What glove weight should I buy?",
+            "answer": "<p>10oz for competition, 12oz for bag and pad work, 14-16oz for sparring. Heavier gloves protect both you and your training partner.</p>"
+          }
+        }
+      },
+      "block_order": ["faq-1"],
+      "settings": {
+        "show_banner": true,
+        "show_collection_image": true,
+        "show_description": true,
+        "show_breadcrumbs": true,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "products_per_page": 24,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "square",
+        "show_vendor": false,
+        "show_rating": false
+      }
+    }
+  },
+  "order": ["main"]
 }

@@ -53,16 +53,14 @@
     <link rel="canonical" href="{{ canonical_url }}">
 
     {%- comment -%}
-      Pagination hints help Google understand deep collection pages.
-      hreflang tags for Markets/languages are emitted automatically inside content_for_header,
-      so we deliberately do NOT duplicate them here.
+      hreflang tags for Markets/languages are emitted automatically inside
+      content_for_header, so we deliberately do NOT duplicate them here.
+
+      No rel=prev/next either: the `paginate` object does not exist in a
+      layout, and Google retired those as an indexing signal in 2019.
+      Paginated collection pages stay indexable and are crawled through the
+      real <a> links in snippets/pagination.liquid.
     {%- endcomment -%}
-    {%- if paginate.previous -%}
-      <link rel="prev" href="{{ paginate.previous.url }}">
-    {%- endif -%}
-    {%- if paginate.next -%}
-      <link rel="next" href="{{ paginate.next.url }}">
-    {%- endif -%}
     {%- if request.page_type == 'search' or request.page_type == 'customers/login' or request.page_type == 'customers/register' or request.page_type == 'cart' -%}
       <meta name="robots" content="noindex, follow">
     {%- else -%}

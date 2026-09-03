@@ -17,9 +17,10 @@ SEO-hardened markup.
 | **4** | Footer section, policies, payment icons | ✅ Done |
 
 | **5** | Product page: gallery, variant picker, Ajax add to cart, related products | ✅ Done |
+| **6** | Collection page: faceted filtering, sorting, pagination, SEO blocks; collections index | ✅ Done |
 
-The original four-step brief plus the product page are built. Collection,
-cart, search and blog templates are still placeholders — see **Next up**.
+Homepage, product and collection pages are built. Cart, search, blog, page
+and 404 templates are still placeholders — see **Next up**.
 
 ---
 
@@ -48,6 +49,8 @@ maalstar-boxing-theme/
 │   ├── footer.liquid         # Multi-column: brand, links, policies, contact
 │   ├── main-product.liquid   # Block-driven product page
 │   ├── related-products.liquid # Recommendations API, loaded after paint
+│   ├── main-collection.liquid  # Facets, sorting, grid, pagination, SEO blocks
+│   ├── main-list-collections.liquid # The /collections index
 │   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
 │   └── footer-group.json     # Footer group, pre-populated with four columns
 ├── snippets/
@@ -60,6 +63,8 @@ maalstar-boxing-theme/
 │   ├── breadcrumbs.liquid    # Visual breadcrumbs (JSON-LD lives in theme.liquid)
 │   ├── product-media-gallery.liquid
 │   ├── product-variant-picker.liquid
+│   ├── facets.liquid         # Filter + sort form (works without JS)
+│   ├── pagination.liquid     # Numbered pagination with real links
 │   ├── cart-drawer-item.liquid
 │   └── free-shipping-bar.liquid
 └── templates/
@@ -184,10 +189,9 @@ causes conflicting signals.
 The four steps of the brief are complete. To actually take orders, the
 remaining templates need building:
 
-1. **`collection.json`** — filtering, sorting, pagination, collection SEO copy.
-2. **`cart.json`** — full cart page (the drawer already handles most journeys).
-3. **`search.json`** + predictive search dropdown.
-4. **`page.json` / `blog.json` / `article.json`** — content templates. Blog
+1. **`cart.json`** — full cart page (the drawer already handles most journeys).
+2. **`search.json`** + predictive search dropdown.
+3. **`page.json` / `blog.json` / `article.json` / `404.json`** — content templates. Blog
    posts are where you win long-tail search traffic like "how to choose
    boxing glove weight".
 
@@ -213,3 +217,25 @@ remaining templates need building:
   products in the editor (complementary needs the Search & Discovery app).
 - **Add to cart is Ajax** and opens the drawer — the customer never leaves
   the product page, which is where the upsells are.
+
+---
+
+## Collection page notes
+
+- **Filtering is Ajax but the URL is real.** Changing a filter re-renders the
+  grid through the Section Rendering API and pushes the new URL with
+  `history.pushState`. Back/forward work, the filtered view is shareable, and
+  Google can still crawl it. If the fetch ever fails the page falls back to a
+  normal navigation rather than showing a stale grid.
+- **It works with JavaScript off.** The facets are a real GET form with a
+  submit button; JS only intercepts it. Same for pagination — numbered `<a>`
+  links, not buttons, so crawlers can walk the whole collection.
+- **Desktop and mobile differ deliberately.** On desktop, filter groups are
+  dropdowns that apply on change. On mobile they are a drawer where changes
+  commit on Apply, so a customer on a phone is not firing a request per tap.
+- **Filters come from Search & Discovery.** Install Shopify's free Search &
+  Discovery app and configure filters there; the theme renders whatever you
+  define, including price range.
+- **SEO blocks sit below the grid.** Add "SEO text" and "FAQ" blocks per
+  collection: products stay above the fold, and the FAQ blocks emit `FAQPage`
+  structured data, which is what earns expandable rows in search results.
