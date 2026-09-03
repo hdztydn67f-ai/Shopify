@@ -28,6 +28,14 @@
           {{ country_option_tags }}
         </select>
       </div>
+      {%- comment -%}
+        Populated by theme.js from the selected country's data-provinces.
+        Without it, addresses in the US, Canada and Australia fail validation.
+      {%- endcomment -%}
+      <div class="field" data-address-province-wrapper hidden>
+        <label class="field__label" for="AddressProvince">{{ 'sections.cart.province' | t }}</label>
+        <select id="AddressProvince" class="field__input field__input--select" name="address[province]" data-address-province></select>
+      </div>
       <div class="field">
         <label class="field__label" for="AddressZip">{{ 'sections.cart.zip' | t }}</label>
         <input type="text" id="AddressZip" class="field__input" name="address[zip]" autocomplete="postal-code">

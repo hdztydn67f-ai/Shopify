@@ -59,7 +59,8 @@
       </div>
 
       <div class="contact__form-wrap">
-        {%- form 'contact', id: 'ContactForm', class: 'contact__form' -%}
+        {%- assign contact_form_id = 'ContactForm-' | append: section.id -%}
+        {%- form 'contact', id: contact_form_id, class: 'contact__form' -%}
           {%- if form.posted_successfully? -%}
             <p class="newsletter__message newsletter__message--success" role="status">
               {% render 'icon', name: 'check', size: 16 %}

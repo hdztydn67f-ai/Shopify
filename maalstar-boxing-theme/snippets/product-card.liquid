@@ -110,15 +110,13 @@
 
     {%- comment -%} Badges {%- endcomment -%}
     <div class="card__badges">
-      {%- unless product.available -%}
+      {%- if product.available == false -%}
         <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
-      {%- else -%}
-        {%- if on_sale and discount_percent > 0 -%}
-          <span class="badge badge--sale">
-            {{ 'products.product.badge_discount' | t: percent: discount_percent }}
-          </span>
-        {%- endif -%}
-      {%- endunless -%}
+      {%- elsif on_sale and discount_percent > 0 -%}
+        <span class="badge badge--sale">
+          {{ 'products.product.badge_discount' | t: percent: discount_percent }}
+        </span>
+      {%- endif -%}
 
       {%- if custom_badge != blank -%}
         <span class="badge badge--custom">{{ custom_badge }}</span>

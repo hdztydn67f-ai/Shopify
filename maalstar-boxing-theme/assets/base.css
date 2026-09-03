@@ -384,6 +384,27 @@ select, textarea {
 }
 .header__submenu a:hover { background: var(--color-surface-2); color: var(--color-accent); padding-left: 1rem; }
 
+/* Third level: opens to the side of its parent row, not below the whole menu.
+   Without this it inherits the top-level positioning and is never revealed. */
+.header__submenu-item { position: relative; }
+.header__submenu-item > a { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.header__submenu-arrow { transform: rotate(-90deg); width: 11px; height: 11px; flex: none; opacity: 0.6; }
+.header__submenu--nested {
+  top: -0.5rem;
+  left: 100%;
+  margin-left: 0.25rem;
+}
+.header__submenu-item:hover > .header__submenu--nested,
+.header__submenu-item:focus-within > .header__submenu--nested {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+/* Flip to the left edge when there is no room on the right. */
+@media screen and (max-width: 1300px) {
+  .header__submenu--nested { left: auto; right: 100%; margin-left: 0; margin-right: 0.25rem; }
+}
+
 /* Header icon actions */
 .header__actions { display: flex; align-items: center; gap: 0.15rem; justify-self: end; }
 .header__action { position: relative; }

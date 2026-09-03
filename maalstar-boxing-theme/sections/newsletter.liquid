@@ -44,7 +44,8 @@
       </div>
 
       <div class="newsletter__form-wrap">
-        {%- form 'customer', id: 'NewsletterForm', class: 'newsletter__form' -%}
+        {%- assign newsletter_form_id = 'NewsletterForm-' | append: section.id -%}
+        {%- form 'customer', id: newsletter_form_id, class: 'newsletter__form' -%}
           <input type="hidden" name="contact[tags]" value="newsletter">
           <input type="hidden" name="contact[accepts_marketing]" value="true">
 

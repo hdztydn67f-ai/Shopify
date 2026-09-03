@@ -328,3 +328,54 @@ Aim at buying-intent questions, not brand slogans. One post per question,
 answered properly in the first hundred words, then link to the product that
 solves it. Four or five posts covering glove weight, hand wrapping, glove
 care, and sparring vs bag gear will out-earn twenty thin posts.
+
+---
+
+## Three-pass review
+
+A second review, done in three passes with a different lens each time, found
+nine more defects.
+
+**Pass 1 — Liquid correctness**
+
+1. **`unless ... else`** in two snippets. Shopify documents `unless` as a
+   reverse `if`; `else` inside it is not documented behaviour. Rewritten as
+   `if`/`elsif`.
+2. **Localization forms submitted their parameter twice** — once from a hidden
+   input and again from the named submit button. Which one wins is
+   server-dependent. The hidden inputs are gone; the buttons carry the value
+   and still work without JavaScript.
+3. **The address form had no province/state field**, so US, Canadian and
+   Australian addresses failed validation. Added, with the province list
+   populated from the country's `data-provinces`.
+4. **Two dead JS hooks** (`data-recover-toggle`, `data-localization-input`)
+   advertised behaviour that did not exist. Removed.
+5. **`JSON.parse` on a possibly-null element.** If a merchant removed the
+   variant picker block, the resulting TypeError took down every other script
+   on the page — cart drawer included. Guarded.
+
+**Pass 2 — JavaScript lifecycle**
+
+6. **Header listeners stacked on every theme-editor section reload.** None of
+   the header sub-initialisers had a binding guard, so each edit added another
+   set of scroll, search and dropdown handlers, and another announcement
+   `setInterval` — the announcements visibly fought each other.
+7. **Predictive search silently died after a header edit.** It guarded with a
+   module-level flag, so once the editor replaced the header markup the new
+   input was never bound. Guards are now marked on the element.
+
+**Pass 3 — Cross-file consistency**
+
+8. **Third-level menu items were unreachable.** They rendered, but the reveal
+   rule only matched direct children of `.header__menu-item`, and a nested
+   list sits inside a plain `<li>`. Any merchant with a three-level menu had
+   silently broken navigation. Nested menus now open to the side, and flip
+   sides when there is no room.
+9. **Hardcoded form ids** in the newsletter and contact sections would
+   duplicate if a section appeared twice, breaking label and ARIA
+   associations. Now scoped to the section id.
+
+Automated checks confirmed clean: every global, section and block setting
+referenced in Liquid exists in its schema; every setting in a template JSON
+exists in the section it configures; every `data-` hook queried by JavaScript
+is rendered by some template.

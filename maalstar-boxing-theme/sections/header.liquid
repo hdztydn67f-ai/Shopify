@@ -82,7 +82,6 @@
             {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
               <localization-selector class="localization" data-localization>
                 {%- form 'localization', id: 'HeaderCountryForm', class: 'localization__form' -%}
-                  <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-localization-input>
                   <button
                     type="button"
                     class="localization__toggle"
@@ -119,7 +118,6 @@
             {%- if section.settings.show_locale_selector and localization.available_languages.size > 1 -%}
               <localization-selector class="localization" data-localization>
                 {%- form 'localization', id: 'HeaderLocaleForm', class: 'localization__form' -%}
-                  <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}" data-localization-input>
                   <button
                     type="button"
                     class="localization__toggle"
@@ -226,8 +224,13 @@
             {%- if link.links.size > 0 -%}
               <ul class="header__submenu" role="list">
                 {%- for child in link.links -%}
-                  <li>
-                    <a href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>{{ child.title }}</a>
+                  <li class="header__submenu-item{% if child.links.size > 0 %} header__submenu-item--has-children{% endif %}">
+                    <a href="{{ child.url }}" {% if child.current %}aria-current="page"{% endif %}>
+                      {{ child.title }}
+                      {%- if child.links.size > 0 -%}
+                        {% render 'icon', name: 'chevron-down', class: 'header__submenu-arrow' %}
+                      {%- endif -%}
+                    </a>
                     {%- if child.links.size > 0 -%}
                       <ul class="header__submenu header__submenu--nested" role="list">
                         {%- for grandchild in child.links -%}

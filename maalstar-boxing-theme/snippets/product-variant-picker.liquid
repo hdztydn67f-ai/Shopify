@@ -4,7 +4,7 @@
   customer never picks a dead combination and then hits an error.
   Accepts: product, section_id
 {%- endcomment -%}
-{%- unless product.has_only_default_variant -%}
+{%- if product.has_only_default_variant == false -%}
   <div class="variant-picker" data-variant-picker>
     {%- for option in product.options_with_values -%}
       {%- assign option_index = forloop.index0 -%}
@@ -40,7 +40,11 @@
     </script>
   </div>
 {%- else -%}
+  {%- comment -%}
+    Single-variant products still need the JSON: theme.js reads it to sync
+    price and availability, and it must exist or the script throws.
+  {%- endcomment -%}
   <script type="application/json" data-variant-json>
     {{ product.variants | json }}
   </script>
-{%- endunless -%}
+{%- endif -%}

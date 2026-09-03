@@ -380,6 +380,7 @@
   font-weight: 700;
   letter-spacing: 0.03em;
 }
+.price__regular { color: var(--color-text); }
 .price__compare { color: var(--color-text-faint); font-weight: 400; text-decoration: line-through; }
 .price__sale { color: var(--color-sale); }
 .price--on-sale .price__sale { font-size: var(--text-lg); }

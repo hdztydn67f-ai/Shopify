@@ -851,6 +851,8 @@
     initSticky: function () {
       var wrapper = $('[data-header-wrapper]');
       if (!wrapper || wrapper.dataset.sticky !== 'true') return;
+      if (wrapper.dataset.stickyBound === 'true') return;
+      wrapper.dataset.stickyBound = 'true';
 
       var hideOnScroll = wrapper.dataset.hideOnScroll === 'true';
       var lastY = window.pageYOffset;
@@ -884,6 +886,8 @@
       var toggle = $('[data-search-toggle]');
       var panel = $('[data-search-panel]');
       if (!toggle || !panel) return;
+      if (toggle.dataset.bound === 'true') return;
+      toggle.dataset.bound = 'true';
 
       function openSearch() {
         panel.classList.add('is-open');
@@ -908,7 +912,16 @@
       });
     },
 
+    announcementTimer: null,
+
     initAnnouncements: function () {
+      // Always clear first: a re-init would otherwise stack a second timer and
+      // the announcements would flicker between two rotations.
+      if (Header.announcementTimer) {
+        clearInterval(Header.announcementTimer);
+        Header.announcementTimer = null;
+      }
+
       var bar = $('[data-announcement-bar]');
       if (!bar) return;
       var items = $$('[data-announcement]', bar);
@@ -917,7 +930,7 @@
       var speed = parseInt(bar.dataset.rotateSpeed, 10) || 5000;
       var index = 0;
 
-      setInterval(function () {
+      Header.announcementTimer = setInterval(function () {
         items[index].classList.remove('is-active');
         index = (index + 1) % items.length;
         items[index].classList.add('is-active');
@@ -929,6 +942,8 @@
         var toggle = $('[data-localization-toggle]', wrapper);
         var list = $('[data-localization-list]', wrapper);
         if (!toggle || !list) return;
+        if (wrapper.dataset.bound === 'true') return;
+        wrapper.dataset.bound = 'true';
 
         function close() {
           list.classList.remove('is-open');
@@ -974,6 +989,9 @@
 
       var self = this;
       this.toggleEl = toggle;
+
+      if (toggle.dataset.bound === 'true') return;
+      toggle.dataset.bound = 'true';
 
       on(toggle, 'click', function () {
         self.isOpen ? self.close() : self.open();
@@ -1214,7 +1232,7 @@
       var variants = [];
       var json = $('[data-quick-view-variants]', content);
       try {
-        variants = JSON.parse(json.textContent);
+        variants = json ? JSON.parse(json.textContent) : [];
       } catch (e) {
         variants = [];
       }
@@ -1407,7 +1425,7 @@
         var variants = [];
         var json = $('[data-variant-json]', info);
         try {
-          variants = JSON.parse(json.textContent);
+          variants = json ? JSON.parse(json.textContent) : [];
         } catch (e) {
           variants = [];
         }
@@ -1813,7 +1831,47 @@
 
 
   /* ---------------------------------------------------------
-     11h. PREDICTIVE SEARCH
+     11h. ADDRESS FORM — province/state sync
+     Shopify's country_option_tags carry a data-provinces payload;
+     without wiring it up, US/CA/AU addresses fail validation.
+     --------------------------------------------------------- */
+  var AddressForm = {
+    init: function (scope) {
+      $$('[data-address-country]', scope || document).forEach(function (country) {
+        if (country.dataset.bound === 'true') return;
+        country.dataset.bound = 'true';
+
+        var form = country.closest('form');
+        if (!form) return;
+        var wrapper = $('[data-address-province-wrapper]', form);
+        var province = $('[data-address-province]', form);
+        if (!wrapper || !province) return;
+
+        function sync() {
+          var option = country.options[country.selectedIndex];
+          var provinces = [];
+          try {
+            provinces = JSON.parse(option.getAttribute('data-provinces') || '[]');
+          } catch (e) {
+            provinces = [];
+          }
+
+          province.innerHTML = provinces
+            .map(function (p) {
+              return '<option value="' + p[0] + '">' + p[1] + '</option>';
+            })
+            .join('');
+          wrapper.hidden = provinces.length === 0;
+        }
+
+        on(country, 'change', sync);
+        sync();
+      });
+    }
+  };
+
+  /* ---------------------------------------------------------
+     11i. PREDICTIVE SEARCH
      Hits /search/suggest and renders sections/predictive-search.
      --------------------------------------------------------- */
   var PredictiveSearch = {
@@ -1822,8 +1880,12 @@
     init: function () {
       var input = $('[data-predictive-input]');
       var panel = $('[data-predictive-panel]');
-      if (!input || !panel || this.bound) return;
-      this.bound = true;
+      if (!input || !panel) return;
+
+      // Marked on the input, not the module: the theme editor swaps the header
+      // markup, and a module flag would leave the new input unbound.
+      if (input.dataset.bound === 'true') return;
+      input.dataset.bound = 'true';
 
       var self = this;
       var activeIndex = -1;
@@ -2027,6 +2089,7 @@
     Recommendations.init();
     Facets.init();
     PredictiveSearch.init();
+    AddressForm.init();
     Wishlist.init();
   }
 
@@ -2040,6 +2103,8 @@
   document.addEventListener('shopify:section:load', function (event) {
     Header.init();
     MobileNav.init();
+    PredictiveSearch.init();
+    AddressForm.init(event.target);
     Tabs.init(event.target);
     ProductPage.init(event.target);
     Recommendations.init(event.target);
