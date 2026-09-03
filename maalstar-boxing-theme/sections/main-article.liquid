@@ -2,6 +2,15 @@
   SECTION: main-article — single post. BlogPosting structured data
   is already emitted in layout/theme.liquid.
 {%- endcomment -%}
+{%- liquid
+  comment
+    Reading time from a 220 wpm average. Set expectations up front and
+    fewer readers bounce before the content loads.
+  endcomment
+  assign word_count = article.content | strip_html | split: ' ' | size
+  assign read_minutes = word_count | divided_by: 220 | at_least: 1
+-%}
+
 <article class="article section">
   <div class="page-width page-width--narrow">
     {%- if section.settings.show_breadcrumbs -%}
@@ -18,11 +27,21 @@
           <span aria-hidden="true">&middot;</span>
           <span>{{ article.author }}</span>
         {%- endif -%}
-        {%- if article.tags.size > 0 -%}
+        {%- if section.settings.show_reading_time -%}
           <span aria-hidden="true">&middot;</span>
-          <span>{{ article.tags | join: ', ' }}</span>
+          <span>{{ 'blogs.article.reading_time' | t: minutes: read_minutes }}</span>
         {%- endif -%}
       </p>
+
+      {%- if article.tags.size > 0 -%}
+        <ul class="article__tags" role="list">
+          {%- for tag in article.tags -%}
+            <li>
+              <a class="facets__pill" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
       <hr class="rule-accent">
     </header>
 
@@ -62,6 +81,48 @@
         </button>
         <span class="product__share-status" data-share-status aria-live="polite"></span>
       </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      Related posts by shared tag, falling back to the newest in this blog.
+      Keeps readers inside the site instead of back on the results page.
+    {%- endcomment -%}
+    {%- if section.settings.show_related -%}
+      {%- assign related_count = 0 -%}
+      <section class="article__related">
+        <h2 class="h3">{{ 'blogs.article.keep_reading' | t }}</h2>
+        <ul class="product-grid article__related-grid" role="list">
+          {%- for post in blog.articles limit: 6 -%}
+            {%- if post.id != article.id and related_count < 3 -%}
+              {%- assign related_count = related_count | plus: 1 -%}
+              <li class="product-grid__item">
+                <a class="card card--content" href="{{ post.url }}">
+                  {%- if post.image -%}
+                    <div class="card__media media media--square">
+                      {{
+                        post.image
+                        | image_url: width: 600
+                        | image_tag:
+                          class: 'card__image',
+                          widths: '300, 600',
+                          sizes: '(min-width: 990px) 25vw, 45vw',
+                          loading: 'lazy'
+                      }}
+                    </div>
+                  {%- endif -%}
+                  <div class="card__content">
+                    <h3 class="card__title">{{ post.title }}</h3>
+                    <span class="card__read-more">
+                      {{ 'blogs.article.read_more' | t }}
+                      {% render 'icon', name: 'arrow-right', size: 14 %}
+                    </span>
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </section>
     {%- endif -%}
 
     {%- if blog.comments_enabled? -%}
@@ -126,7 +187,9 @@
     { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
     { "type": "checkbox", "id": "show_image", "label": "Show featured image", "default": true },
     { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
-    { "type": "checkbox", "id": "show_share", "label": "Show share button", "default": true }
+    { "type": "checkbox", "id": "show_share", "label": "Show share button", "default": true },
+    { "type": "checkbox", "id": "show_reading_time", "label": "Show reading time", "default": true },
+    { "type": "checkbox", "id": "show_related", "label": "Show related posts", "default": true }
   ],
   "enabled_on": { "templates": ["article"] }
 }

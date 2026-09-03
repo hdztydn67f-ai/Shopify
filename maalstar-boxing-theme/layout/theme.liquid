@@ -195,6 +195,20 @@
           "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
           {% if product_seo_image %}"image": [{{ product_seo_image | image_url: width: 1200 | prepend: "https:" | json }}],{% endif %}
           "description": {{ product.description | strip_html | truncatewords: 60 | json }},
+          {%- comment -%}
+            Only emitted when a review app has written to the standard
+            reviews metafields. Never fabricate ratings: Google penalises it
+            and it is illegal advertising in many markets.
+          {%- endcomment -%}
+          {%- if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0 -%}
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": {{ product.metafields.reviews.rating.value.rating | json }},
+              "ratingCount": {{ product.metafields.reviews.rating_count.value | json }},
+              "bestRating": {{ product.metafields.reviews.rating.value.scale_max | json }},
+              "worstRating": {{ product.metafields.reviews.rating.value.scale_min | json }}
+            },
+          {%- endif -%}
           "offers": [
             {%- for variant in product.variants -%}
               {
@@ -217,9 +231,12 @@
         {
           "@context": "https://schema.org",
           "@type": "BlogPosting",
-          "headline": {{ article.title | json }},
+          "headline": {{ article.title | truncate: 110 | json }},
+          "description": {{ article.excerpt_or_content | strip_html | truncatewords: 40 | json }},
           "articleBody": {{ article.content | strip_html | json }},
+          "wordCount": {{ article.content | strip_html | split: ' ' | size }},
           "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+          "dateModified": {{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
           "author": { "@type": "Person", "name": {{ article.author | json }} },
           "publisher": { "@type": "Organization", "name": {{ shop.name | json }} },
           "mainEntityOfPage": { "@type": "WebPage", "@id": {{ shop.url | append: article.url | json }} }

@@ -1,0 +1,30 @@
+<div class="section customer-page">
+  <div class="page-width page-width--narrow">
+    <div class="customer-page__inner">
+      <h1 class="h1">{{ 'customer.activate_account.title' | t }}</h1>
+      <hr class="rule-accent">
+      <p class="text-muted">{{ 'customer.activate_account.subtext' | t }}</p>
+
+      {%- form 'activate_customer_password', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <p class="newsletter__message newsletter__message--error" role="alert">
+            {% render 'icon', name: 'alert', size: 16 %}
+            {{ form.errors | default_errors }}
+          </p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="ActivatePassword">{{ 'customer.reset_password.password' | t }}</label>
+          <input type="password" id="ActivatePassword" class="field__input" name="customer[password]" autocomplete="new-password" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="ActivatePasswordConfirm">{{ 'customer.reset_password.confirm' | t }}</label>
+          <input type="password" id="ActivatePasswordConfirm" class="field__input" name="customer[password_confirmation]" autocomplete="new-password" required>
+        </div>
+
+        <button type="submit" class="button button--primary button--full">{{ 'customer.activate_account.submit' | t }}</button>
+        <button type="submit" name="decline" class="button button--ghost button--full">{{ 'customer.activate_account.decline' | t }}</button>
+      {%- endform -%}
+    </div>
+  </div>
+</div>

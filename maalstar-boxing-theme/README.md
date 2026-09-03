@@ -20,8 +20,10 @@ SEO-hardened markup.
 | **6** | Collection page: faceted filtering, sorting, pagination, SEO blocks; collections index | ✅ Done |
 | **7** | Search (predictive dropdown + results page), cart page, blog, article, page, 404 | ✅ Done |
 
-**Every template is now built.** No placeholders remain — the theme can be
-uploaded and taken through a full purchase journey.
+| **8** | Customer accounts, contact page, article SEO features, richer structured data | ✅ Done |
+
+**Every storefront route is now built**, including the seven customer account
+templates and a contact page — both of which the header links to.
 
 ---
 
@@ -74,6 +76,9 @@ maalstar-boxing-theme/
 │   ├── cart-drawer-item.liquid
 │   └── free-shipping-bar.liquid
 └── templates/
+    ├── customers/            # login, register, account, order, addresses,
+    │                         # reset_password, activate_account
+    ├── page.contact.json     # Contact form (the header menu links here)
     ├── index.json            # Hero + Trending Now wired up
     ├── product.quick-view.liquid  # Bare fragment fetched by the quick view modal
     ├── *.json                # Remaining placeholders — filled in Steps 3–4
@@ -290,3 +295,36 @@ Also removed `| default:` chains from `image_tag` alt arguments: `image_tag`
 already defaults alt to the media alt text or resource title, and a filter
 inside a named argument is ambiguous. Where a specific fallback was wanted
 (header logo, split banner) the value is resolved into a variable first.
+
+---
+
+## Blog and content SEO
+
+The blog is where you win searches you cannot buy cheaply — "what glove
+weight for sparring", "how to wrap your hands", "10oz vs 12oz gloves". The
+article template supports that:
+
+- **Reading time** (220 wpm) sets expectations before the reader bounces.
+- **Tag pills** link to `/blogs/<blog>/tagged/<tag>`, giving each topic its
+  own crawlable index page.
+- **Related posts** below every article keep readers on the site rather than
+  back on the results page.
+- **Richer `BlogPosting` schema**: description, `wordCount`, `dateModified`
+  and image, on top of the headline and body already emitted.
+
+### Product star ratings in search results
+
+The product `aggregateRating` block is emitted **only** when a review app has
+written to the standard `reviews.rating` and `reviews.rating_count`
+metafields. Star ratings are one of the largest organic click-through wins
+available, but never fake them: Google penalises fabricated review markup and
+in many markets it is illegal advertising. Install a review app (Judge.me and
+Shopify's own Product Reviews both write these metafields) and the stars
+appear on their own.
+
+### Writing that actually ranks
+
+Aim at buying-intent questions, not brand slogans. One post per question,
+answered properly in the first hundred words, then link to the product that
+solves it. Four or five posts covering glove weight, hand wrapping, glove
+care, and sparring vs bag gear will out-earn twenty thin posts.

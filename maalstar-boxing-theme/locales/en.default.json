@@ -66,7 +66,77 @@
     "log_in": "Log in",
     "account_fallback": "Account",
     "account": {
-      "title": "Account"
+      "title": "Account",
+      "default_address": "Default address",
+      "view_addresses": "Manage addresses"
+    },
+    "log_out": "Log out",
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "sign_in": "Sign in",
+      "forgot_password": "Forgot your password?",
+      "no_account": "No account yet?"
+    },
+    "register": {
+      "title": "Create account",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "submit": "Create account",
+      "has_account": "Already have an account?"
+    },
+    "recover_password": {
+      "title": "Reset your password",
+      "submit": "Send reset link",
+      "success": "We sent you an email with a link to update your password."
+    },
+    "reset_password": {
+      "title": "Reset account password",
+      "subtext": "Enter a new password.",
+      "password": "New password",
+      "confirm": "Confirm password",
+      "submit": "Reset password"
+    },
+    "activate_account": {
+      "title": "Activate account",
+      "subtext": "Create a password to activate your account.",
+      "submit": "Activate account",
+      "decline": "Decline invitation"
+    },
+    "orders": {
+      "title": "Order history",
+      "order_number": "Order",
+      "date": "Date",
+      "payment_status": "Payment",
+      "fulfillment_status": "Fulfillment",
+      "total": "Total",
+      "none": "You have not placed any orders yet."
+    },
+    "order": {
+      "title": "Order {{ name }}",
+      "product": "Product",
+      "price": "Price",
+      "total": "Total",
+      "shipping": "Shipping",
+      "tax": "Tax",
+      "billing_address": "Billing address",
+      "shipping_address": "Shipping address",
+      "fulfilled_at": "Fulfilled",
+      "track_shipment": "Track shipment",
+      "cancelled": "This order was cancelled.",
+      "back": "Back to account"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "add_new": "Add a new address",
+      "add": "Add address",
+      "saved": "Saved addresses",
+      "delete": "Delete",
+      "none": "No address saved yet.",
+      "address1": "Address",
+      "city": "City",
+      "phone": "Phone"
     }
   },
   "sections": {
@@ -185,7 +255,9 @@
   "blogs": {
     "article": {
       "read_more": "Read more",
-      "no_articles": "No posts yet."
+      "no_articles": "No posts yet.",
+      "reading_time": "{{ minutes }} min read",
+      "keep_reading": "Keep reading"
     },
     "comments": {
       "title": "Comments",
@@ -204,5 +276,15 @@
     "date_at_time": "%b %-d, %Y at %-I:%M%p",
     "default": "%b %-d, %Y",
     "abbreviated_date": "%b %-d, %Y"
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "order_number": "Order number (optional)",
+    "send": "Send message",
+    "success": "Thanks — we have your message and will reply within one business day.",
+    "error": "Please check the fields below and try again."
   }
 }
