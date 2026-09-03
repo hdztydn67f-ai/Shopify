@@ -1,0 +1,85 @@
+<div class="section customer-page">
+  <div class="page-width">
+    <h1 class="h1">{{ 'customer.order.title' | t: name: order.name }}</h1>
+    <p class="text-muted">{{ order.created_at | date: format: 'date_at_time' }}</p>
+    <hr class="rule-accent">
+
+    {%- if order.cancelled -%}
+      <p class="newsletter__message newsletter__message--error">
+        {% render 'icon', name: 'alert', size: 16 %}
+        {{ 'customer.order.cancelled' | t }} {{ order.cancel_reason_label }}
+      </p>
+    {%- endif -%}
+
+    <div class="table-wrap">
+      <table class="customer-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'customer.order.product' | t }}</th>
+            <th scope="col">{{ 'customer.order.price' | t }}</th>
+            <th scope="col">{{ 'products.product.quantity.label' | t }}</th>
+            <th scope="col">{{ 'customer.order.total' | t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for line_item in order.line_items -%}
+            <tr>
+              <td>
+                <a class="customer-page__link" href="{{ line_item.product.url }}">{{ line_item.title }}</a>
+                {%- if line_item.fulfillment -%}
+                  <p class="text-muted">
+                    {{ 'customer.order.fulfilled_at' | t }}
+                    {{ line_item.fulfillment.created_at | date: format: 'date' }}
+                    {%- if line_item.fulfillment.tracking_url -%}
+                      &mdash; <a class="customer-page__link" href="{{ line_item.fulfillment.tracking_url }}">
+                        {{ 'customer.order.track_shipment' | t }}
+                      </a>
+                    {%- endif -%}
+                  </p>
+                {%- endif -%}
+              </td>
+              <td>{{ line_item.price | money }}</td>
+              <td>{{ line_item.quantity }}</td>
+              <td>{{ line_item.line_price | money }}</td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">{{ 'sections.cart.subtotal' | t }}</td>
+            <td>{{ order.line_items_subtotal_price | money }}</td>
+          </tr>
+          {%- for shipping_method in order.shipping_methods -%}
+            <tr>
+              <td colspan="3">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</td>
+              <td>{{ shipping_method.price | money }}</td>
+            </tr>
+          {%- endfor -%}
+          {%- for tax_line in order.tax_lines -%}
+            <tr>
+              <td colspan="3">{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+              <td>{{ tax_line.price | money }}</td>
+            </tr>
+          {%- endfor -%}
+          <tr>
+            <td colspan="3"><strong>{{ 'customer.order.total' | t }}</strong></td>
+            <td><strong>{{ order.total_price | money_with_currency }}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="customer-account__layout">
+      <section>
+        <h2 class="h4">{{ 'customer.order.billing_address' | t }}</h2>
+        <address class="footer__contact">{{ order.billing_address | format_address }}</address>
+      </section>
+      <section>
+        <h2 class="h4">{{ 'customer.order.shipping_address' | t }}</h2>
+        <address class="footer__contact">{{ order.shipping_address | format_address }}</address>
+      </section>
+    </div>
+
+    <a class="customer-page__link" href="{{ routes.account_url }}">{{ 'customer.order.back' | t }}</a>
+  </div>
+</div>

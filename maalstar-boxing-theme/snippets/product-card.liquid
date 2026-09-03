@@ -1,0 +1,228 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SNIPPET: product-card
+  Feature-rich grid card: badges, hover image, wishlist, quick view,
+  Ajax quick add, compare-at pricing.
+
+  Usage:
+    {% render 'product-card',
+       product: product,
+       index: forloop.index,
+       image_ratio: 'square',
+       show_vendor: true,
+       show_wishlist: true,
+       show_quick_view: true,
+       show_quick_add: true %}
+
+  Params:
+    product      (required) product object
+    index        loop position — the first 4 cards load eagerly for LCP
+    image_ratio  'square' | 'portrait' | 'natural'  (default 'square')
+    sizes_attr   custom sizes attribute for the <img>
+  ------------------------------------------------------------
+{%- endcomment -%}
+
+{%- liquid
+  assign ratio_class = image_ratio | default: 'square'
+  assign card_index = index | default: 99
+  comment
+    The first row of cards is above the fold on most viewports, so it loads
+    eagerly — everything below stays lazy to protect LCP and bandwidth.
+  endcomment
+  assign loading_attr = 'lazy'
+  if card_index <= 4
+    assign loading_attr = 'eager'
+  endif
+
+  assign sizes = sizes_attr | default: '(min-width: 1200px) 22vw, (min-width: 750px) 30vw, 45vw'
+
+  assign second_image = product.media[1].preview_image
+  assign show_second = false
+  if second_image and show_second_image != false
+    assign show_second = true
+  endif
+
+  assign variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  assign discount_percent = 0
+  if variant.compare_at_price > variant.price
+    assign on_sale = true
+    assign discount_amount = variant.compare_at_price | minus: variant.price | times: 100.0
+    assign discount_percent = discount_amount | divided_by: variant.compare_at_price | round
+  endif
+
+  comment
+    Merchants can add a custom ribbon with a product tag like "badge:Fighter Approved".
+  endcomment
+  assign custom_badge = ''
+  for tag in product.tags
+    if tag contains 'badge:'
+      assign custom_badge = tag | remove_first: 'badge:' | strip
+      break
+    endif
+  endfor
+
+  assign single_variant = false
+  if product.variants.size == 1
+    assign single_variant = true
+  endif
+-%}
+
+<div
+  class="card"
+  data-product-card
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+>
+  <div class="card__media media media--{{ ratio_class }}">
+    <a
+      class="card__media-link"
+      href="{{ product.url }}"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      {%- if product.featured_media -%}
+        {{
+          product.featured_media
+          | image_url: width: 900
+          | image_tag:
+            class: 'card__image card__image--primary',
+            widths: '200, 300, 400, 600, 800, 900',
+            sizes: sizes,
+            loading: loading_attr
+        }}
+        {%- if show_second -%}
+          {{
+            second_image
+            | image_url: width: 900
+            | image_tag:
+              class: 'card__image card__image--secondary',
+              widths: '200, 300, 400, 600, 800, 900',
+              sizes: sizes,
+              loading: 'lazy',
+              alt: ''
+          }}
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'card__image placeholder-svg' }}
+      {%- endif -%}
+    </a>
+
+    {%- comment -%} Badges {%- endcomment -%}
+    <div class="card__badges">
+      {%- if product.available == false -%}
+        <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif on_sale and discount_percent > 0 -%}
+        <span class="badge badge--sale">
+          {{ 'products.product.badge_discount' | t: percent: discount_percent }}
+        </span>
+      {%- endif -%}
+
+      {%- if custom_badge != blank -%}
+        <span class="badge badge--custom">{{ custom_badge }}</span>
+      {%- endif -%}
+
+      {%- if product.available
+        and variant.inventory_management != blank
+        and variant.inventory_policy == 'deny'
+        and variant.inventory_quantity > 0
+        and variant.inventory_quantity <= 5
+      -%}
+        <span class="badge badge--low-stock">
+          {{ 'products.product.only_left' | t: quantity: variant.inventory_quantity }}
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Wishlist {%- endcomment -%}
+    {%- if show_wishlist != false -%}
+      <button
+        type="button"
+        class="card__wishlist js-only"
+        data-wishlist-toggle
+        data-product-id="{{ product.id }}"
+        data-product-handle="{{ product.handle }}"
+        aria-pressed="false"
+        aria-label="{{ 'general.wishlist.add' | t: title: product.title | escape }}"
+        title="{{ 'general.wishlist.add' | t: title: product.title | escape }}"
+      >
+        <span class="card__wishlist-off">{% render 'icon', name: 'heart', size: 18 %}</span>
+        <span class="card__wishlist-on">{% render 'icon', name: 'heart-filled', size: 18 %}</span>
+      </button>
+    {%- endif -%}
+
+    {%- comment -%} Quick view {%- endcomment -%}
+    {%- if show_quick_view != false -%}
+      <button
+        type="button"
+        class="card__quick-view button button--secondary button--sm js-only"
+        data-quick-view
+        data-product-url="{{ product.url }}"
+        aria-label="{{ 'products.product.quick_view_title' | t: title: product.title | escape }}"
+      >
+        {% render 'icon', name: 'eye', size: 16 %}
+        <span>{{ 'products.product.quick_view' | t }}</span>
+      </button>
+    {%- endif -%}
+  </div>
+
+  <div class="card__content">
+    {%- if show_vendor and product.vendor != blank -%}
+      <p class="card__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+
+    <h3 class="card__title">
+      <a class="card__title-link" href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    {%- if show_rating and product.metafields.reviews.rating.value != blank -%}
+      {%- liquid
+        assign rating = product.metafields.reviews.rating.value.rating
+        assign rating_count = product.metafields.reviews.rating_count.value
+      -%}
+      <div class="card__rating" aria-label="{{ 'products.product.rating_label' | t: rating: rating }}">
+        <span class="card__stars" style="--rating: {{ rating }};" aria-hidden="true"></span>
+        <span class="card__rating-count">({{ rating_count }})</span>
+      </div>
+    {%- endif -%}
+
+    {% render 'price', product: product, variant: variant %}
+
+    {%- if show_quick_add != false -%}
+      <div class="card__actions js-only">
+        {%- if product.available == false -%}
+          <button type="button" class="button button--secondary button--full" disabled>
+            {{ 'products.product.sold_out' | t }}
+          </button>
+        {%- elsif single_variant -%}
+          <button
+            type="button"
+            class="button button--primary button--full card__quick-add"
+            data-quick-add
+            data-variant-id="{{ variant.id }}"
+            aria-label="{{ 'products.product.add_to_cart_title' | t: title: product.title | escape }}"
+          >
+            <span class="card__quick-add-text">{{ 'products.product.quick_add' | t }}</span>
+            <span class="card__quick-add-spinner spinner" hidden aria-hidden="true"></span>
+          </button>
+        {%- else -%}
+          <button
+            type="button"
+            class="button button--primary button--full"
+            data-quick-view
+            data-product-url="{{ product.url }}"
+            aria-label="{{ 'products.product.choose_options_title' | t: title: product.title | escape }}"
+          >
+            {{ 'products.product.choose_options' | t }}
+          </button>
+        {%- endif -%}
+      </div>
+
+      <noscript>
+        <a class="button button--secondary button--full" href="{{ product.url }}">
+          {{ 'products.product.view_product' | t }}
+        </a>
+      </noscript>
+    {%- endif -%}
+  </div>
+</div>

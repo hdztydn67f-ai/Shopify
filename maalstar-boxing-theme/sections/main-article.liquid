@@ -1,0 +1,196 @@
+{%- comment -%}
+  SECTION: main-article — single post. BlogPosting structured data
+  is already emitted in layout/theme.liquid.
+{%- endcomment -%}
+{%- liquid
+  comment
+    Reading time from a 220 wpm average. Set expectations up front and
+    fewer readers bounce before the content loads.
+  endcomment
+  assign word_count = article.content | strip_html | split: ' ' | size
+  assign read_minutes = word_count | divided_by: 220 | at_least: 1
+-%}
+
+<article class="article section">
+  <div class="page-width page-width--narrow">
+    {%- if section.settings.show_breadcrumbs -%}
+      {% render 'breadcrumbs' %}
+    {%- endif -%}
+
+    <header class="article__header">
+      <h1 class="article__title h1">{{ article.title }}</h1>
+      <p class="article__meta">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+          {{ article.published_at | date: format: 'date' }}
+        </time>
+        {%- if section.settings.show_author and article.author != blank -%}
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ article.author }}</span>
+        {%- endif -%}
+        {%- if section.settings.show_reading_time -%}
+          <span aria-hidden="true">&middot;</span>
+          <span>{{ 'blogs.article.reading_time' | t: minutes: read_minutes }}</span>
+        {%- endif -%}
+      </p>
+
+      {%- if article.tags.size > 0 -%}
+        <ul class="article__tags" role="list">
+          {%- for tag in article.tags -%}
+            <li>
+              <a class="facets__pill" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <hr class="rule-accent">
+    </header>
+
+    {%- if article.image and section.settings.show_image -%}
+      <div class="article__media">
+        <img
+          class="article__image"
+          src="{{ article.image | image_url: width: 1400 }}"
+          srcset="
+            {{ article.image | image_url: width: 600 }} 600w,
+            {{ article.image | image_url: width: 900 }} 900w,
+            {{ article.image | image_url: width: 1400 }} 1400w
+          "
+          sizes="(min-width: 990px) 780px, 100vw"
+          width="{{ article.image.width }}"
+          height="{{ article.image.height }}"
+          alt="{{ article.image.alt | default: article.title | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      </div>
+    {%- endif -%}
+
+    <div class="rte article__content">{{ article.content }}</div>
+
+    {%- if section.settings.show_share -%}
+      <div class="product__share article__share">
+        <button
+          type="button"
+          class="product__share-button js-only"
+          data-share
+          data-share-url="{{ shop.url }}{{ article.url }}"
+          data-share-title="{{ article.title | escape }}"
+        >
+          {% render 'icon', name: 'arrow-right', size: 16 %}
+          {{ 'general.share' | t }}
+        </button>
+        <span class="product__share-status" data-share-status aria-live="polite"></span>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      Related posts by shared tag, falling back to the newest in this blog.
+      Keeps readers inside the site instead of back on the results page.
+    {%- endcomment -%}
+    {%- if section.settings.show_related -%}
+      {%- assign related_count = 0 -%}
+      <section class="article__related">
+        <h2 class="h3">{{ 'blogs.article.keep_reading' | t }}</h2>
+        <ul class="product-grid article__related-grid" role="list">
+          {%- for post in blog.articles limit: 6 -%}
+            {%- if post.id != article.id and related_count < 3 -%}
+              {%- assign related_count = related_count | plus: 1 -%}
+              <li class="product-grid__item">
+                <a class="card card--content" href="{{ post.url }}">
+                  {%- if post.image -%}
+                    <div class="card__media media media--square">
+                      {{
+                        post.image
+                        | image_url: width: 600
+                        | image_tag:
+                          class: 'card__image',
+                          widths: '300, 600',
+                          sizes: '(min-width: 990px) 25vw, 45vw',
+                          loading: 'lazy'
+                      }}
+                    </div>
+                  {%- endif -%}
+                  <div class="card__content">
+                    <h3 class="card__title">{{ post.title }}</h3>
+                    <span class="card__read-more">
+                      {{ 'blogs.article.read_more' | t }}
+                      {% render 'icon', name: 'arrow-right', size: 14 %}
+                    </span>
+                  </div>
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+
+    {%- if blog.comments_enabled? -%}
+      <section class="article__comments">
+        <h2 class="h3">{{ 'blogs.comments.title' | t }} ({{ article.comments_count }})</h2>
+
+        {%- if article.comments_count > 0 -%}
+          <ul class="article__comment-list" role="list">
+            {%- for comment in article.comments -%}
+              <li class="article__comment">
+                <p class="article__comment-meta">
+                  <strong>{{ comment.author }}</strong>
+                  <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">
+                    {{ comment.created_at | date: format: 'date' }}
+                  </time>
+                </p>
+                <div class="rte">{{ comment.content }}</div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        {%- form 'new_comment', article, class: 'article__comment-form' -%}
+          {%- if form.errors -%}
+            <p class="newsletter__message newsletter__message--error" role="alert">
+              {% render 'icon', name: 'alert', size: 16 %}
+              {{ 'blogs.comments.error' | t }}
+            </p>
+          {%- endif -%}
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter__message newsletter__message--success" role="status">
+              {% render 'icon', name: 'check', size: 16 %}
+              {{ 'blogs.comments.success' | t }}
+            </p>
+          {%- endif -%}
+
+          <div class="field">
+            <label class="field__label" for="CommentAuthor">{{ 'blogs.comments.name' | t }}</label>
+            <input type="text" id="CommentAuthor" class="field__input" name="comment[author]" value="{{ form.author }}" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentEmail">{{ 'blogs.comments.email' | t }}</label>
+            <input type="email" id="CommentEmail" class="field__input" name="comment[email]" value="{{ form.email }}" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label class="field__label" for="CommentBody">{{ 'blogs.comments.message' | t }}</label>
+            <textarea id="CommentBody" class="field__input field__input--textarea" name="comment[body]" rows="4" required>{{ form.body }}</textarea>
+          </div>
+          <button type="submit" class="button button--primary">{{ 'blogs.comments.post' | t }}</button>
+        {%- endform -%}
+      </section>
+    {%- endif -%}
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Blog post",
+  "class": "section-main-article",
+  "tag": "div",
+  "settings": [
+    { "type": "checkbox", "id": "show_breadcrumbs", "label": "Show breadcrumbs", "default": true },
+    { "type": "checkbox", "id": "show_image", "label": "Show featured image", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "checkbox", "id": "show_share", "label": "Show share button", "default": true },
+    { "type": "checkbox", "id": "show_reading_time", "label": "Show reading time", "default": true },
+    { "type": "checkbox", "id": "show_related", "label": "Show related posts", "default": true }
+  ],
+  "enabled_on": { "templates": ["article"] }
+}
+{% endschema %}

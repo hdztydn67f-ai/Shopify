@@ -1,0 +1,266 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SECTION: tabbed-products ("Trending Now")
+  Every tab's grid is rendered server-side and toggled with JS, so
+  switching tabs never hits the network and crawlers still see all
+  products in the HTML.
+  ------------------------------------------------------------
+{%- endcomment -%}
+
+{%- liquid
+  assign tabs = section.blocks | where: 'type', 'tab'
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --grid-columns-desktop: {{ section.settings.columns_desktop }};
+    --grid-columns-mobile: {{ section.settings.columns_mobile }};
+    background-color: {{ section.settings.background_color }};
+  }
+{% endstyle %}
+
+<section class="tabbed-products section">
+  <div class="page-width">
+    <div class="section-header section-header--{{ section.settings.heading_alignment }}">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="section-header__heading h1">{{ section.settings.heading | escape }}</h2>
+        <hr class="rule-accent">
+      {%- endif -%}
+
+      {%- if section.settings.subheading != blank -%}
+        <div class="section-header__text text-muted">{{ section.settings.subheading }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if tabs.size > 0 -%}
+      {%- comment -%} Tab list — roving tabindex + arrow keys handled in theme.js {%- endcomment -%}
+      <div class="tabs" data-tabs>
+        <div
+          class="tabs__list"
+          role="tablist"
+          aria-label="{{ section.settings.heading | default: 'Product collections' | escape }}"
+        >
+          {%- for block in tabs -%}
+            {%- assign tab_collection = block.settings.collection -%}
+            <button
+              type="button"
+              class="tabs__tab{% if forloop.first %} is-active{% endif %}"
+              id="Tab-{{ section.id }}-{{ forloop.index }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-controls="Panel-{{ section.id }}-{{ forloop.index }}"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+              data-tab
+              {{ block.shopify_attributes }}
+            >
+              {{ block.settings.label | default: tab_collection.title | default: 'Tab' | escape }}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- for block in tabs -%}
+          {%- liquid
+            assign tab_collection = block.settings.collection
+            assign limit = block.settings.products_to_show | default: section.settings.products_to_show
+          -%}
+          <div
+            class="tabs__panel"
+            id="Panel-{{ section.id }}-{{ forloop.index }}"
+            role="tabpanel"
+            aria-labelledby="Tab-{{ section.id }}-{{ forloop.index }}"
+            tabindex="0"
+            data-tab-panel
+            {% unless forloop.first %}hidden{% endunless %}
+          >
+            {%- if tab_collection != blank and tab_collection.products.size > 0 -%}
+              <ul class="product-grid" role="list">
+                {%- for product in tab_collection.products limit: limit -%}
+                  <li class="product-grid__item">
+                    {% render 'product-card',
+                      product: product,
+                      index: forloop.index,
+                      image_ratio: section.settings.image_ratio,
+                      show_vendor: section.settings.show_vendor,
+                      show_rating: section.settings.show_rating,
+                      show_wishlist: section.settings.show_wishlist,
+                      show_quick_view: section.settings.show_quick_view,
+                      show_quick_add: section.settings.show_quick_add,
+                      show_second_image: section.settings.show_second_image
+                    %}
+                  </li>
+                {%- endfor -%}
+              </ul>
+
+              {%- if section.settings.show_view_all -%}
+                <div class="tabs__footer">
+                  <a class="button button--ghost" href="{{ tab_collection.url }}">
+                    {{ 'sections.collection.view_all' | t }} {{ tab_collection.title }}
+                    {% render 'icon', name: 'arrow-right' %}
+                  </a>
+                </div>
+              {%- endif -%}
+            {%- else -%}
+              {%- comment -%} Placeholder grid so the section is usable before collections exist {%- endcomment -%}
+              <ul class="product-grid" role="list">
+                {%- for i in (1..4) -%}
+                  <li class="product-grid__item">
+                    <div class="card card--placeholder">
+                      <div class="card__media media media--{{ section.settings.image_ratio }}">
+                        {{ 'product-1' | placeholder_svg_tag: 'card__image placeholder-svg' }}
+                      </div>
+                      <div class="card__content">
+                        <h3 class="card__title">{{ 'onboarding.product_title' | t }}</h3>
+                        <div class="price"><span class="price__regular">{{ 1999 | money }}</span></div>
+                      </div>
+                    </div>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%}
+        ItemList schema for the default tab. Gives Google an explicit,
+        ordered product list for the page without duplicating Product markup.
+      {%- endcomment -%}
+      {%- assign first_tab = tabs | first -%}
+      {%- if first_tab.settings.collection.products.size > 0 -%}
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": {{ section.settings.heading | default: 'Trending now' | json }},
+            "numberOfItems": {{ first_tab.settings.collection.products.size }},
+            "itemListElement": [
+              {%- for product in first_tab.settings.collection.products limit: section.settings.products_to_show -%}
+                {
+                  "@type": "ListItem",
+                  "position": {{ forloop.index }},
+                  "url": {{ shop.url | append: product.url | json }},
+                  "name": {{ product.title | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          }
+        </script>
+      {%- endif -%}
+    {%- else -%}
+      <p class="text-center text-muted">{{ 'sections.collection.add_tabs' | t }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Tabbed products",
+  "class": "section-tabbed-products",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Fighter favourites" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "TRENDING NOW" },
+    {
+      "type": "richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "<p>The gear our athletes reach for first.</p>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#0B0B0C" },
+    { "type": "header", "content": "Grid" },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "label": "Products per tab",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" },
+        { "value": "natural", "label": "Natural" }
+      ],
+      "default": "square"
+    },
+    { "type": "header", "content": "Card content" },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_rating", "label": "Show product rating", "default": false, "info": "Requires a review app that writes to the reviews.rating metafield." },
+    { "type": "checkbox", "id": "show_second_image", "label": "Swap to second image on hover", "default": true },
+    { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist button", "default": true },
+    { "type": "checkbox", "id": "show_quick_view", "label": "Show quick view button", "default": true },
+    { "type": "checkbox", "id": "show_quick_add", "label": "Show quick add button", "default": true },
+    { "type": "checkbox", "id": "show_view_all", "label": "Show 'view all' link under each tab", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "limit": 6,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Tab label", "default": "Best Sellers" },
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        {
+          "type": "range",
+          "id": "products_to_show",
+          "min": 2,
+          "max": 16,
+          "step": 1,
+          "label": "Products to show",
+          "default": 8,
+          "info": "Overrides the section-level count for this tab."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabbed products",
+      "blocks": [
+        { "type": "tab", "settings": { "label": "Best Sellers" } },
+        { "type": "tab", "settings": { "label": "Boxing Sets" } },
+        { "type": "tab", "settings": { "label": "Winning" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

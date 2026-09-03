@@ -1,0 +1,40 @@
+{%- comment -%}
+  Numbered pagination. Real <a> links so crawlers can walk the
+  collection and every page stays reachable without JavaScript.
+  Accepts: paginate, anchor
+{%- endcomment -%}
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+    <ul class="pagination__list" role="list">
+      {%- if paginate.previous -%}
+        <li>
+          <a class="pagination__item pagination__item--nav" href="{{ paginate.previous.url }}{{ anchor }}" aria-label="{{ 'general.pagination.previous' | t }}">
+            {% render 'icon', name: 'arrow-right', class: 'pagination__prev-icon' %}
+          </a>
+        </li>
+      {%- endif -%}
+
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a class="pagination__item" href="{{ part.url }}{{ anchor }}" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">
+              {{ part.title }}
+            </a>
+          {%- elsif part.title == '&hellip;' or part.title == '…' -%}
+            <span class="pagination__item pagination__item--gap">{{ part.title }}</span>
+          {%- else -%}
+            <span class="pagination__item is-current" aria-current="page">{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+
+      {%- if paginate.next -%}
+        <li>
+          <a class="pagination__item pagination__item--nav" href="{{ paginate.next.url }}{{ anchor }}" aria-label="{{ 'general.pagination.next' | t }}">
+            {% render 'icon', name: 'arrow-right' %}
+          </a>
+        </li>
+      {%- endif -%}
+    </ul>
+  </nav>
+{%- endif -%}

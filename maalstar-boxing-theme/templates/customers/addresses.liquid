@@ -1,0 +1,68 @@
+<div class="section customer-page">
+  <div class="page-width page-width--narrow">
+    <h1 class="h1">{{ 'customer.addresses.title' | t }}</h1>
+    <hr class="rule-accent">
+
+    {%- form 'customer_address', customer.new_address -%}
+      <h2 class="h4">{{ 'customer.addresses.add_new' | t }}</h2>
+
+      <div class="field">
+        <label class="field__label" for="AddressFirstName">{{ 'customer.register.first_name' | t }}</label>
+        <input type="text" id="AddressFirstName" class="field__input" name="address[first_name]" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressLastName">{{ 'customer.register.last_name' | t }}</label>
+        <input type="text" id="AddressLastName" class="field__input" name="address[last_name]" autocomplete="family-name">
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressLine1">{{ 'customer.addresses.address1' | t }}</label>
+        <input type="text" id="AddressLine1" class="field__input" name="address[address1]" autocomplete="address-line1">
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressCity">{{ 'customer.addresses.city' | t }}</label>
+        <input type="text" id="AddressCity" class="field__input" name="address[city]" autocomplete="address-level2">
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressCountry">{{ 'sections.cart.country' | t }}</label>
+        <select id="AddressCountry" class="field__input field__input--select" name="address[country]" data-address-country>
+          {{ country_option_tags }}
+        </select>
+      </div>
+      {%- comment -%}
+        Populated by theme.js from the selected country's data-provinces.
+        Without it, addresses in the US, Canada and Australia fail validation.
+      {%- endcomment -%}
+      <div class="field" data-address-province-wrapper hidden>
+        <label class="field__label" for="AddressProvince">{{ 'sections.cart.province' | t }}</label>
+        <select id="AddressProvince" class="field__input field__input--select" name="address[province]" data-address-province></select>
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressZip">{{ 'sections.cart.zip' | t }}</label>
+        <input type="text" id="AddressZip" class="field__input" name="address[zip]" autocomplete="postal-code">
+      </div>
+      <div class="field">
+        <label class="field__label" for="AddressPhone">{{ 'customer.addresses.phone' | t }}</label>
+        <input type="tel" id="AddressPhone" class="field__input" name="address[phone]" autocomplete="tel">
+      </div>
+
+      <button type="submit" class="button button--primary">{{ 'customer.addresses.add' | t }}</button>
+    {%- endform -%}
+
+    {%- if customer.addresses.size > 0 -%}
+      <h2 class="h4">{{ 'customer.addresses.saved' | t }}</h2>
+      <ul class="customer-address-list" role="list">
+        {%- for address in customer.addresses -%}
+          <li class="customer-address">
+            <address class="footer__contact">{{ address | format_address }}</address>
+            {%- form 'customer_address', address -%}
+              <input type="hidden" name="_method" value="delete">
+              <button type="submit" class="cart-item__remove">{{ 'customer.addresses.delete' | t }}</button>
+            {%- endform -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <a class="customer-page__link" href="{{ routes.account_url }}">{{ 'customer.order.back' | t }}</a>
+  </div>
+</div>

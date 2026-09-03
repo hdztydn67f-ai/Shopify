@@ -1,0 +1,152 @@
+{%- comment -%}
+  Quick view body: gallery, variant picker, Ajax add to cart.
+  Rendered standalone by templates/product.quick-view.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if current_variant.compare_at_price > current_variant.price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="quick-view" data-quick-view-content data-product-id="{{ product.id }}">
+  <div class="quick-view__media">
+    {%- if product.featured_media -%}
+      {%- comment -%}
+        Written out longhand rather than via image_tag: Liquid named
+        arguments cannot contain hyphens, and JS needs the data hook.
+      {%- endcomment -%}
+      <img
+        class="quick-view__image"
+        src="{{ product.featured_media | image_url: width: 800 }}"
+        srcset="
+          {{ product.featured_media | image_url: width: 400 }} 400w,
+          {{ product.featured_media | image_url: width: 600 }} 600w,
+          {{ product.featured_media | image_url: width: 800 }} 800w
+        "
+        sizes="(min-width: 750px) 40vw, 90vw"
+        width="{{ product.featured_media.width }}"
+        height="{{ product.featured_media.height }}"
+        alt="{{ product.featured_media.alt | default: product.title | escape }}"
+        loading="eager"
+        data-quick-view-image
+      >
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'quick-view__image placeholder-svg' }}
+    {%- endif -%}
+
+    {%- if product.media.size > 1 -%}
+      <ul class="quick-view__thumbs" role="list">
+        {%- for media in product.media limit: 5 -%}
+          <li>
+            <button
+              type="button"
+              class="quick-view__thumb{% if forloop.first %} is-active{% endif %}"
+              data-quick-view-thumb
+              data-image="{{ media.preview_image | image_url: width: 800 }}"
+              aria-label="{{ 'products.product.media.gallery_thumbnail' | t: index: forloop.index }}"
+            >
+              {{
+                media.preview_image
+                | image_url: width: 160
+                | image_tag: widths: '80, 160', sizes: '80px', loading: 'lazy', alt: ''
+              }}
+            </button>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+
+  <div class="quick-view__details">
+    {%- if product.vendor != blank -%}
+      <p class="quick-view__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+
+    <h2 class="quick-view__title h3">{{ product.title }}</h2>
+
+    <div class="quick-view__price" data-quick-view-price>
+      {% render 'price', variant: current_variant, show_unit_price: true %}
+    </div>
+
+    {%- if product.description != blank -%}
+      <div class="quick-view__description rte">
+        {{ product.description | strip_html | truncatewords: 45 }}
+      </div>
+    {%- endif -%}
+
+    <form class="quick-view__form" data-quick-view-form novalidate>
+      {%- unless product.has_only_default_variant -%}
+        <div class="quick-view__options">
+          {%- for option in product.options_with_values -%}
+            <div class="field">
+              <label class="field__label" for="QuickViewOption-{{ option.position }}">{{ option.name }}</label>
+              <select
+                id="QuickViewOption-{{ option.position }}"
+                class="field__input field__input--select"
+                data-quick-view-option
+                data-option-position="{{ option.position }}"
+              >
+                {%- for value in option.values -%}
+                  <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                    {{ value }}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endunless -%}
+
+      <div class="quick-view__buy">
+        <div class="quantity" data-quantity>
+          <button type="button" class="quantity__button" data-qv-quantity-minus aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
+            {% render 'icon', name: 'minus', size: 14 %}
+          </button>
+          <label class="visually-hidden" for="QuickViewQuantity">{{ 'products.product.quantity.label' | t }}</label>
+          <input
+            class="quantity__input"
+            type="number"
+            id="QuickViewQuantity"
+            name="quantity"
+            value="1"
+            min="1"
+            data-quick-view-quantity
+          >
+          <button type="button" class="quantity__button" data-qv-quantity-plus aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
+            {% render 'icon', name: 'plus', size: 14 %}
+          </button>
+        </div>
+
+        <input type="hidden" name="id" value="{{ current_variant.id }}" data-quick-view-variant-id>
+
+        <button
+          type="submit"
+          class="button button--primary button--full"
+          data-quick-view-submit
+          {% unless current_variant.available %}disabled{% endunless %}
+        >
+          <span data-quick-view-submit-text>
+            {%- if current_variant.available -%}
+              {{ 'products.product.add_to_cart' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </span>
+          <span class="spinner" data-quick-view-spinner hidden aria-hidden="true"></span>
+        </button>
+      </div>
+    </form>
+
+    <a class="quick-view__full-link" href="{{ product.url }}">
+      {{ 'products.product.view_full_details' | t }}
+      {% render 'icon', name: 'arrow-right', size: 14 %}
+    </a>
+  </div>
+
+  {%- comment -%} Variant data for client-side option matching. {%- endcomment -%}
+  <script type="application/json" data-quick-view-variants>
+    {{ product.variants | json }}
+  </script>
+</div>

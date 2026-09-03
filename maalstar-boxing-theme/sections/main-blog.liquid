@@ -1,0 +1,73 @@
+{%- comment -%}
+  SECTION: main-blog — article listing. Long-tail search traffic
+  ("what glove weight for sparring") lands here, so each card links
+  straight through with a real excerpt.
+{%- endcomment -%}
+{% style %}
+  #shopify-section-{{ section.id }} { --grid-columns-desktop: {{ section.settings.columns_desktop }}; --grid-columns-mobile: 1; }
+{% endstyle %}
+
+<div class="section">
+  <div class="page-width">
+    <div class="section-header section-header--center">
+      <h1 class="section-header__heading h1">{{ blog.title }}</h1>
+      <hr class="rule-accent">
+    </div>
+
+    {%- paginate blog.articles by section.settings.posts_per_page -%}
+      {%- if blog.articles.size > 0 -%}
+        <ul class="product-grid" role="list">
+          {%- for article in blog.articles -%}
+            <li class="product-grid__item">
+              <a class="card card--content" href="{{ article.url }}">
+                {%- if article.image -%}
+                  <div class="card__media media media--square">
+                    {{
+                      article.image
+                      | image_url: width: 800
+                      | image_tag:
+                        class: 'card__image',
+                        widths: '300, 500, 800',
+                        sizes: '(min-width: 990px) 30vw, 90vw',
+                        loading: 'lazy'
+                    }}
+                  </div>
+                {%- endif -%}
+                <div class="card__content">
+                  <p class="card__vendor">
+                    <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                      {{ article.published_at | date: format: 'date' }}
+                    </time>
+                  </p>
+                  <h2 class="card__title">{{ article.title }}</h2>
+                  <p class="text-muted">{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+                  <span class="card__read-more">
+                    {{ 'blogs.article.read_more' | t }}
+                    {% render 'icon', name: 'arrow-right', size: 14 %}
+                  </span>
+                </div>
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        {% render 'pagination', paginate: paginate, anchor: '' %}
+      {%- else -%}
+        <p class="text-center text-muted">{{ 'blogs.article.no_articles' | t }}</p>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "class": "section-main-blog",
+  "tag": "div",
+  "settings": [
+    { "type": "range", "id": "posts_per_page", "min": 3, "max": 24, "step": 3, "label": "Posts per page", "default": 9 },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 4, "step": 1, "label": "Columns on desktop", "default": 3 }
+  ],
+  "enabled_on": { "templates": ["blog"] }
+}
+{% endschema %}

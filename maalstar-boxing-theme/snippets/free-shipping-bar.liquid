@@ -1,0 +1,23 @@
+{%- comment -%}
+  Progress toward the free-shipping threshold. Threshold is entered in the
+  theme editor in the store's currency (e.g. 150 = $150.00).
+{%- endcomment -%}
+{%- liquid
+  assign threshold = settings.cart_free_shipping_threshold | default: 0 | times: 100
+  assign remaining = threshold | minus: cart.total_price
+  assign remaining_money = remaining | money
+  assign progress = 0
+  if threshold > 0
+    assign progress = cart.total_price | times: 100.0 | divided_by: threshold | at_most: 100
+  endif
+-%}
+<p class="free-shipping-bar__text">
+  {%- if remaining > 0 -%}
+    {{ 'sections.cart.free_shipping_remaining_html' | t: amount: remaining_money }}
+  {%- else -%}
+    {% render 'icon', name: 'check', size: 14 %} {{ 'sections.cart.free_shipping_unlocked' | t }}
+  {%- endif -%}
+</p>
+<div class="free-shipping-bar__track" role="progressbar" aria-valuenow="{{ progress | round }}" aria-valuemin="0" aria-valuemax="100">
+  <span class="free-shipping-bar__fill" style="width: {{ progress }}%"></span>
+</div>

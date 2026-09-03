@@ -1,0 +1,54 @@
+<div class="section customer-page">
+  <div class="page-width page-width--narrow">
+    <div class="customer-page__inner">
+      <h1 class="h1">{{ 'customer.login.title' | t }}</h1>
+      <hr class="rule-accent">
+
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <p class="newsletter__message newsletter__message--error" role="alert">
+            {% render 'icon', name: 'alert', size: 16 %}
+            {{ form.errors.messages.form }}
+          </p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="CustomerEmail">{{ 'customer.login.email' | t }}</label>
+          <input type="email" id="CustomerEmail" class="field__input" name="customer[email]" autocomplete="email" autocapitalize="off" required>
+        </div>
+
+        {%- if form.password_needed -%}
+          <div class="field">
+            <label class="field__label" for="CustomerPassword">{{ 'customer.login.password' | t }}</label>
+            <input type="password" id="CustomerPassword" class="field__input" name="customer[password]" autocomplete="current-password" required>
+          </div>
+          <a class="customer-page__link" href="#recover">{{ 'customer.login.forgot_password' | t }}</a>
+        {%- endif -%}
+
+        <button type="submit" class="button button--primary button--full">{{ 'customer.login.sign_in' | t }}</button>
+      {%- endform -%}
+
+      <div class="customer-page__recover" id="recover">
+        <h2 class="h4">{{ 'customer.recover_password.title' | t }}</h2>
+        {%- form 'recover_customer_password' -%}
+          {%- if form.posted_successfully? -%}
+            <p class="newsletter__message newsletter__message--success" role="status">
+              {% render 'icon', name: 'check', size: 16 %}
+              {{ 'customer.recover_password.success' | t }}
+            </p>
+          {%- endif -%}
+          <div class="field">
+            <label class="field__label" for="RecoverEmail">{{ 'customer.login.email' | t }}</label>
+            <input type="email" id="RecoverEmail" class="field__input" name="email" autocomplete="email" autocapitalize="off" required>
+          </div>
+          <button type="submit" class="button button--secondary">{{ 'customer.recover_password.submit' | t }}</button>
+        {%- endform -%}
+      </div>
+
+      <p class="customer-page__footer">
+        {{ 'customer.login.no_account' | t }}
+        <a class="customer-page__link" href="{{ routes.account_register_url }}">{{ 'customer.register.title' | t }}</a>
+      </p>
+    </div>
+  </div>
+</div>

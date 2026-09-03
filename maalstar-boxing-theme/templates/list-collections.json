@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-list-collections",
+      "settings": {
+        "heading": "SHOP BY CATEGORY",
+        "heading_alignment": "center",
+        "sort_by": "default",
+        "show_product_count": true,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "portrait"
+      }
+    }
+  },
+  "order": ["main"]
+}

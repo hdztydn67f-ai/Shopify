@@ -1,0 +1,50 @@
+{%- comment -%}
+  Variant picker as radio pills. Combinations that do not exist or are
+  sold out get marked by theme.js from the variant JSON below, so a
+  customer never picks a dead combination and then hits an error.
+  Accepts: product, section_id
+{%- endcomment -%}
+{%- if product.has_only_default_variant == false -%}
+  <div class="variant-picker" data-variant-picker>
+    {%- for option in product.options_with_values -%}
+      {%- assign option_index = forloop.index0 -%}
+      <fieldset class="variant-picker__option" data-option-position="{{ option.position }}">
+        <legend class="variant-picker__label">
+          <span>{{ option.name }}</span>
+          <span class="variant-picker__selected" data-option-selected="{{ option.position }}">
+            {{- option.selected_value -}}
+          </span>
+        </legend>
+
+        <div class="variant-picker__values">
+          {%- for value in option.values -%}
+            {%- assign input_id = section_id | append: '-opt-' | append: option.position | append: '-' | append: forloop.index -%}
+            <input
+              type="radio"
+              class="variant-picker__input visually-hidden"
+              id="{{ input_id }}"
+              name="{{ section_id }}-option-{{ option.position }}"
+              value="{{ value | escape }}"
+              data-option-input
+              data-option-position="{{ option.position }}"
+              {% if option.selected_value == value %}checked{% endif %}
+            >
+            <label class="variant-picker__value" for="{{ input_id }}">{{ value }}</label>
+          {%- endfor -%}
+        </div>
+      </fieldset>
+    {%- endfor -%}
+
+    <script type="application/json" data-variant-json>
+      {{ product.variants | json }}
+    </script>
+  </div>
+{%- else -%}
+  {%- comment -%}
+    Single-variant products still need the JSON: theme.js reads it to sync
+    price and availability, and it must exist or the script throws.
+  {%- endcomment -%}
+  <script type="application/json" data-variant-json>
+    {{ product.variants | json }}
+  </script>
+{%- endif -%}

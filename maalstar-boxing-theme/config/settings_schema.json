@@ -1,0 +1,400 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Maalstar Boxing",
+    "theme_version": "1.0.0",
+    "theme_author": "Custom build",
+    "theme_documentation_url": "https://shopify.dev/docs/themes",
+    "theme_support_url": "https://shopify.dev/docs/themes"
+  },
+  {
+    "name": "Logo and branding",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "32 x 32px .png recommended"
+      },
+      {
+        "type": "image_picker",
+        "id": "social_share_image",
+        "label": "Default social sharing image",
+        "info": "1200 x 630px. Used when a page has no image of its own."
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Core palette"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#0B0B0C"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface / cards",
+        "default": "#141417"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Text",
+        "default": "#F5F5F5"
+      },
+      {
+        "type": "header",
+        "content": "Accent"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Primary accent",
+        "default": "#C9A227",
+        "info": "Metallic gold by default. Try #C0142B for blood red or #C7CCD1 for gunmetal silver."
+      },
+      {
+        "type": "color",
+        "id": "color_accent_text",
+        "label": "Text on accent",
+        "default": "#0B0B0C"
+      },
+      {
+        "type": "color",
+        "id": "color_alert",
+        "label": "Alert / blood red",
+        "default": "#C0142B"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale badge",
+        "default": "#C0142B"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_heading_font",
+        "label": "Heading font",
+        "default": "assistant_n7",
+        "info": "Pick a heavy, blocky sans (Archivo, Oswald, Anton-style) for the fighter look."
+      },
+      {
+        "type": "range",
+        "id": "heading_scale",
+        "min": 80,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "label": "Heading size scale",
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "heading_letter_spacing",
+        "min": -0.02,
+        "max": 0.2,
+        "step": 0.01,
+        "unit": "em",
+        "label": "Heading letter spacing",
+        "default": 0.02
+      },
+      {
+        "type": "checkbox",
+        "id": "heading_uppercase",
+        "label": "Uppercase headings",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Body"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "assistant_n4"
+      },
+      {
+        "type": "range",
+        "id": "body_scale",
+        "min": 90,
+        "max": 120,
+        "step": 5,
+        "unit": "%",
+        "label": "Body size scale",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1200,
+        "max": 1800,
+        "step": 40,
+        "unit": "px",
+        "label": "Page width",
+        "default": 1440
+      },
+      {
+        "type": "range",
+        "id": "corner_radius",
+        "min": 0,
+        "max": 16,
+        "step": 1,
+        "unit": "px",
+        "label": "Corner radius",
+        "default": 2,
+        "info": "Keep this low (0–4px) for the hard-edged, aggressive look."
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "number",
+        "id": "cart_free_shipping_threshold",
+        "label": "Free shipping threshold",
+        "default": 150,
+        "info": "In your store currency. Set to 0 to hide the progress bar."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_note",
+        "label": "Show 'Add note for seller'",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_shipping_estimator",
+        "label": "Show shipping rate estimator",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_discount",
+        "label": "Show discount code field",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_payment_icons",
+        "label": "Show accelerated checkout buttons",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Age verification",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "age_gate_enabled",
+        "label": "Enable age verification popup",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "age_gate_image",
+        "label": "Popup image",
+        "info": "Falls back to your logo."
+      },
+      {
+        "type": "text",
+        "id": "age_gate_heading",
+        "label": "Heading",
+        "default": "Are you 18 years old or older?"
+      },
+      {
+        "type": "textarea",
+        "id": "age_gate_text",
+        "label": "Body text",
+        "default": "You must be 18 or older to enter this store."
+      },
+      {
+        "type": "text",
+        "id": "age_gate_yes_label",
+        "label": "Confirm button",
+        "default": "Yes, I am 18+"
+      },
+      {
+        "type": "text",
+        "id": "age_gate_no_label",
+        "label": "Decline button",
+        "default": "No, I am under 18"
+      },
+      {
+        "type": "textarea",
+        "id": "age_gate_decline_message",
+        "label": "Decline message",
+        "default": "Sorry, you must be 18 or older to shop with us."
+      },
+      {
+        "type": "range",
+        "id": "age_gate_remember_days",
+        "min": 0,
+        "max": 90,
+        "step": 1,
+        "unit": "d",
+        "label": "Remember answer for",
+        "default": 30,
+        "info": "0 asks on every new browser session."
+      }
+    ]
+  },
+  {
+    "name": "Cookie consent",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cookie_banner_enabled",
+        "label": "Enable cookie banner",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "cookie_banner_text",
+        "label": "Text",
+        "default": "We use cookies to improve your experience, personalise content and analyse traffic."
+      },
+      {
+        "type": "text",
+        "id": "cookie_accept_label",
+        "label": "Accept button",
+        "default": "Accept"
+      },
+      {
+        "type": "text",
+        "id": "cookie_decline_label",
+        "label": "Decline button",
+        "default": "Decline"
+      },
+      {
+        "type": "url",
+        "id": "cookie_policy_page",
+        "label": "Privacy policy link"
+      }
+    ]
+  },
+  {
+    "name": "SEO",
+    "settings": [
+      {
+        "type": "text",
+        "id": "seo_home_tagline",
+        "label": "Homepage title tagline",
+        "default": "Premium Boxing Gloves, Sets & Fight Gear",
+        "info": "Appended after your store name in the homepage <title>. Keep the whole title under 60 characters."
+      },
+      {
+        "type": "textarea",
+        "id": "seo_home_description",
+        "label": "Homepage meta description",
+        "default": "Handmade premium boxing gloves, sparring sets, headgear and groin protectors. Built for fighters who refuse to compromise. Free worldwide shipping over $150.",
+        "info": "150–160 characters. Include your main keyword and an offer."
+      },
+      {
+        "type": "text",
+        "id": "seo_phone",
+        "label": "Business phone",
+        "info": "Used in Organization structured data."
+      },
+      {
+        "type": "text",
+        "id": "seo_email",
+        "label": "Business email"
+      },
+      {
+        "type": "text",
+        "id": "seo_twitter_handle",
+        "label": "X (Twitter) handle",
+        "info": "Without the @"
+      },
+      {
+        "type": "header",
+        "content": "Business address",
+        "info": "Feeds the Organization structured data and the footer contact block. Local search treats a consistent name/address/phone as a ranking signal."
+      },
+      {
+        "type": "text",
+        "id": "seo_address_street",
+        "label": "Street address"
+      },
+      {
+        "type": "text",
+        "id": "seo_address_city",
+        "label": "City"
+      },
+      {
+        "type": "text",
+        "id": "seo_address_region",
+        "label": "State / region"
+      },
+      {
+        "type": "text",
+        "id": "seo_address_zip",
+        "label": "Postal code"
+      },
+      {
+        "type": "text",
+        "id": "seo_address_country",
+        "label": "Country"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "url",
+        "id": "social_instagram_link",
+        "label": "Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_youtube_link",
+        "label": "YouTube"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_link",
+        "label": "TikTok"
+      },
+      {
+        "type": "url",
+        "id": "social_x_link",
+        "label": "X (Twitter)"
+      }
+    ]
+  }
+]

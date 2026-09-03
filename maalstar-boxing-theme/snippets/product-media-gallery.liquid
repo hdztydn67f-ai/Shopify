@@ -1,0 +1,93 @@
+{%- comment -%}
+  Product gallery: sticky main stage + thumbnail rail.
+  Accepts: product, enable_zoom
+{%- endcomment -%}
+{%- liquid
+  assign featured = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+-%}
+
+<div class="product-gallery" data-product-gallery>
+  <div class="product-gallery__stage">
+    {%- if product.media.size > 0 -%}
+      {%- for media in product.media -%}
+        {%- assign is_active = false -%}
+        {%- if media.id == featured.id -%}
+          {%- assign is_active = true -%}
+        {%- endif -%}
+
+        <div
+          class="product-gallery__slide{% if is_active %} is-active{% endif %}"
+          data-gallery-slide
+          data-media-id="{{ media.id }}"
+          {% unless is_active %}hidden{% endunless %}
+        >
+          {%- case media.media_type -%}
+            {%- when 'image' -%}
+              <img
+                class="product-gallery__image{% if enable_zoom %} product-gallery__image--zoom{% endif %}"
+                src="{{ media | image_url: width: 1200 }}"
+                srcset="
+                  {{ media | image_url: width: 500 }} 500w,
+                  {{ media | image_url: width: 800 }} 800w,
+                  {{ media | image_url: width: 1200 }} 1200w,
+                  {{ media | image_url: width: 1600 }} 1600w
+                "
+                sizes="(min-width: 990px) 50vw, 100vw"
+                width="{{ media.width }}"
+                height="{{ media.height }}"
+                alt="{{ media.alt | default: product.title | escape }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                {% if forloop.first %}fetchpriority="high"{% endif %}
+              >
+
+            {%- when 'video' -%}
+              {{ media | video_tag: image_size: '1200x', controls: true, muted: false, class: 'product-gallery__video' }}
+
+            {%- when 'external_video' -%}
+              {{ media | external_video_tag: class: 'product-gallery__video', loading: 'lazy' }}
+
+            {%- when 'model' -%}
+              {{ media | model_viewer_tag: image_size: '1200x', class: 'product-gallery__model' }}
+
+            {%- else -%}
+              {{ media | media_tag: class: 'product-gallery__image', image_size: '1200x' }}
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'product-gallery__image placeholder-svg' }}
+    {%- endif -%}
+  </div>
+
+  {%- if product.media.size > 1 -%}
+    <ul class="product-gallery__thumbs" role="list">
+      {%- for media in product.media -%}
+        <li>
+          <button
+            type="button"
+            class="product-gallery__thumb{% if media.id == featured.id %} is-active{% endif %}"
+            data-gallery-thumb
+            data-media-id="{{ media.id }}"
+            aria-label="{{ 'products.product.media.gallery_thumbnail' | t: index: forloop.index }}"
+            {% if media.id == featured.id %}aria-current="true"{% endif %}
+          >
+            <img
+              src="{{ media.preview_image | image_url: width: 200 }}"
+              srcset="{{ media.preview_image | image_url: width: 100 }} 100w, {{ media.preview_image | image_url: width: 200 }} 200w"
+              sizes="90px"
+              width="90"
+              height="90"
+              alt=""
+              loading="lazy"
+            >
+            {%- if media.media_type != 'image' -%}
+              <span class="product-gallery__thumb-badge" aria-hidden="true">
+                {% render 'icon', name: 'eye', size: 14 %}
+              </span>
+            {%- endif -%}
+          </button>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</div>

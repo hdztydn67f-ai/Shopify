@@ -1,0 +1,16 @@
+{%- comment -%}
+  Renders an icon from the sprite.
+  Usage: {% render 'icon', name: 'cart', size: 22, class: 'my-class' %}
+{%- endcomment -%}
+{%- liquid
+  assign icon_size = size | default: 20
+  assign icon_class = class | default: ''
+-%}
+<svg
+  class="icon icon-{{ name }}{% if icon_class != blank %} {{ icon_class }}{% endif %}"
+  width="{{ icon_size }}"
+  height="{{ icon_size }}"
+  aria-hidden="true"
+  focusable="false"
+  role="presentation"
+><use href="#icon-{{ name }}"></use></svg>

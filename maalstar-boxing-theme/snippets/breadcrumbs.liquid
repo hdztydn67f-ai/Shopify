@@ -1,0 +1,47 @@
+{%- comment -%}
+  Visual breadcrumbs. The matching BreadcrumbList JSON-LD is emitted in
+  layout/theme.liquid, so the markup here stays presentational.
+{%- endcomment -%}
+<nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs.label' | t }}">
+  <ol class="breadcrumbs__list" role="list">
+    <li class="breadcrumbs__item">
+      <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a>
+    </li>
+
+    {%- case request.page_type -%}
+      {%- when 'product' -%}
+        {%- if collection.url -%}
+          <li class="breadcrumbs__item">
+            {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+            <a href="{{ collection.url }}">{{ collection.title }}</a>
+          </li>
+        {%- endif -%}
+        <li class="breadcrumbs__item" aria-current="page">
+          {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+          <span>{{ product.title }}</span>
+        </li>
+
+      {%- when 'collection' -%}
+        <li class="breadcrumbs__item" aria-current="page">
+          {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+          <span>{{ collection.title }}</span>
+        </li>
+
+      {%- when 'page' -%}
+        <li class="breadcrumbs__item" aria-current="page">
+          {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+          <span>{{ page.title }}</span>
+        </li>
+
+      {%- when 'article' -%}
+        <li class="breadcrumbs__item">
+          {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+          <a href="{{ blog.url }}">{{ blog.title }}</a>
+        </li>
+        <li class="breadcrumbs__item" aria-current="page">
+          {% render 'icon', name: 'chevron-down', class: 'breadcrumbs__sep' %}
+          <span>{{ article.title }}</span>
+        </li>
+    {%- endcase -%}
+  </ol>
+</nav>

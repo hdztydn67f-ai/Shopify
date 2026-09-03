@@ -1,0 +1,201 @@
+{%- comment -%}
+  ------------------------------------------------------------
+  SECTION: main-search
+  Search results with the same facets and grid as a collection.
+  On-site searchers convert far better than browsers, so this page
+  gets the same filtering treatment rather than a bare list.
+  ------------------------------------------------------------
+{%- endcomment -%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --grid-columns-desktop: {{ section.settings.columns_desktop }};
+    --grid-columns-mobile: {{ section.settings.columns_mobile }};
+  }
+{% endstyle %}
+
+<div class="collection-section" id="CollectionSection-{{ section.id }}" data-collection-section>
+  <div class="page-width">
+    <div class="search-header">
+      <h1 class="search-header__title h1">
+        {%- if search.performed -%}
+          {{ 'general.search.results_for' | t: terms: search.terms }}
+        {%- else -%}
+          {{ 'general.search.title' | t }}
+        {%- endif -%}
+      </h1>
+
+      <form class="search-header__form" action="{{ routes.search_url }}" method="get" role="search">
+        <input type="hidden" name="options[prefix]" value="last">
+        <label class="visually-hidden" for="SearchPageInput">{{ 'general.search.search' | t }}</label>
+        <input
+          type="search"
+          id="SearchPageInput"
+          class="field__input"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          autocomplete="off"
+        >
+        <button type="submit" class="button button--primary" aria-label="{{ 'general.search.submit' | t }}">
+          {% render 'icon', name: 'search' %}
+        </button>
+      </form>
+    </div>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by section.settings.results_per_page -%}
+        {%- if search.results_count > 0 -%}
+          {%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+            {% render 'facets',
+              results: search,
+              section_id: section.id,
+              enable_filtering: section.settings.enable_filtering,
+              enable_sorting: section.settings.enable_sorting
+            %}
+          {%- endif -%}
+
+          <div class="collection-grid" data-product-grid-container>
+            <ul class="product-grid" role="list">
+              {%- for item in search.results -%}
+                <li class="product-grid__item">
+                  {%- case item.object_type -%}
+                    {%- when 'product' -%}
+                      {% render 'product-card',
+                        product: item,
+                        index: forloop.index,
+                        image_ratio: section.settings.image_ratio,
+                        show_wishlist: true,
+                        show_quick_view: true,
+                        show_quick_add: true,
+                        show_second_image: true
+                      %}
+
+                    {%- when 'article' -%}
+                      <a class="card card--content" href="{{ item.url }}">
+                        {%- if item.image -%}
+                          <div class="card__media media media--square">
+                            {{ item.image | image_url: width: 600 | image_tag: class: 'card__image', widths: '300, 600', sizes: '(min-width: 990px) 25vw, 45vw', loading: 'lazy', alt: item.title }}
+                          </div>
+                        {%- endif -%}
+                        <div class="card__content">
+                          <p class="card__vendor">{{ 'general.search.article' | t }}</p>
+                          <h3 class="card__title">{{ item.title }}</h3>
+                          <p class="text-muted">{{ item.excerpt_or_content | strip_html | truncatewords: 18 }}</p>
+                        </div>
+                      </a>
+
+                    {%- when 'page' -%}
+                      <a class="card card--content" href="{{ item.url }}">
+                        <div class="card__content">
+                          <p class="card__vendor">{{ 'general.search.page' | t }}</p>
+                          <h3 class="card__title">{{ item.title }}</h3>
+                          <p class="text-muted">{{ item.content | strip_html | truncatewords: 18 }}</p>
+                        </div>
+                      </a>
+                  {%- endcase -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+
+            {%- assign search_anchor = '#CollectionSection-' | append: section.id -%}
+            {% render 'pagination', paginate: paginate, anchor: search_anchor %}
+          </div>
+        {%- else -%}
+          <div class="collection-empty">
+            <p class="collection-empty__title h3">{{ 'general.search.no_results' | t: terms: search.terms }}</p>
+            <p class="text-muted">{{ 'general.search.try_again' | t }}</p>
+
+            {%- comment -%}
+              A dead end is a lost sale. Offer the popular searches the
+              merchant configures, so the customer has somewhere to go.
+            {%- endcomment -%}
+            {%- if section.settings.popular_searches != blank -%}
+              <div class="search-suggestions">
+                <p class="eyebrow">{{ 'general.search.popular' | t }}</p>
+                <div class="search-suggestions__list">
+                  {%- assign terms = section.settings.popular_searches | split: ',' -%}
+                  {%- for term in terms -%}
+                    {%- assign clean_term = term | strip -%}
+                    <a class="facets__pill" href="{{ routes.search_url }}?q={{ clean_term | url_encode }}">
+                      {{ clean_term }}
+                    </a>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.fallback_collection != blank -%}
+              {%- assign fallback = collections[section.settings.fallback_collection] -%}
+              {%- if fallback.products.size > 0 -%}
+                <div class="search-fallback">
+                  <h2 class="h3">{{ section.settings.fallback_heading | escape }}</h2>
+                  <ul class="product-grid" role="list">
+                    {%- for product in fallback.products limit: 4 -%}
+                      <li class="product-grid__item">
+                        {% render 'product-card', product: product, index: forloop.index %}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search results",
+  "class": "section-main-search",
+  "tag": "div",
+  "settings": [
+    { "type": "checkbox", "id": "enable_filtering", "label": "Enable filtering", "default": true },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sorting", "default": true },
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Results per page",
+      "default": 24
+    },
+    { "type": "range", "id": "columns_desktop", "min": 2, "max": 5, "step": 1, "label": "Columns on desktop", "default": 4 },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (3:4)" }
+      ],
+      "default": "square"
+    },
+    { "type": "header", "content": "No results" },
+    {
+      "type": "text",
+      "id": "popular_searches",
+      "label": "Popular searches",
+      "default": "Boxing gloves, Sparring set, Headgear, Groin guard",
+      "info": "Comma separated. Shown when a search returns nothing."
+    },
+    { "type": "text", "id": "fallback_heading", "label": "Fallback heading", "default": "Best sellers" },
+    { "type": "collection", "id": "fallback_collection", "label": "Fallback collection" }
+  ],
+  "enabled_on": { "templates": ["search"] }
+}
+{% endschema %}

@@ -1,0 +1,79 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": { "type": "vendor", "settings": {} },
+        "title": { "type": "title", "settings": {} },
+        "rating": { "type": "rating", "settings": {} },
+        "price": { "type": "price", "settings": { "show_tax_note": true } },
+        "inventory": { "type": "inventory", "settings": { "low_stock_threshold": 5 } },
+        "variant_picker": { "type": "variant_picker", "settings": {} },
+        "quantity": { "type": "quantity_selector", "settings": {} },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": { "show_dynamic_checkout": true, "show_wishlist": true }
+        },
+        "trust": {
+          "type": "trust_badges",
+          "settings": {
+            "badges": "Handmade genuine leather, Free shipping over $150, 30-day returns, Secure checkout"
+          }
+        },
+        "description": { "type": "description", "settings": {} },
+        "shipping": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Shipping & returns",
+            "icon": "truck",
+            "content": "<p>Free worldwide shipping on orders over $150. Orders ship within 2 business days. 30-day returns on unused gear in original packaging.</p>"
+          }
+        },
+        "sizing": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Sizing & fit",
+            "icon": "note",
+            "content": "<p>10oz for competition, 12oz for bag work, 14–16oz for sparring. Sizing up protects your training partner as much as your hands.</p>"
+          }
+        },
+        "share": { "type": "share", "settings": {} }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "rating",
+        "price",
+        "inventory",
+        "variant_picker",
+        "quantity",
+        "buy_buttons",
+        "trust",
+        "description",
+        "shipping",
+        "sizing",
+        "share"
+      ],
+      "settings": {
+        "gallery_position": "left",
+        "gallery_width": 55,
+        "enable_zoom": true,
+        "show_breadcrumbs": true,
+        "show_sku": true
+      }
+    },
+    "related": {
+      "type": "related-products",
+      "settings": {
+        "heading": "COMPLETE THE KIT",
+        "heading_alignment": "center",
+        "intent": "related",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "image_ratio": "square"
+      }
+    }
+  },
+  "order": ["main", "related"]
+}

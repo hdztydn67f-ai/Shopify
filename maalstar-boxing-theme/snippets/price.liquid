@@ -1,0 +1,68 @@
+{%- comment -%}
+  Price block with compare-at ("was") pricing and unit price.
+  Usage: {% render 'price', product: product %}
+         {% render 'price', variant: variant, show_unit_price: true %}
+{%- endcomment -%}
+{%- liquid
+  if variant
+    assign target = variant
+    assign compare_at = variant.compare_at_price
+    assign price_value = variant.price
+  else
+    assign target = product
+    assign compare_at = product.compare_at_price_max
+    assign price_value = product.price
+  endif
+
+  assign on_sale = false
+  if compare_at > price_value
+    assign on_sale = true
+  endif
+
+  assign show_range = false
+  if variant == nil and product.price_varies
+    assign show_range = true
+  endif
+
+  comment
+    Money is formatted up front: a filter cannot be applied to an argument
+    inside a `t:` call, so `price: price_value | money` would silently break.
+  endcomment
+  assign price_money = price_value | money
+  assign compare_money = compare_at | money
+-%}
+
+<div class="price{% if on_sale %} price--on-sale{% endif %}">
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+    <s class="price__compare">{{ compare_money }}</s>
+    <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+    <span class="price__sale">
+      {%- if show_range -%}
+        {{ 'products.product.price.from_price_html' | t: price: price_money }}
+      {%- else -%}
+        {{ price_money }}
+      {%- endif -%}
+    </span>
+  {%- else -%}
+    <span class="price__regular">
+      {%- if show_range -%}
+        {{ 'products.product.price.from_price_html' | t: price: price_money }}
+      {%- else -%}
+        {{ price_money }}
+      {%- endif -%}
+    </span>
+  {%- endif -%}
+
+  {%- if show_unit_price and target.unit_price_measurement -%}
+    <div class="price__unit">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      {{ target.unit_price | money }}
+      <span aria-hidden="true">/</span>
+      {%- if target.unit_price_measurement.reference_value != 1 -%}
+        {{ target.unit_price_measurement.reference_value }}
+      {%- endif -%}
+      {{ target.unit_price_measurement.reference_unit }}
+    </div>
+  {%- endif -%}
+</div>
