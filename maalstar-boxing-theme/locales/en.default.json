@@ -20,6 +20,10 @@
       "added": "Added to wishlist",
       "removed": "Removed from wishlist",
       "add": "Add {{ title }} to wishlist"
+    },
+    "footer": {
+      "rights_reserved": "All rights reserved.",
+      "payment_methods": "Payment methods"
     }
   },
   "accessibility": {
@@ -123,5 +127,9 @@
   },
   "onboarding": {
     "product_title": "Example product title"
+  },
+  "newsletter": {
+    "email_label": "Email address",
+    "success": "Thanks for subscribing."
   }
 }

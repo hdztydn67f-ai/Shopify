@@ -134,6 +134,16 @@
         "name": {{ shop.name | json }},
         "url": {{ shop.url | append: routes.root_url | json }},
         {% if settings.logo %}"logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},{% endif %}
+        {% if settings.seo_address_street != blank %}
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": {{ settings.seo_address_street | json }},
+            "addressLocality": {{ settings.seo_address_city | json }},
+            "addressRegion": {{ settings.seo_address_region | json }},
+            "postalCode": {{ settings.seo_address_zip | json }},
+            "addressCountry": {{ settings.seo_address_country | json }}
+          },
+        {% endif %}
         {% if settings.seo_phone != blank %}
           "contactPoint": {
             "@type": "ContactPoint",

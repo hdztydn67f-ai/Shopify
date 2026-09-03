@@ -13,8 +13,11 @@ SEO-hardened markup.
 | --- | --- | --- |
 | **1** | `theme.liquid`, global CSS variables, `header.liquid` (+ top bar), cart drawer, age gate, cookie banner | ✅ Done |
 | **2** | Hero banner, tabbed product grid, `product-card.liquid`, quick view, quick add, wishlist | ✅ Done |
-| 3 | Secondary split banner, newsletter section | Pending |
-| 4 | Footer section, policies, payment icons | Pending |
+| **3** | Secondary split banner, newsletter section | ✅ Done |
+| **4** | Footer section, policies, payment icons | ✅ Done |
+
+All four steps of the original brief are built. Product, collection, cart,
+search and blog templates are still placeholders — see **Next up** below.
 
 ---
 
@@ -38,14 +41,18 @@ maalstar-boxing-theme/
 │   ├── header.liquid         # Top bar + sticky header + mobile nav
 │   ├── hero-banner.liquid    # Full-bleed image/video hero, carries the H1
 │   ├── tabbed-products.liquid# "Trending Now" tabs — no reload, no refetch
+│   ├── split-banner.liquid   # "HANDMADE GEAR. FIGHTER APPROVED."
+│   ├── newsletter.liquid     # "LET'S GET IN TOUCH" — Shopify customer form
+│   ├── footer.liquid         # Multi-column: brand, links, policies, contact
 │   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
-│   └── footer-group.json     # Empty until Step 4
+│   └── footer-group.json     # Footer group, pre-populated with four columns
 ├── snippets/
 │   ├── icon-sprite.liquid    # One inline SVG sprite for every icon
 │   ├── icon.liquid           # {% render 'icon', name: 'cart' %}
 │   ├── product-card.liquid   # Badges, hover image, wishlist, quick view, quick add
 │   ├── price.liquid          # Compare-at + unit pricing
 │   ├── quick-view.liquid     # Quick view body with variant picker
+│   ├── social-links.liquid   # Social icons from the global settings
 │   ├── cart-drawer-item.liquid
 │   └── free-shipping-bar.liquid
 └── templates/
@@ -139,3 +146,42 @@ causes conflicting signals.
   customer picks a size/colour without leaving the grid.
 - **Wishlist** — stored per browser in `localStorage` under `msb:wishlist`.
   Point the header wishlist icon at a page in **Theme settings → Header**.
+
+---
+
+## Footer + newsletter notes (Steps 3–4)
+
+- **Policies are live, not hardcoded.** The Policies column reads
+  `shop.privacy_policy`, `refund_policy`, `shipping_policy`,
+  `terms_of_service` and `subscription_policy` straight from
+  **Settings → Policies**. Write them there and they appear; leave one blank
+  and no dead link is published.
+- **Payment icons** come from `shop.enabled_payment_types`, so they always
+  match what checkout actually accepts.
+- **Newsletter** posts through Shopify's `customer` form and tags the
+  subscriber `newsletter` with `accepts_marketing` set. They land in
+  **Customers**, and any email platform synced to Shopify picks them up. To
+  deliver the 10% code, create an automation in Shopify Email (or Klaviyo)
+  triggered on that tag — the theme captures the subscriber, the automation
+  sends the code.
+- **Business address** lives in **Theme settings → SEO → Business address**.
+  One entry feeds both the footer contact column and the `Organization`
+  structured data, so your name/address/phone stays consistent — which is
+  exactly what local search rewards. The footer contact block can override it
+  per-column if you have a second location.
+
+---
+
+## Next up
+
+The four steps of the brief are complete. To actually take orders, the
+remaining templates need building:
+
+1. **`product.json`** — gallery, variant picker, add to cart, trust badges,
+   description tabs, related products.
+2. **`collection.json`** — filtering, sorting, pagination, collection SEO copy.
+3. **`cart.json`** — full cart page (the drawer already handles most journeys).
+4. **`search.json`** + predictive search dropdown.
+5. **`page.json` / `blog.json` / `article.json`** — content templates. Blog
+   posts are where you win long-tail search traffic like "how to choose
+   boxing glove weight".
