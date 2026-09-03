@@ -18,7 +18,8 @@
     "wishlist": {
       "title": "Wishlist",
       "added": "Added to wishlist",
-      "removed": "Removed from wishlist"
+      "removed": "Removed from wishlist",
+      "add": "Add {{ title }} to wishlist"
     }
   },
   "accessibility": {
@@ -81,6 +82,10 @@
       "free_shipping_remaining_html": "You are {{ amount }} away from free shipping",
       "free_shipping_remaining_js": "You are {amount} away from free shipping",
       "free_shipping_unlocked": "Free shipping unlocked"
+    },
+    "collection": {
+      "view_all": "View all",
+      "add_tabs": "Add a tab block and pick a collection to display products here."
     }
   },
   "products": {
@@ -92,7 +97,31 @@
         "label": "Quantity",
         "increase": "Increase quantity for {{ product }}",
         "decrease": "Decrease quantity for {{ product }}"
+      },
+      "quick_add": "Quick add",
+      "quick_view": "Quick view",
+      "quick_view_title": "Quick view of {{ title }}",
+      "add_to_cart_title": "Add {{ title }} to cart",
+      "choose_options": "Choose options",
+      "choose_options_title": "Choose options for {{ title }}",
+      "view_product": "View product",
+      "view_full_details": "View full details",
+      "unavailable": "Unavailable",
+      "badge_discount": "Flat {{ percent }}% off",
+      "only_left": "Only {{ quantity }} left",
+      "rating_label": "Rated {{ rating }} out of 5 stars",
+      "media": {
+        "gallery_thumbnail": "Load image {{ index }} into gallery view"
+      },
+      "price": {
+        "regular_price": "Regular price",
+        "sale_price": "Sale price",
+        "unit_price": "Unit price",
+        "from_price_html": "From {{ price }}"
       }
     }
+  },
+  "onboarding": {
+    "product_title": "Example product title"
   }
 }

@@ -1,0 +1,6 @@
+{%- comment -%}
+  Alternate product template rendered as a bare HTML fragment.
+  theme.js fetches /products/<handle>?view=quick-view and injects the
+  result into the quick view modal.
+{%- endcomment -%}
+{% layout none %}{% render 'quick-view', product: product %}

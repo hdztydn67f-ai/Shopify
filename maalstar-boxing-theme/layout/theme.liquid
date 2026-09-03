@@ -424,6 +424,7 @@
 
     <link rel="preload" as="style" href="{{ 'base.css' | asset_url }}">
     {{ 'base.css' | stylesheet_tag }}
+    {{ 'components.css' | stylesheet_tag }}
 
     {%- comment -%} Flip .no-js -> .js and pre-apply modal state before first paint (kills the flash). {%- endcomment -%}
     <script>
@@ -733,6 +734,35 @@
         </div>
       </div>
     {%- endif -%}
+
+    {%- comment -%} ==================== QUICK VIEW MODAL ==================== {%- endcomment -%}
+    <div
+      class="quick-view-modal"
+      id="QuickViewModal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'products.product.quick_view' | t }}"
+      aria-hidden="true"
+      data-quick-view-modal
+    >
+      <div class="quick-view-modal__backdrop" data-quick-view-close></div>
+      <div class="quick-view-modal__panel" tabindex="-1" data-quick-view-panel>
+        <button
+          type="button"
+          class="icon-button quick-view-modal__close"
+          data-quick-view-close
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {% render 'icon', name: 'close' %}
+        </button>
+        <div class="quick-view-modal__target" data-quick-view-target>
+          <div class="quick-view-modal__loading">
+            <span class="spinner" aria-hidden="true"></span>
+            <span class="visually-hidden">{{ 'general.loading' | t }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     {%- comment -%} ==================== COOKIE CONSENT ==================== {%- endcomment -%}
     {%- if settings.cookie_banner_enabled -%}

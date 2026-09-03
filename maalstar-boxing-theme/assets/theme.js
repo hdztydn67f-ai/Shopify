@@ -964,9 +964,327 @@
     }
   };
 
+
   /* ---------------------------------------------------------
-     11. WISHLIST (localStorage) — full UI ships with the
-         product card in Step 2; the counter lives here.
+     11b. TABBED COLLECTIONS
+     Panels are all in the DOM already — switching is pure
+     show/hide, so there is no network round trip and crawlers
+     still see every product.
+     --------------------------------------------------------- */
+  var Tabs = {
+    init: function (scope) {
+      $$('[data-tabs]', scope || document).forEach(function (root) {
+        if (root.dataset.tabsBound === 'true') return;
+        root.dataset.tabsBound = 'true';
+
+        var tabs = $$('[data-tab]', root);
+        var panels = $$('[data-tab-panel]', root);
+        if (!tabs.length) return;
+
+        function activate(index, setFocus) {
+          tabs.forEach(function (tab, i) {
+            var selected = i === index;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.setAttribute('tabindex', selected ? '0' : '-1');
+            tab.classList.toggle('is-active', selected);
+          });
+
+          panels.forEach(function (panel, i) {
+            panel.hidden = i !== index;
+            if (i === index) {
+              panel.classList.add('is-entering');
+              setTimeout(function () {
+                panel.classList.remove('is-entering');
+              }, 300);
+            }
+          });
+
+          if (setFocus) tabs[index].focus();
+
+          // Keep the active tab in view on narrow screens.
+          if (tabs[index].scrollIntoView) {
+            tabs[index].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          }
+
+          document.dispatchEvent(
+            new CustomEvent('tabs:changed', { detail: { root: root, index: index } })
+          );
+        }
+
+        tabs.forEach(function (tab, index) {
+          on(tab, 'click', function () {
+            activate(index, false);
+          });
+
+          on(tab, 'keydown', function (event) {
+            var next = null;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = tabs.length - 1;
+            if (next === null) return;
+            event.preventDefault();
+            activate(next, true);
+          });
+        });
+      });
+    }
+  };
+  MSB.tabs = Tabs;
+
+  /* ---------------------------------------------------------
+     11c. QUICK ADD (delegated, so it survives re-renders)
+     --------------------------------------------------------- */
+  var QuickAdd = {
+    init: function () {
+      if (this.bound) return;
+      this.bound = true;
+
+      on(document, 'click', function (event) {
+        var button = event.target.closest('[data-quick-add]');
+        if (!button) return;
+
+        event.preventDefault();
+        if (button.classList.contains('is-loading')) return;
+
+        var variantId = button.dataset.variantId;
+        if (!variantId) return;
+
+        button.classList.add('is-loading');
+        var spinner = $('.card__quick-add-spinner', button);
+        if (spinner) spinner.hidden = false;
+
+        Cart.add({ id: Number(variantId), quantity: 1 })
+          .then(function () {
+            button.classList.add('is-added');
+            var label = $('.card__quick-add-text', button);
+            var original = label ? label.textContent : '';
+            if (label) label.textContent = strings.added || 'Added';
+            setTimeout(function () {
+              button.classList.remove('is-added');
+              if (label) label.textContent = original;
+            }, 1800);
+          })
+          .catch(function () {
+            /* Cart.add already surfaced the error toast. */
+          })
+          .finally(function () {
+            button.classList.remove('is-loading');
+            if (spinner) spinner.hidden = true;
+          });
+      });
+    }
+  };
+
+  /* ---------------------------------------------------------
+     11d. QUICK VIEW
+     Fetches /products/<handle>?view=quick-view — a bare fragment
+     rendered by templates/product.quick-view.liquid.
+     --------------------------------------------------------- */
+  var QuickView = {
+    modal: null,
+    target: null,
+    isOpen: false,
+    cache: {},
+
+    init: function () {
+      this.modal = $('[data-quick-view-modal]');
+      if (!this.modal || this.bound) return;
+      this.bound = true;
+
+      this.target = $('[data-quick-view-target]', this.modal);
+      var self = this;
+
+      on(document, 'click', function (event) {
+        var trigger = event.target.closest('[data-quick-view]');
+        if (!trigger) return;
+        event.preventDefault();
+        self.open(trigger.dataset.productUrl);
+      });
+
+      $$('[data-quick-view-close]', this.modal).forEach(function (el) {
+        on(el, 'click', function () {
+          self.close();
+        });
+      });
+
+      on(document, 'keydown', function (event) {
+        if (event.key === 'Escape' && self.isOpen) self.close();
+      });
+    },
+
+    open: function (productUrl) {
+      if (!productUrl) return;
+      var self = this;
+
+      this.isOpen = true;
+      this.modal.classList.add('is-open');
+      this.modal.setAttribute('aria-hidden', 'false');
+      scrollLock.lock();
+      this.target.innerHTML =
+        '<div class="quick-view-modal__loading"><span class="spinner" aria-hidden="true"></span></div>';
+
+      var url = productUrl + (productUrl.indexOf('?') === -1 ? '?' : '&') + 'view=quick-view';
+
+      var request = this.cache[url]
+        ? Promise.resolve(this.cache[url])
+        : fetch(url, { credentials: 'same-origin' }).then(function (response) {
+            if (!response.ok) throw new Error('Quick view request failed');
+            return response.text();
+          });
+
+      request
+        .then(function (html) {
+          self.cache[url] = html;
+          self.target.innerHTML = html;
+          self.bindContent();
+          trapFocus($('[data-quick-view-panel]', self.modal));
+        })
+        .catch(function () {
+          Toast.show(strings.error || 'Could not load product', 'error');
+          self.close();
+          window.location.href = productUrl;
+        });
+    },
+
+    close: function () {
+      if (!this.isOpen) return;
+      this.isOpen = false;
+      this.modal.classList.remove('is-open');
+      this.modal.setAttribute('aria-hidden', 'true');
+      scrollLock.unlock();
+      releaseFocus(true);
+    },
+
+    bindContent: function () {
+      var content = $('[data-quick-view-content]', this.target);
+      if (!content) return;
+
+      var variants = [];
+      var json = $('[data-quick-view-variants]', content);
+      try {
+        variants = JSON.parse(json.textContent);
+      } catch (e) {
+        variants = [];
+      }
+
+      var form = $('[data-quick-view-form]', content);
+      var idInput = $('[data-quick-view-variant-id]', content);
+      var submit = $('[data-quick-view-submit]', content);
+      var submitText = $('[data-quick-view-submit-text]', content);
+      var priceHost = $('[data-quick-view-price]', content);
+      var image = $('[data-quick-view-image]', content);
+      var quantityInput = $('[data-quick-view-quantity]', content);
+      var selects = $$('[data-quick-view-option]', content);
+
+      function currentVariant() {
+        if (!selects.length) return variants[0];
+        var chosen = selects.map(function (select) {
+          return select.value;
+        });
+        return variants.filter(function (variant) {
+          return chosen.every(function (value, i) {
+            return variant.options[i] === value;
+          });
+        })[0];
+      }
+
+      function syncVariant() {
+        var variant = currentVariant();
+
+        if (!variant) {
+          submit.disabled = true;
+          if (submitText) submitText.textContent = strings.unavailable || 'Unavailable';
+          return;
+        }
+
+        idInput.value = variant.id;
+        submit.disabled = !variant.available;
+        if (submitText) {
+          submitText.textContent = variant.available
+            ? strings.addToCart || 'Add to cart'
+            : strings.soldOut || 'Sold out';
+        }
+
+        if (priceHost) {
+          var markup = '<div class="price' + (variant.compare_at_price > variant.price ? ' price--on-sale' : '') + '">';
+          if (variant.compare_at_price > variant.price) {
+            markup +=
+              '<s class="price__compare">' + formatMoney(variant.compare_at_price) + '</s>' +
+              '<span class="price__sale">' + formatMoney(variant.price) + '</span>';
+          } else {
+            markup += '<span class="price__regular">' + formatMoney(variant.price) + '</span>';
+          }
+          priceHost.innerHTML = markup + '</div>';
+        }
+
+        if (image && variant.featured_image && variant.featured_image.src) {
+          image.src = variant.featured_image.src.replace(/(\.[^.?]*)(\?|$)/, '_800x$1$2');
+          image.removeAttribute('srcset');
+        }
+
+        // Reflect the selection in the URL bar for shareable state.
+        if (window.history && window.history.replaceState) {
+          try {
+            var url = new URL(window.location.href);
+            url.searchParams.set('variant', variant.id);
+            window.history.replaceState({}, '', url.toString());
+          } catch (e) {}
+        }
+      }
+
+      selects.forEach(function (select) {
+        on(select, 'change', syncVariant);
+      });
+
+      on($('[data-qv-quantity-minus]', content), 'click', function () {
+        quantityInput.value = Math.max(1, parseInt(quantityInput.value, 10) - 1);
+      });
+      on($('[data-qv-quantity-plus]', content), 'click', function () {
+        quantityInput.value = parseInt(quantityInput.value, 10) + 1;
+      });
+
+      $$('[data-quick-view-thumb]', content).forEach(function (thumb) {
+        on(thumb, 'click', function () {
+          if (!image) return;
+          image.src = thumb.dataset.image;
+          image.removeAttribute('srcset');
+          $$('[data-quick-view-thumb]', content).forEach(function (t) {
+            t.classList.toggle('is-active', t === thumb);
+          });
+        });
+      });
+
+      var self = this;
+      on(form, 'submit', function (event) {
+        event.preventDefault();
+        if (submit.disabled) return;
+
+        submit.classList.add('is-loading');
+        var spinner = $('[data-quick-view-spinner]', content);
+        if (spinner) spinner.hidden = false;
+
+        Cart.add({
+          id: Number(idInput.value),
+          quantity: parseInt(quantityInput.value, 10) || 1
+        })
+          .then(function () {
+            self.close();
+          })
+          .catch(function () {})
+          .finally(function () {
+            submit.classList.remove('is-loading');
+            if (spinner) spinner.hidden = true;
+          });
+      });
+
+      syncVariant();
+    }
+  };
+  MSB.quickView = QuickView;
+
+  /* ---------------------------------------------------------
+     12. WISHLIST (localStorage)
      --------------------------------------------------------- */
   var Wishlist = {
     key: 'msb:wishlist',
@@ -1010,14 +1328,46 @@
       });
     },
 
+    // Reflects saved state on every card currently in the DOM.
+    syncButtons: function (scope) {
+      var self = this;
+      $$('[data-wishlist-toggle]', scope || document).forEach(function (button) {
+        button.setAttribute('aria-pressed', self.has(button.dataset.productId) ? 'true' : 'false');
+      });
+    },
+
     init: function () {
+      if (!this.bound) {
+        this.bound = true;
+        var self = this;
+
+        on(document, 'click', function (event) {
+          var button = event.target.closest('[data-wishlist-toggle]');
+          if (!button) return;
+          event.preventDefault();
+
+          var added = self.toggle(button.dataset.productId);
+          button.setAttribute('aria-pressed', added ? 'true' : 'false');
+          button.classList.add('is-bumped');
+          setTimeout(function () {
+            button.classList.remove('is-bumped');
+          }, 450);
+
+          Toast.show(
+            added ? strings.wishlistAdded || 'Added to wishlist' : strings.wishlistRemoved || 'Removed from wishlist',
+            added ? 'success' : null
+          );
+        });
+      }
+
       this.renderCount();
+      this.syncButtons();
     }
   };
   MSB.wishlist = Wishlist;
 
   /* ---------------------------------------------------------
-     12. BOOT
+     13. BOOT
      --------------------------------------------------------- */
   function init() {
     AgeGate.expireIfNeeded();
@@ -1026,6 +1376,9 @@
     CookieBanner.init();
     Header.init();
     MobileNav.init();
+    Tabs.init();
+    QuickAdd.init();
+    QuickView.init();
     Wishlist.init();
   }
 
@@ -1036,9 +1389,11 @@
   }
 
   // Theme editor: re-bind after a section is re-rendered.
-  document.addEventListener('shopify:section:load', function () {
+  document.addEventListener('shopify:section:load', function (event) {
     Header.init();
     MobileNav.init();
+    Tabs.init(event.target);
     Wishlist.renderCount();
+    Wishlist.syncButtons(event.target);
   });
 })();

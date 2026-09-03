@@ -169,8 +169,12 @@
       {% render 'icon', name: 'menu' %}
     </button>
 
-    {%- comment -%} Logo: h1 on the homepage for on-page SEO hierarchy {%- endcomment -%}
-    {%- if request.page_type == 'index' -%}<h1 class="header__logo">{%- else -%}<div class="header__logo">{%- endif -%}
+    {%- comment -%}
+      The logo is never an <h1>. On the homepage the hero heading carries the
+      single keyword-bearing <h1>; on every other template the page's own
+      main heading does. This keeps one h1 per page.
+    {%- endcomment -%}
+    <div class="header__logo">
       <a href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }} &mdash; {{ 'general.home' | t }}">
         {%- if section.settings.logo != blank -%}
           {{
@@ -196,7 +200,7 @@
           </span>
         {%- endif -%}
       </a>
-    {%- if request.page_type == 'index' -%}</h1>{%- else -%}</div>{%- endif -%}
+    </div>
 
     {%- comment -%} Desktop navigation {%- endcomment -%}
     <nav class="header__nav" aria-label="{{ 'sections.header.primary_navigation' | t }}">

@@ -12,8 +12,8 @@ SEO-hardened markup.
 | Step | Scope | Status |
 | --- | --- | --- |
 | **1** | `theme.liquid`, global CSS variables, `header.liquid` (+ top bar), cart drawer, age gate, cookie banner | ✅ Done |
-| 2 | Hero banner, tabbed product grid, `product-card.liquid` | Pending |
-| 3 | Full `theme.js` (tabs, quick add, quick view), split banner, newsletter | Pending |
+| **2** | Hero banner, tabbed product grid, `product-card.liquid`, quick view, quick add, wishlist | ✅ Done |
+| 3 | Secondary split banner, newsletter section | Pending |
 | 4 | Footer section, policies, payment icons | Pending |
 
 ---
@@ -24,7 +24,9 @@ SEO-hardened markup.
 maalstar-boxing-theme/
 ├── assets/
 │   ├── base.css              # Design system: layout, buttons, fields, header, drawer, modals
-│   └── theme.js              # Ajax cart, drawer, age gate, cookie banner, header, wishlist
+│   ├── components.css        # Hero, tabs, product grid/card, price, quick view modal
+│   └── theme.js              # Ajax cart, drawer, age gate, cookie banner, header, tabs,
+│                             # quick add, quick view, wishlist
 ├── config/
 │   ├── settings_schema.json  # Theme editor settings (colors, type, cart, age gate, SEO)
 │   └── settings_data.json    # Default values for a fresh install
@@ -34,15 +36,22 @@ maalstar-boxing-theme/
 │   └── en.default.json       # All UI strings (translatable)
 ├── sections/
 │   ├── header.liquid         # Top bar + sticky header + mobile nav
+│   ├── hero-banner.liquid    # Full-bleed image/video hero, carries the H1
+│   ├── tabbed-products.liquid# "Trending Now" tabs — no reload, no refetch
 │   ├── header-group.json     # Section group rendered by {% sections 'header-group' %}
 │   └── footer-group.json     # Empty until Step 4
 ├── snippets/
 │   ├── icon-sprite.liquid    # One inline SVG sprite for every icon
 │   ├── icon.liquid           # {% render 'icon', name: 'cart' %}
+│   ├── product-card.liquid   # Badges, hover image, wishlist, quick view, quick add
+│   ├── price.liquid          # Compare-at + unit pricing
+│   ├── quick-view.liquid     # Quick view body with variant picker
 │   ├── cart-drawer-item.liquid
 │   └── free-shipping-bar.liquid
 └── templates/
-    ├── *.json                # Placeholders — filled in Steps 2–4
+    ├── index.json            # Hero + Trending Now wired up
+    ├── product.quick-view.liquid  # Bare fragment fetched by the quick view modal
+    ├── *.json                # Remaining placeholders — filled in Steps 3–4
     └── robots.txt.liquid
 ```
 
@@ -113,3 +122,20 @@ and `templates/index.json` for a theme to upload.
 hreflang tags are intentionally *not* hand-written — Shopify emits them inside
 `content_for_header` for every published market/language, and duplicating them
 causes conflicting signals.
+
+---
+
+## Merchandising hooks (Step 2)
+
+- **Custom ribbon** — tag a product `badge:Fighter Approved` and that text
+  renders as a gold ribbon on its card. Any tag starting with `badge:` works.
+- **Low stock urgency** — cards automatically show "Only N left" when a
+  variant tracks inventory, denies overselling, and has 5 or fewer units.
+- **Sale badge** — "Flat N% off" is calculated from compare-at price; set a
+  compare-at price on the variant and the badge appears with the crossed-out
+  price.
+- **Quick add vs. choose options** — single-variant products add straight to
+  the cart via Ajax; multi-variant products open the quick view so the
+  customer picks a size/colour without leaving the grid.
+- **Wishlist** — stored per browser in `localStorage` under `msb:wishlist`.
+  Point the header wishlist icon at a page in **Theme settings → Header**.

@@ -1,4 +1,58 @@
 {
-  "sections": {},
-  "order": []
+  "sections": {
+    "hero": {
+      "type": "hero-banner",
+      "blocks": {
+        "trust-1": { "type": "trust", "settings": { "text": "Free worldwide shipping over $150", "icon": "truck" } },
+        "trust-2": { "type": "trust", "settings": { "text": "Handmade genuine leather", "icon": "check" } },
+        "trust-3": { "type": "trust", "settings": { "text": "30-day returns", "icon": "lock" } }
+      },
+      "block_order": ["trust-1", "trust-2", "trust-3"],
+      "settings": {
+        "overlay_opacity": 55,
+        "overlay_color": "#0B0B0C",
+        "show_grain": true,
+        "height_desktop": 85,
+        "height_mobile": 80,
+        "content_position": "left",
+        "text_alignment": "left",
+        "text_color": "#FFFFFF",
+        "show_scroll_cue": true,
+        "eyebrow": "Premium fight equipment",
+        "heading": "BUILT FOR THE FIGHT",
+        "heading_tag": "h1",
+        "subheading": "<p>Premium boxing equipment designed for fighters who refuse to compromise</p>",
+        "aria_label": "Hero banner",
+        "button_label": "SHOP NOW"
+      }
+    },
+    "trending": {
+      "type": "tabbed-products",
+      "blocks": {
+        "tab-1": { "type": "tab", "settings": { "label": "Best Sellers", "products_to_show": 8 } },
+        "tab-2": { "type": "tab", "settings": { "label": "Boxing Sets", "products_to_show": 8 } },
+        "tab-3": { "type": "tab", "settings": { "label": "Winning", "products_to_show": 8 } }
+      },
+      "block_order": ["tab-1", "tab-2", "tab-3"],
+      "settings": {
+        "eyebrow": "Fighter favourites",
+        "heading": "TRENDING NOW",
+        "subheading": "<p>The gear our athletes reach for first.</p>",
+        "heading_alignment": "center",
+        "background_color": "#0B0B0C",
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "products_to_show": 8,
+        "image_ratio": "square",
+        "show_vendor": false,
+        "show_rating": false,
+        "show_second_image": true,
+        "show_wishlist": true,
+        "show_quick_view": true,
+        "show_quick_add": true,
+        "show_view_all": true
+      }
+    }
+  },
+  "order": ["hero", "trending"]
 }
