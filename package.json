@@ -1,0 +1,15 @@
+{
+  "name": "shopify-theme",
+  "private": true,
+  "description": "Shopify theme development",
+  "scripts": {
+    "shopify": "shopify",
+    "dev": "shopify theme dev",
+    "pull": "shopify theme pull",
+    "push": "shopify theme push",
+    "check": "shopify theme check"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^4.8.0"
+  }
+}
