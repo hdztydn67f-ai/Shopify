@@ -17,3 +17,9 @@ test-product-diagnostic, rfd, bb, v-c, gfd — junk drafts, never real pages.
 
 ## Not fixable via API (live theme is write-protected)
 - snippets/hvc-seo-global.liquid: MerchantReturnPolicy applicableCountry is "AU"; should match real markets (US, GB, CA, EU) and returnFees must match the real refund policy.
+
+## Round 2 — after Search Console screenshot (1,223 x 404)
+- Root cause: de/es/fr storefront languages are published, so every old product URL also 404'd at /de/, /es/, /fr/ (~304 x 4).
+- Imported 1,688 locale-prefixed redirects (/de, /es, /fr, /it) mirroring all 422 base redirects -> total 2,110 redirects.
+- Fixed 2 blog articles linking through redirects (lace-up vs hook & loop; what size gloves) and corrected the size range to 6oz-18oz.
+- Open: ~155 products have OUTDATED fr/de/es translations (old titles, 8-16oz, links to old collection handles). Likely a main driver of "Crawled - currently not indexed" (778).
