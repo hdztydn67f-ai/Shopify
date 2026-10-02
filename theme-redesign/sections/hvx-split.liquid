@@ -2,7 +2,7 @@
 <section class="hvx hvx-sec{% if section.settings.dark %} hvx-sec--dark{% endif %}">
   <div class="hvx-wrap hvx-split">
     <div class="hvx-split__media" {% if section.settings.flip %}style="order:2"{% endif %}>
-      {%- if im -%}{{ im | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '600,900,1200', sizes: '(min-width:900px) 50vw, 100vw', alt: section.settings.image_alt | default: section.settings.heading }}{%- endif -%}
+      {%- if im -%}{%- assign hvx_alt = section.settings.image_alt | default: section.settings.heading -%}{{ im | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '600,900,1200', sizes: '(min-width:900px) 50vw, 100vw', alt: hvx_alt }}{%- endif -%}
     </div>
     <div>
       {%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}

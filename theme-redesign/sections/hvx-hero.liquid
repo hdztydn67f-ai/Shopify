@@ -26,7 +26,7 @@
     </div>
     <div class="hvx-hero__media">
       {%- if img -%}
-        {{ img | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,720,960,1200,1400', sizes: '(min-width:900px) 52vw, 92vw', alt: section.settings.image_alt | default: img.alt | default: fp.title }}
+        {%- assign hvx_alt = section.settings.image_alt | default: img.alt | default: fp.title -%}{{ img | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,720,960,1200,1400', sizes: '(min-width:900px) 52vw, 92vw', alt: hvx_alt }}
       {%- endif -%}
       {%- if fp != blank -%}
         <a class="hvx-hero__tag" href="{{ fp.url }}"><small>{{ section.settings.tag_label | default: 'Best seller' }}</small><b>{{ fp.title }}</b><span>{% if fp.price_varies %}From {% endif %}{{ fp.price | money }}</span></a>

@@ -30,7 +30,7 @@
         <span class="hvx-badge hvx-badge--gold">{{ badge }}</span>
       {%- endif -%}
       {%- if img -%}
-        {{ img | image_url: width: 900 | image_tag: loading: loading, widths: '320,480,640,900', sizes: '(min-width:1200px) 320px, (min-width:990px) 25vw, (min-width:550px) 45vw, 64vw', alt: img.alt | default: product.title }}
+        {%- assign hvx_alt = img.alt | default: product.title -%}{{ img | image_url: width: 900 | image_tag: loading: loading, widths: '320,480,640,900', sizes: '(min-width:1200px) 320px, (min-width:990px) 25vw, (min-width:550px) 45vw, 64vw', alt: hvx_alt }}
         {%- if img2 -%}{{ img2 | image_url: width: 900 | image_tag: loading: 'lazy', widths: '320,480,640,900', sizes: '(min-width:990px) 25vw, 45vw', alt: '' }}{%- endif -%}
       {%- endif -%}
     </div>

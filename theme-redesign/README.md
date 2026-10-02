@@ -27,3 +27,11 @@ New features: scrolling ticker, quick add-to-cart with size select on every card
 hover image swap, scroll-reveal (assets/hvx.js, progressive enhancement), white image stages with multiply blending,
 responsive srcset up to 1400px.
 Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US spelling, added missing video alt.
+
+## v3 fixes (2026-10-02)
+- Bug: filters chained after image_tag (e.g. `alt: x | default: y | append: ' boxing gloves'`) were applied to the
+  <img> HTML, leaking "boxing gloves" text beside brand images and dropping alt fallbacks. All alts now pre-assigned.
+- Images fill their frames (object-fit: cover, no padding) so grey-background product photos no longer look boxed/half size.
+- Mosaic: caption sits under the photo; mobile = big tile full width + 2x2 grid. Brands: 2 columns on mobile.
+- Product page extras: At-a-glance specs, accepted payment icons, trust list, WhatsApp help link (prefilled with product),
+  glove size guide / shoe sizing tips, related-collection chips. Hid SKU + product type, disabled cluttered "Collection" tab.

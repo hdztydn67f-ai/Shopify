@@ -6,7 +6,7 @@
     <div class="hvx-posts">
       {%- for a in bl.articles limit: 3 -%}
         <a class="hvx-post" href="{{ a.url }}">
-          <div class="hvx-post__img">{%- if a.image -%}{{ a.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', sizes: '(min-width:750px) 33vw, 100vw', alt: a.image.alt | default: a.title }}{%- else -%}<span class="hvx-post__ph">{{ a.title }}</span>{%- endif -%}</div>
+          <div class="hvx-post__img">{%- if a.image -%}{%- assign hvx_alt = a.image.alt | default: a.title -%}{{ a.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', sizes: '(min-width:750px) 33vw, 100vw', alt: hvx_alt }}{%- else -%}<span class="hvx-post__ph">{{ a.title }}</span>{%- endif -%}</div>
           <h3>{{ a.title }}</h3>
           <p>{{ a.excerpt_or_content | strip_html | truncatewords: 22 }}</p>
         </a>

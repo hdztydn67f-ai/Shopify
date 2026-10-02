@@ -9,7 +9,7 @@
         {%- for m in imgs limit: 5 -%}<input type="radio" name="spot-{{ section.id }}" id="spot-{{ section.id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>{%- endfor -%}
         <div class="hvx-spot__main">
           {%- for m in imgs limit: 5 -%}
-            <div class="hvx-spot__slide">{{ m.preview_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '480,720,960,1200', sizes: '(min-width:900px) 50vw, 92vw', alt: m.alt | default: p.title }}</div>
+            <div class="hvx-spot__slide">{%- assign hvx_alt = m.alt | default: p.title -%}{{ m.preview_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '480,720,960,1200', sizes: '(min-width:900px) 50vw, 92vw', alt: hvx_alt }}</div>
           {%- endfor -%}
         </div>
         {%- if imgs.size > 1 -%}

@@ -9,7 +9,7 @@
         {%- if c == blank -%}{%- continue -%}{%- endif -%}
         {%- assign im = b.settings.image | default: b.settings.product.featured_image | default: c.products.first.featured_image | default: c.image -%}
         <a class="hvx-brand hvx-reveal" href="{{ c.url }}" {{ b.shopify_attributes }}>
-          <span class="hvx-brand__img">{%- if im -%}{{ im | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360,540,720,900', sizes: '(min-width:750px) 33vw, 42vw', alt: b.settings.title | default: c.title | append: ' boxing gloves' }}{%- endif -%}</span>
+          <span class="hvx-brand__img">{%- if im -%}{%- assign hvx_alt = im.alt | default: b.settings.product.title | default: b.settings.title | default: c.title -%}{{ im | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360,540,720,900', sizes: '(min-width:750px) 33vw, 42vw', alt: hvx_alt }}{%- endif -%}</span>
           <span class="hvx-brand__txt">
             <span class="hvx-brand__name">{{ b.settings.title | default: c.title }}</span>
             <span class="hvx-brand__meta">{{ b.settings.text }}</span>
