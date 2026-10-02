@@ -1,6 +1,6 @@
 <section class="hvx hvx-sec">
   <div class="hvx-wrap">
-    <div class="hvx-head" style="justify-content:center;text-align:center"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
+    <div class="hvx-head hvx-reveal" style="justify-content:center;text-align:center"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
     <div class="hvx-faq">
       {%- for b in section.blocks -%}
         <details {{ b.shopify_attributes }}{% if forloop.first %} open{% endif %}><summary>{{ b.settings.q }}</summary><div class="hvx-faq__a">{{ b.settings.a }}</div></details>

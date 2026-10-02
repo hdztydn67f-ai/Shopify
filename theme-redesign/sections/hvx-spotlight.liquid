@@ -1,0 +1,53 @@
+{%- assign p = section.settings.product -%}
+{%- if p != blank -%}
+{%- assign imgs = p.media | where: 'media_type', 'image' -%}
+<section class="hvx hvx-sec{% if section.settings.mist %} hvx-sec--mist{% endif %}">
+  <div class="hvx-wrap">
+    <div class="hvx-head hvx-head--center hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
+    <div class="hvx-spot" data-hvx-spot>
+      <div class="hvx-spot__gallery hvx-reveal">
+        {%- for m in imgs limit: 5 -%}<input type="radio" name="spot-{{ section.id }}" id="spot-{{ section.id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>{%- endfor -%}
+        <div class="hvx-spot__main">
+          {%- for m in imgs limit: 5 -%}
+            <div class="hvx-spot__slide">{{ m.preview_image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '480,720,960,1200', sizes: '(min-width:900px) 50vw, 92vw', alt: m.alt | default: p.title }}</div>
+          {%- endfor -%}
+        </div>
+        {%- if imgs.size > 1 -%}
+          <div class="hvx-spot__thumbs">
+            {%- for m in imgs limit: 5 -%}<label for="spot-{{ section.id }}-{{ forloop.index }}" aria-label="Show image {{ forloop.index }}">{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}</label>{%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+      <div class="hvx-reveal">
+        <span class="hvx-spot__vendor">{{ p.vendor }}</span>
+        <h3><a href="{{ p.url }}" style="color:inherit;text-decoration:none">{{ p.title }}</a></h3>
+        <p class="hvx-spot__price"><span data-hvx-price>{{ p.selected_or_first_available_variant.price | money }}</span>{% if p.compare_at_price > p.price %}<s>{{ p.compare_at_price | money }}</s>{% endif %}</p>
+        <p class="hvx-spot__desc">{{ section.settings.text | default: p.description | strip_html | truncatewords: 40 }}</p>
+        {%- if p.available -%}
+          {%- form 'product', p, class: 'hvx-spot__form' -%}
+            {%- if p.has_only_default_variant -%}
+              <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}">
+            {%- else -%}
+              <label for="spot-v-{{ section.id }}">{{ p.options | join: ' / ' }}</label>
+              <select id="spot-v-{{ section.id }}" name="id" data-hvx-variant>
+                {%- for v in p.variants -%}<option value="{{ v.id }}" data-price="{{ v.price | money | escape }}"{% unless v.available %} disabled{% endunless %}{% if v == p.selected_or_first_available_variant %} selected{% endif %}>{{ v.title }}{% unless v.available %} (sold out){% endunless %}</option>{%- endfor -%}
+              </select>
+            {%- endif -%}
+            <button type="submit" class="hvx-btn hvx-btn--red">Add to cart</button>
+          {%- endform -%}
+        {%- else -%}
+          <a class="hvx-btn hvx-btn--dark" href="{{ p.url }}">View product</a>
+        {%- endif -%}
+        {%- if section.blocks.size > 0 -%}<ul class="hvx-spot__perks">{%- for b in section.blocks -%}<li {{ b.shopify_attributes }}>{{ b.settings.text }}</li>{%- endfor -%}</ul>{%- endif -%}
+        <p style="margin:18px 0 0"><a class="hvx-link" href="{{ p.url }}">Full details & size guide</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"Havoc product spotlight","tag":"div","class":"hvx-s-spot",
+"settings":[{"type":"product","id":"product","label":"Product"},{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Customer favorite"},{"type":"text","id":"heading","label":"Heading","default":"Our best-selling boot"},{"type":"textarea","id":"text","label":"Short pitch (optional)"},{"type":"checkbox","id":"mist","label":"Grey background","default":false}],
+"blocks":[{"type":"perk","name":"Perk","limit":5,"settings":[{"type":"text","id":"text","label":"Text"}]}],
+"presets":[{"name":"Havoc product spotlight"}]}
+{% endschema %}

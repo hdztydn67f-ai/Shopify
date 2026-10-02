@@ -36,6 +36,7 @@
         {% render 'variable' %}
         {% render 'global-style' %}
         {{ 'hvx.css' | asset_url | stylesheet_tag }}
+        <script src="{{ 'hvx.js' | asset_url }}" defer></script>
         {% render 'global-script' %}
 
         <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>

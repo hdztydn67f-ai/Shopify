@@ -1,0 +1,31 @@
+{%- if section.blocks.size > 0 -%}
+<section class="hvx hvx-sec{% if section.settings.mist %} hvx-sec--mist{% endif %}">
+  <div class="hvx-wrap">
+    <div class="hvx-head hvx-head--center hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div></div>
+    <div class="hvx-tabs">
+      {%- for b in section.blocks -%}<input type="radio" name="tabs-{{ section.id }}" id="tab-{{ section.id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>{%- endfor -%}
+      <nav class="hvx-tabs__nav" aria-label="{{ section.settings.heading | escape }}">
+        {%- for b in section.blocks -%}<label for="tab-{{ section.id }}-{{ forloop.index }}" {{ b.shopify_attributes }}>{{ b.settings.title | default: b.settings.collection.title }}</label>{%- endfor -%}
+      </nav>
+      {%- for b in section.blocks -%}
+        {%- assign c = b.settings.collection -%}
+        <div class="hvx-tabs__panel">
+          {%- if c != blank -%}
+            <h3 class="hvx-sr">{{ b.settings.title | default: c.title }}</h3>
+            <div class="hvx-grid">
+              {%- for p in c.products limit: section.settings.limit -%}{%- render 'hvx-card', product: p, prefix: section.id -%}{%- endfor -%}
+            </div>
+            <div class="hvx-tabs__more"><a class="hvx-btn hvx-btn--line" href="{{ c.url }}">Shop all {{ b.settings.title | default: c.title }}</a></div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+{% schema %}
+{"name":"Havoc product tabs","tag":"div","class":"hvx-s-tabs",
+"settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Shop the range"},{"type":"text","id":"heading","label":"Heading","default":"Find your gear"},{"type":"textarea","id":"text","label":"Text"},{"type":"range","id":"limit","label":"Products per tab","min":4,"max":12,"step":4,"default":8},{"type":"checkbox","id":"mist","label":"Grey background","default":false}],
+"blocks":[{"type":"tab","name":"Tab","limit":5,"settings":[{"type":"collection","id":"collection","label":"Collection"},{"type":"text","id":"title","label":"Tab label"}]}],
+"presets":[{"name":"Havoc product tabs"}]}
+{% endschema %}

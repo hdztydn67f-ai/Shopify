@@ -1,4 +1,7 @@
-{%- comment -%} Havoc product card. Usage: render 'hvx-card', product: p, eager: false {%- endcomment -%}
+{%- comment -%}
+  Havoc product card v2: white image stage, hover image swap, quick add with size select.
+  render 'hvx-card', product: p, prefix: section.id, badge: ''
+{%- endcomment -%}
 {%- liquid
   assign img = product.featured_media.preview_image | default: product.featured_image
   assign img2 = product.media[1].preview_image
@@ -14,29 +17,54 @@
       break
     endif
   endfor
+  assign uid = prefix | default: 'c' | append: '-' | append: product.id
 -%}
-<a class="hvx-card" href="{{ product.url }}">
-  <div class="hvx-card__img">
-    {%- if product.compare_at_price > product.price -%}
-      <span class="hvx-badge">Save {{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}%</span>
-    {%- elsif product.available == false -%}
-      <span class="hvx-badge hvx-badge--soft">Sold out</span>
+<div class="hvx-card">
+  <a class="hvx-card__link" href="{{ product.url }}">
+    <div class="hvx-card__img">
+      {%- if product.compare_at_price > product.price -%}
+        <span class="hvx-badge">-{{ product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price }}%</span>
+      {%- elsif product.available == false -%}
+        <span class="hvx-badge hvx-badge--soft">Sold out</span>
+      {%- elsif badge != blank -%}
+        <span class="hvx-badge hvx-badge--gold">{{ badge }}</span>
+      {%- endif -%}
+      {%- if img -%}
+        {{ img | image_url: width: 900 | image_tag: loading: loading, widths: '320,480,640,900', sizes: '(min-width:1200px) 320px, (min-width:990px) 25vw, (min-width:550px) 45vw, 64vw', alt: img.alt | default: product.title }}
+        {%- if img2 -%}{{ img2 | image_url: width: 900 | image_tag: loading: 'lazy', widths: '320,480,640,900', sizes: '(min-width:990px) 25vw, 45vw', alt: '' }}{%- endif -%}
+      {%- endif -%}
+    </div>
+    <div class="hvx-card__body">
+      <span class="hvx-card__brand">{{ product.vendor }}</span>
+      <h3 class="hvx-card__title">{{ product.title }}</h3>
+      {%- if size_opt and size_opt.values.size > 1 -%}
+        <span class="hvx-card__meta">{{ size_opt.name }}: {{ size_opt.values.first }} – {{ size_opt.values.last }}</span>
+      {%- endif -%}
+      <span class="hvx-card__price">
+        {%- if product.price_varies -%}From {% endif -%}
+        <span class="{% if product.compare_at_price > product.price %}hvx-sale{% endif %}">{{ product.price | money }}</span>
+        {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}
+      </span>
+    </div>
+  </a>
+  {%- if product.available -%}
+    {%- if product.has_only_default_variant -%}
+      {%- form 'product', product, class: 'hvx-qa hvx-qa--full' -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" aria-label="Add {{ product.title | escape }} to cart">Add to cart</button>
+      {%- endform -%}
+    {%- elsif product.variants.size <= 40 -%}
+      {%- form 'product', product, class: 'hvx-qa' -%}
+        <label class="hvx-sr" for="qa-{{ uid }}">Choose option for {{ product.title | escape }}</label>
+        <select id="qa-{{ uid }}" name="id">
+          {%- for v in product.variants -%}
+            {%- if v.available -%}<option value="{{ v.id }}"{% if v == product.selected_or_first_available_variant %} selected{% endif %}>{{ v.title }}{% if product.price_varies %} · {{ v.price | money }}{% endif %}</option>{%- endif -%}
+          {%- endfor -%}
+        </select>
+        <button type="submit" aria-label="Add {{ product.title | escape }} to cart">Add</button>
+      {%- endform -%}
+    {%- else -%}
+      <div class="hvx-qa hvx-qa--full"><a href="{{ product.url }}">Choose options</a></div>
     {%- endif -%}
-    {%- if img -%}
-      {{ img | image_url: width: 600 | image_tag: loading: loading, widths: '300,450,600', sizes: '(min-width:990px) 25vw, (min-width:550px) 42vw, 72vw', alt: img.alt | default: product.title }}
-      {%- if img2 -%}{{ img2 | image_url: width: 600 | image_tag: loading: 'lazy', widths: '300,450,600', sizes: '(min-width:990px) 25vw, 42vw', alt: '' }}{%- endif -%}
-    {%- endif -%}
-  </div>
-  <div class="hvx-card__body">
-    <span class="hvx-card__brand">{{ product.vendor }}</span>
-    <h3 class="hvx-card__title">{{ product.title }}</h3>
-    {%- if size_opt and size_opt.values.size > 1 -%}
-      <span class="hvx-card__meta">{{ size_opt.values.first }} – {{ size_opt.values.last }}{% if product.options.size > 1 %} · {{ product.options.size }} options{% endif %}</span>
-    {%- endif -%}
-    <span class="hvx-card__price">
-      {%- if product.price_varies -%}From {% endif -%}
-      <span class="{% if product.compare_at_price > product.price %}hvx-sale{% endif %}">{{ product.price | money }}</span>
-      {%- if product.compare_at_price > product.price -%}<s>{{ product.compare_at_price | money }}</s>{%- endif -%}
-    </span>
-  </div>
-</a>
+  {%- endif -%}
+</div>

@@ -1,0 +1,14 @@
+{%- if section.blocks.size > 0 -%}
+<div class="hvx hvx-marquee" role="region" aria-label="Store highlights">
+  <div class="hvx-marquee__track">
+    {%- for i in (1..2) -%}
+      {%- for b in section.blocks -%}<span {% if i == 2 %}aria-hidden="true"{% else %}{{ b.shopify_attributes }}{% endif %}>{{ b.settings.text }}</span>{%- endfor -%}
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+{"name":"Havoc ticker","tag":"div","class":"hvx-s-marquee",
+"blocks":[{"type":"t","name":"Message","settings":[{"type":"text","id":"text","label":"Text"}]}],
+"presets":[{"name":"Havoc ticker"}]}
+{% endschema %}

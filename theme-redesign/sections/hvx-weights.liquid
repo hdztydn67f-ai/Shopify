@@ -1,7 +1,7 @@
 {%- assign base = section.settings.collection.url | default: '/collections/boxing-gloves' -%}
-<section class="hvx hvx-sec hvx-sec--dark">
+<section class="hvx hvx-sec hvx-sec--mist">
   <div class="hvx-wrap">
-    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
+    <div class="hvx-head hvx-head--center hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
     <div class="hvx-weights">
       {%- for b in section.blocks -%}
         <a class="hvx-weight" href="{{ base }}?filter.v.option.size={{ b.settings.oz | url_encode }}" rel="nofollow" {{ b.shopify_attributes }}><b>{{ b.settings.oz }}</b><span>{{ b.settings.use }}</span></a>
