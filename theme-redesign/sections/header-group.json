@@ -411,8 +411,8 @@
       "type": "hvx-countdown",
       "settings": {
         "enabled": true,
-        "start": "2026-11-17 00:00 -0500",
-        "end": "2026-11-30 23:59 -0500",
+        "start": "2026-10-02 00:00 -0400",
+        "end": "2026-10-16 23:59 -0400",
         "teaser_days": 3,
         "before": "Black Friday Sale · up to 40% off · starts in",
         "during": "Black Friday Sale · up to 40% off · ends in",
