@@ -27,6 +27,21 @@
   <div class="hvx-wrap">
     <div class="hvx-pdp__grid">
       <div class="hvx-pdp__card">
+        {%- assign fs_th = section.settings.free_ship | times: 100 -%}
+        {%- if fs_th > 0 -%}
+          {%- assign fs_same = false -%}{%- if cart.currency.iso_code == shop.currency -%}{%- assign fs_same = true -%}{%- endif -%}
+          <div class="hvx-ship" data-hvx-ship data-th="{{ fs_th }}" data-same="{{ fs_same }}" data-fmt="{{ shop.money_format | strip_html | escape }}">
+            <p class="hvx-ship__msg" data-msg>
+              {%- if fs_same and product.price >= fs_th -%}This item ships free with tracking.
+              {%- elsif fs_same and cart.total_price >= fs_th -%}Your order ships free with tracking.
+              {%- elsif fs_same -%}Spend <b>{{ fs_th | minus: cart.total_price | money }}</b> more for free tracked shipping.
+              {%- else -%}Free tracked shipping on orders over {{ fs_th | money_without_trailing_zeros }}.{%- endif -%}
+            </p>
+            {%- if fs_same -%}{%- assign fs_pct = cart.total_price | times: 100 | divided_by: fs_th -%}{%- if product.price >= fs_th -%}{%- assign fs_pct = 100 -%}{%- endif -%}{%- if fs_pct > 100 -%}{%- assign fs_pct = 100 -%}{%- endif -%}
+              <div class="hvx-ship__bar" role="progressbar" aria-label="Progress to free shipping" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ fs_pct }}"><span data-bar style="width:{{ fs_pct }}%"></span></div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
         <h2 class="hvx-pdp__h">Details</h2>
         <dl class="hvx-specs">
           {%- if product.vendor != blank -%}<div><dt>Brand</dt><dd>{{ product.vendor }}</dd></div>{%- endif -%}
@@ -59,6 +74,59 @@
         </ul>
       </div>
     </div>
+
+    {%- liquid
+      assign tt = product.title | downcase
+      assign kit_a = ''
+      assign kit_b = ''
+      assign kit_h = ''
+      if tt contains 'set' or tt contains 'kit' or tt contains 'bundle'
+        assign kit_a = 'boxing-shoes'
+        assign kit_h = 'Finish the kit: boxing shoes'
+      elsif tt contains 'glove'
+        assign kit_a = 'boxing-head-guards'
+        assign kit_b = 'boxing-groin-guards'
+        assign kit_h = 'Complete your kit: headgear & groin guards'
+      elsif tt contains 'shoe' or tt contains 'boot'
+        assign kit_a = 'boxing-gloves'
+        assign kit_h = 'Complete your kit: boxing gloves'
+      elsif tt contains 'headgear' or tt contains 'headguard'
+        assign kit_a = 'boxing-gloves'
+        assign kit_b = 'boxing-groin-guards'
+        assign kit_h = 'Complete your kit: gloves & groin guards'
+      elsif tt contains 'groin'
+        assign kit_a = 'boxing-head-guards'
+        assign kit_b = 'boxing-gloves'
+        assign kit_h = 'Complete your kit: headgear & gloves'
+      elsif tt contains 'mitt' or tt contains 'paddle'
+        assign kit_a = 'boxing-gloves'
+        assign kit_h = 'Pair them with: boxing gloves'
+      endif
+      assign kit_per = 4
+      if kit_b != blank
+        assign kit_per = 2
+      endif
+    -%}
+    {%- if section.settings.show_kit and kit_a != blank -%}
+      <div class="hvx-kit">
+        <div class="hvx-head"><div><h2 class="hvx-h2 hvx-kit__h">{{ kit_h }}</h2></div><a class="hvx-link" href="{{ collections[kit_a].url }}">View all</a></div>
+        <div class="hvx-grid hvx-kit__grid">
+          {%- for kc in (1..2) -%}
+            {%- if forloop.first -%}{%- assign kh = kit_a -%}{%- else -%}{%- assign kh = kit_b -%}{%- endif -%}
+            {%- if kh == blank -%}{%- continue -%}{%- endif -%}
+            {%- assign kn = 0 -%}
+            {%- for p in collections[kh].products limit: 24 -%}
+              {%- if kn >= kit_per -%}{%- break -%}{%- endif -%}
+              {%- if p.id == product.id or p.available == false -%}{%- continue -%}{%- endif -%}
+              {%- assign kfw = p.featured_media.preview_image.width | default: 0 -%}
+              {%- if kfw < 700 -%}{%- continue -%}{%- endif -%}
+              {%- render 'hvx-card', product: p, prefix: 'kit' -%}
+              {%- assign kn = kn | plus: 1 -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
 
     {%- if is_glove and section.settings.show_sizes -%}
       <div class="hvx-faq hvx-pdp__acc">
@@ -99,12 +167,32 @@
     {%- endif -%}
   </div>
 </section>
+<script>
+(function(){
+  var el=document.querySelector('[data-hvx-ship]'); if(!el||el.dataset.same!=='true')return;
+  var th=+el.dataset.th, msg=el.querySelector('[data-msg]'), bar=el.querySelector('[data-bar]'), price={{ product.price | json }};
+  function money(c){var f=el.dataset.fmt||'';var a=(c/100).toFixed(2);if(f.indexOf('amount')<0)return '$'+a;return f.replace(/\{\{\s*amount[a-z_]*\s*\}\}/,a.replace(/\B(?=(\d{3})+(?!\d))/g,','));}
+  function paint(total){
+    var pct=price>=th?100:Math.min(100,Math.round(total*100/th));
+    if(bar){bar.style.width=pct+'%';bar.parentNode.setAttribute('aria-valuenow',pct);}
+    if(price>=th)msg.textContent='This item ships free with tracking.';
+    else if(total>=th)msg.textContent='Your order ships free with tracking.';
+    else msg.innerHTML='Spend <b>'+money(th-total)+'</b> more for free tracked shipping.';
+  }
+  function refresh(){fetch('{{ routes.cart_url }}.js',{credentials:'same-origin'}).then(function(r){return r.json()}).then(function(c){paint(c.total_price)}).catch(function(){});}
+  document.addEventListener('submit',function(e){if(e.target&&/\/cart\/add/.test(e.target.action||''))setTimeout(refresh,1200);},true);
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[name="add"],.product-form__submit,.button--addToCart'))setTimeout(refresh,1500);},true);
+  window.addEventListener('pageshow',refresh);
+})();
+</script>
 {% schema %}
 {"name":"Havoc product extras","tag":"div","class":"hvx-s-assure",
 "settings":[
 {"type":"checkbox","id":"show_sizes","label":"Show size guide on gloves, sets and shoes","default":true},
 {"type":"text","id":"dispatch","label":"Dispatch line","default":"1–3 business days"},
-{"type":"text","id":"shipping","label":"Shipping line","default":"Tracked & insured: DHL, FedEx, UPS"}],
+{"type":"text","id":"shipping","label":"Shipping line","default":"Tracked & insured: DHL, FedEx, UPS"},
+{"type":"number","id":"free_ship","label":"Free shipping threshold (store currency, 0 hides the bar)","default":250},
+{"type":"checkbox","id":"show_kit","label":"Show Complete your kit products","default":true}],
 "blocks":[{"type":"i","name":"Trust point","limit":4,"settings":[{"type":"select","id":"icon","label":"Icon","options":[{"value":"truck","label":"Shipping"},{"value":"lock","label":"Secure"},{"value":"return","label":"Returns"},{"value":"chat","label":"Support"}],"default":"truck"},{"type":"text","id":"title","label":"Title"},{"type":"text","id":"text","label":"Text"}]}],
 "presets":[{"name":"Havoc product extras"}]}
 {% endschema %}

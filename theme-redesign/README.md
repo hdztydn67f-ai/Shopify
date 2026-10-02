@@ -69,3 +69,9 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - Robots meta: noindex,follow on search, cart, account, password, 404 and tag-filtered collections; index everywhere else.
 - Product JSON-LD return policy: was 30 days, free, AU only; now 14 days, customer pays, US/UK/CA/EU/AU, with merchantReturnLink.
 - Homepage WebPage node added to the brand @graph.
+
+## v9 (2026-10-02)
+- Hero: back to Nike Hyperko 1 Black/Metallic Silver (#1 seller). The image is contained, not cropped, so the whole shoe shows. The price tag sits under the image instead of over it, and its title is shortened at " | ".
+- "Best-selling boxing shoes" row is now shoes only. The Cleto Reyes Metallic Purple set moved to a new "Best-selling gloves & sets" row built from real 12-month sales.
+- Collections audit: added Mizuno Metallic Silver boots to Boxing Shoes and Winning Brown/Black/Orange/White gloves to Boxing Gloves. 4 untitled draft products (rfd, bb, v-c, gfd) still sit in Boxing Shoes; they are hidden from shoppers.
+- Product page (hvx-assure): live free-shipping progress bar ($250, store currency only, updates after add to cart), plus "Complete your kit" cross-sell with quick add (gloves → headgear + groin guards, shoes → gloves, sets → shoes, and so on). It skips the current product, sold-out items and photos under 700px.

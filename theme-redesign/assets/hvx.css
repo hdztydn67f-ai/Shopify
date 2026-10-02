@@ -332,3 +332,20 @@
 .hvx-reviews{padding:56px 0;border-top:1px solid var(--hvx-line)}
 .hvx-reviews .hvx-h2{margin-bottom:20px}
 @media (max-width:749px){.hvx-reviews{padding:40px 0}}
+/* v9: hero shows the whole product, price tag sits under it instead of over it */
+.hvx-hero__media{aspect-ratio:auto;display:flex;flex-direction:column;align-items:stretch;gap:14px}
+.hvx-hero__media img{width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;object-position:center;background:#fff;padding:3%;box-sizing:border-box}
+.hvx-hero__tag{position:static;align-self:flex-end;max-width:none;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hvx-hero__tag small{margin:0}
+.hvx-hero__tag span{margin:0}
+@media (max-width:899px){.hvx-hero__tag{align-self:stretch;justify-content:space-between;max-width:none;padding:12px 14px}.hvx-hero__tag b{flex:1 1 60%;font-size:13px}}
+/* v9: free shipping meter + complete your kit */
+.hvx-ship{margin:0 0 18px;padding:12px 14px;border:1px solid var(--hvx-line);border-radius:var(--hvx-radius);background:#fafaf8}
+.hvx-ship__msg{margin:0;font-size:14px;line-height:1.45;color:var(--hvx-ink)}
+.hvx-ship__msg b{color:var(--hvx-red)}
+.hvx-ship__bar{height:6px;margin-top:10px;border-radius:99px;background:#e6e6e2;overflow:hidden}
+.hvx-ship__bar span{display:block;height:100%;background:var(--hvx-red);border-radius:inherit;transition:width .4s ease}
+.hvx-kit{margin-top:40px}
+.hvx-kit__h{font-size:clamp(22px,2.4vw,30px)}
+.hvx-kit__grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:989px){.hvx-kit__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}

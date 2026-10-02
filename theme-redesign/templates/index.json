@@ -13,8 +13,8 @@
       "type": "hvx-hero",
       "settings": {
         "head_font": "oswald_n7",
-        "product": "nike-hyperko-1-boxing-shoes-black-gold",
-        "image_alt": "Nike Hyperko 1 boxing boots in black and metallic gold",
+        "product": "nike-hyperko-1-boxing-boots-black-metallic-silver-us6-12",
+        "image_alt": "Nike Hyperko 1 boxing boots in black and metallic silver",
         "tag_label": "Best seller",
         "kicker": "",
         "heading": "Boxing gloves, boots",
@@ -81,14 +81,15 @@
           "nike-hyperko-2-boxing-shoes-royal-blue-us6-12",
           "nike-hyperko-1-boxing-shoes-black-gold",
           "nike-hyperko-1-boxing-boots-red-blue-us6-12",
-          "cleto-reyes-3-piece-sparring-set-metallic-purple-8oz-16oz",
+          "nike-hyperko-2-boxing-shoes-black-pink-us6-12",
           "nike-hyperko-2-boxing-shoes-white-bright-crimson-us6-12",
-          "nike-hyperko-2-boxing-shoes-black-white"
+          "nike-hyperko-2-boxing-shoes-black-white",
+          "nike-hyperko-2-boxing-shoes-blue-white-yellow-us6-12"
         ],
         "link": "shopify://collections/boxing-shoes",
         "eyebrow": "",
-        "heading": "Best sellers",
-        "text": "What people have been ordering most this year.",
+        "heading": "Best-selling boxing shoes",
+        "text": "The Nike boxing boots people have ordered most this year.",
         "link_text": "All boxing shoes",
         "badge": "",
         "limit": 10,
@@ -481,12 +482,36 @@
         "qa_7",
         "qa_8"
       ]
+    },
+    "best2": {
+      "type": "hvx-rail",
+      "settings": {
+        "products": [
+          "cleto-reyes-3-piece-sparring-set-metallic-purple-8oz-16oz",
+          "winning-boxing-set-white-purple-custom-made",
+          "winning-3-piece-boxing-sparring-set-classic-blue-8oz-16oz",
+          "winning-boxing-gloves-white",
+          "cleto-reyes-royal-blue-boxing-gloves-8oz-16oz",
+          "winning-boxing-gloves-purple",
+          "cleto-reyes-gold-metallic-elastic-boxing-gloves-8oz-16oz",
+          "cleto-reyes-red-boxing-gloves-8oz-16oz"
+        ],
+        "link": "shopify://collections/boxing-sets",
+        "eyebrow": "",
+        "heading": "Best-selling gloves & sets",
+        "text": "Sparring sets and gloves our customers keep coming back for.",
+        "link_text": "All boxing sets",
+        "badge": "",
+        "limit": 8,
+        "mist": true
+      }
     }
   },
   "order": [
     "hero",
     "usp",
     "best",
+    "best2",
     "brands",
     "tabs",
     "spot",
