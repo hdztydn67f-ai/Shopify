@@ -1,0 +1,492 @@
+{%- comment -%}
+================================================================================
+  HAVOC BOXING — MASTER STRUCTURED DATA (JSON-LD)
+  Rebuilt for Google rich results + AI answer engines (ChatGPT, Perplexity,
+  Gemini, Copilot). Every string is emitted through the `| json` filter so a
+  quote, apostrophe or line break inside a description can never break the
+  block again.
+
+  2026-08-27 FIX — IDENTIFIER VALIDATION (see snippets/hvc-gtin.liquid)
+  --------------------------------------------------------------------
+  Previously any text in the Shopify `barcode` field was emitted as `gtin`,
+  and the SKU was always emitted as `mpn`. Products carrying a product NAME in
+  those fields therefore published:
+      "gtin": "Black & Silver Pro Boxing Gloves – Premium Sparring"
+  which Google Merchant Center rejects as `Invalid value [gtin]`.
+  gtin / mpn are now emitted ONLY when the value is actually a valid
+  identifier, and omitted otherwise. Omitting an optional property is valid;
+  emitting a wrong one is not.
+
+  MERCHANT SETTINGS — the only lines you should ever need to touch:
+================================================================================
+{%- endcomment -%}
+{%- liquid
+  assign hvc_return_days      = 14
+  assign hvc_return_country   = 'AU'
+  assign hvc_free_returns     = false
+  assign hvc_return_markets   = 'US,GB,CA,IE,DE,FR,ES,IT,NL,BE,AT,PT,SE,DK,FI,PL,AU' | split: ','
+
+  comment
+  Set hvc_shipping_details to true ONLY after you confirm these numbers match
+  your real shipping settings. Wrong values here can trigger Google Merchant
+  Center misrepresentation warnings.
+  endcomment
+  assign hvc_shipping_details = false
+  assign hvc_ship_country     = 'AU'
+  assign hvc_ship_rate        = 0
+  assign hvc_handling_min     = 1
+  assign hvc_handling_max     = 2
+  assign hvc_transit_min      = 3
+  assign hvc_transit_max      = 7
+
+  assign hvc_base   = shop.url
+  assign hvc_ptype  = request.page_type
+  assign hvc_valid  = 'now' | date: '%s' | plus: 31536000 | date: '%Y-%m-%d'
+-%}
+
+{%- if hvc_ptype == 'product' and product != blank -%}
+  {%- liquid
+    assign v = product.selected_or_first_available_variant
+    assign p_name = product.title | replace: '&amp;', '&' | replace: '&nbsp;', ' ' | strip_html
+    assign p_desc = product.description | strip_html | replace: '&amp;', '&' | replace: '&nbsp;', ' ' | strip_newlines | truncate: 4800
+
+    assign img_arr = ''
+    for image in product.images limit: 10
+      assign u = image | image_url: width: 1946
+      unless u contains 'http'
+        assign u = u | prepend: 'https:'
+      endunless
+      assign img_arr = img_arr | append: u | append: '|~|'
+    endfor
+    assign img_arr = img_arr | split: '|~|'
+
+    assign low  = product.price_min | divided_by: 100.0
+    assign high = product.price_max | divided_by: 100.0
+    assign vcount = product.variants | size
+
+    assign rating = product.metafields.reviews.rating.value
+    assign rating_count = product.metafields.reviews.rating_count.value | plus: 0
+
+    comment
+      GTIN GUARD. Strip every digit out of the barcode. If anything is left
+      over, the field contains letters, spaces or punctuation and is NOT a
+      GTIN. Valid GTIN lengths are 8, 12, 13 and 14.
+    endcomment
+    assign p_bc = v.barcode | strip
+    assign p_bc_rest = p_bc | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+    assign p_bc_len = p_bc | size
+    assign p_gtin_key = ''
+    if p_bc != blank and p_bc_rest == blank
+      if p_bc_len == 8
+        assign p_gtin_key = 'gtin8'
+      elsif p_bc_len == 12
+        assign p_gtin_key = 'gtin12'
+      elsif p_bc_len == 13
+        assign p_gtin_key = 'gtin13'
+      elsif p_bc_len == 14
+        assign p_gtin_key = 'gtin14'
+      endif
+    endif
+
+    comment
+      MPN GUARD. A manufacturer part number is a short code, not a sentence.
+      Anything longer than 32 characters or more than two words is a product
+      title that was typed into the SKU field, so mpn is omitted for it.
+    endcomment
+    assign p_sku = v.sku | strip
+    assign p_sku_len = p_sku | size
+    assign p_sku_words = p_sku | split: ' ' | size
+    assign p_mpn_ok = false
+    if p_sku != blank and p_sku_len <= 32 and p_sku_words <= 2
+      assign p_mpn_ok = true
+    endif
+  -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": {{ canonical_url | append: '#product' | json }},
+    "name": {{ p_name | json }},
+    "description": {{ p_desc | json }},
+    "url": {{ canonical_url | json }},
+    "image": {{ img_arr | json }},
+    "sku": {{ v.sku | default: v.id | json }},
+    {%- if p_mpn_ok %}
+    "mpn": {{ p_sku | json }},
+    {%- endif %}
+    "productID": {{ product.id | json }},
+    {%- if p_gtin_key != blank %}
+    "{{ p_gtin_key }}": {{ p_bc | json }},
+    {%- endif %}
+    {%- if product.type != blank %}
+    "category": {{ product.type | json }},
+    {%- endif %}
+    {%- for opt in product.options_with_values %}
+      {%- assign okey = opt.name | downcase -%}
+      {%- assign oval = v.options[forloop.index0] -%}
+      {%- if oval != blank -%}
+        {%- if okey contains 'colo' %}
+    "color": {{ oval | json }},
+        {%- elsif okey contains 'size' %}
+    "size": {{ oval | json }},
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor %}
+    {%- if rating != blank and rating_count > 0 %}
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": {{ rating.rating | default: rating }},
+      "reviewCount": {{ rating_count }},
+      "bestRating": {{ rating.scale_max | default: 5 }},
+      "worstRating": {{ rating.scale_min | default: 1 }}
+    },
+    {%- endif %}
+    "brand": {
+      "@type": "Brand",
+      "name": {{ product.vendor | default: shop.name | replace: '&amp;', '&' | json }}
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+      "lowPrice": {{ low }},
+      "highPrice": {{ high }},
+      "offerCount": {{ vcount }},
+      "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+      "offers": [
+        {%- for variant in product.variants -%}
+        {%- liquid
+          assign vu = variant.image | default: product.featured_image | image_url: width: 1946
+          unless vu contains 'http'
+            assign vu = vu | prepend: 'https:'
+          endunless
+          if variant.title == 'Default Title'
+            assign vname = p_name
+          else
+            assign vtt = variant.title | replace: '&amp;', '&'
+            assign vname = p_name | append: ' - ' | append: vtt
+          endif
+
+          comment
+            GTIN guard, per variant. Same rule as above.
+          endcomment
+          assign vbc = variant.barcode | strip
+          assign vbc_rest = vbc | remove: '0' | remove: '1' | remove: '2' | remove: '3' | remove: '4' | remove: '5' | remove: '6' | remove: '7' | remove: '8' | remove: '9'
+          assign vbc_len = vbc | size
+          assign vgtin_key = ''
+          if vbc != blank and vbc_rest == blank
+            if vbc_len == 8
+              assign vgtin_key = 'gtin8'
+            elsif vbc_len == 12
+              assign vgtin_key = 'gtin12'
+            elsif vbc_len == 13
+              assign vgtin_key = 'gtin13'
+            elsif vbc_len == 14
+              assign vgtin_key = 'gtin14'
+            endif
+          endif
+        -%}
+        {
+          "@type": "Offer",
+          "@id": {{ hvc_base | append: variant.url | append: '#offer' | json }},
+          "name": {{ vname | json }},
+          "url": {{ hvc_base | append: variant.url | json }},
+          "image": {{ vu | json }},
+          "sku": {{ variant.sku | default: variant.id | json }},
+          {%- if vgtin_key != blank %}
+          "{{ vgtin_key }}": {{ vbc | json }},
+          {%- endif %}
+          "price": {{ variant.price | divided_by: 100.0 }},
+          "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+          "priceValidUntil": {{ hvc_valid | json }},
+          "itemCondition": "https://schema.org/NewCondition",
+          "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+          "seller": {
+            "@type": "Organization",
+            "@id": {{ hvc_base | append: '/#organization' | json }},
+            "name": {{ shop.name | json }}
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": {{ hvc_return_markets | json }},
+            "returnPolicyCountry": {{ hvc_return_country | json }},
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": {{ hvc_return_days }},
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "merchantReturnLink": {{ hvc_base | append: '/policies/refund-policy' | json }},
+            "returnFees": "https://schema.org/{% if hvc_free_returns %}FreeReturn{% else %}ReturnFeesCustomerResponsibility{% endif %}"
+          }
+          {%- if hvc_shipping_details %},
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": {{ hvc_ship_rate }},
+              "currency": {{ cart.currency.iso_code | default: shop.currency | json }}
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": {{ hvc_ship_country | json }}
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": {{ hvc_handling_min }},
+                "maxValue": {{ hvc_handling_max }},
+                "unitCode": "DAY"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": {{ hvc_transit_min }},
+                "maxValue": {{ hvc_transit_max }},
+                "unitCode": "DAY"
+              }
+            }
+          }
+          {%- endif %}
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    },
+    "isRelatedTo": {
+      "@type": "WebSite",
+      "@id": {{ hvc_base | append: '/#website' | json }}
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": {{ canonical_url | append: '#breadcrumb' | json }},
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ hvc_base | json }}
+      },
+      {%- if collection and collection.handle -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ collection.title | replace: '&amp;', '&' | strip_html | json }},
+        "item": {{ hvc_base | append: collection.url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ p_name | json }},
+        "item": {{ canonical_url | json }}
+      }
+      {%- else -%}
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ p_name | json }},
+        "item": {{ canonical_url | json }}
+      }
+      {%- endif -%}
+    ]
+  }
+  </script>
+
+{%- elsif hvc_ptype == 'collection' and collection.handle -%}
+  {%- liquid
+    assign c_name = collection.title | replace: '&amp;', '&' | strip_html
+    assign c_desc = collection.description | split: '[lang2]' | first | strip_html | replace: '&amp;', '&' | replace: '&nbsp;', ' ' | strip_newlines | truncate: 4800
+    assign c_img = collection.image | default: collection.products.first.featured_image | image_url: width: 1200
+    unless c_img contains 'http'
+      assign c_img = c_img | prepend: 'https:'
+    endunless
+  -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": {{ canonical_url | append: '#collection' | json }},
+    "name": {{ c_name | json }},
+    "url": {{ canonical_url | json }},
+    {%- if c_desc != blank %}
+    "description": {{ c_desc | json }},
+    {%- endif %}
+    {%- if collection.image %}
+    "image": {{ c_img | json }},
+    {%- endif %}
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": {{ hvc_base | append: '/#website' | json }}
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": {{ c_name | json }},
+      "numberOfItems": {{ collection.products_count }},
+      "itemListElement": [
+        {%- for cp in collection.products limit: 30 -%}
+        {%- liquid
+          assign cp_name = cp.title | replace: '&amp;', '&' | strip_html
+          assign cp_img = cp.featured_image | image_url: width: 1200
+          unless cp_img contains 'http'
+            assign cp_img = cp_img | prepend: 'https:'
+          endunless
+        -%}
+        {
+          "@type": "ListItem",
+          "position": {{ forloop.index }},
+          "item": {
+            "@type": "Product",
+            "@id": {{ hvc_base | append: cp.url | append: '#product' | json }},
+            "name": {{ cp_name | json }},
+            "url": {{ hvc_base | append: cp.url | json }},
+            "image": {{ cp_img | json }},
+            "sku": {{ cp.selected_or_first_available_variant.sku | default: cp.selected_or_first_available_variant.id | json }},
+            "brand": {
+              "@type": "Brand",
+              "name": {{ cp.vendor | default: shop.name | replace: '&amp;', '&' | json }}
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": {{ cp.price_min | divided_by: 100.0 }},
+              "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+              "itemCondition": "https://schema.org/NewCondition",
+              "availability": "https://schema.org/{% if cp.available %}InStock{% else %}OutOfStock{% endif %}",
+              "url": {{ hvc_base | append: cp.url | json }}
+            }
+          }
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": {{ canonical_url | append: '#breadcrumb' | json }},
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ hvc_base | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ c_name | json }},
+        "item": {{ canonical_url | json }}
+      }
+    ]
+  }
+  </script>
+
+{%- elsif hvc_ptype == 'article' and article != blank -%}
+  {%- liquid
+    assign a_name = article.title | replace: '&amp;', '&' | strip_html
+    assign a_desc = article.excerpt_or_content | strip_html | replace: '&amp;', '&' | strip_newlines | truncate: 400
+    assign a_img = article.image | image_url: width: 1600
+    unless a_img contains 'http'
+      assign a_img = a_img | prepend: 'https:'
+    endunless
+  -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": {{ canonical_url | append: '#article' | json }},
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": {{ canonical_url | json }}
+    },
+    "headline": {{ a_name | truncate: 110 | json }},
+    "description": {{ a_desc | json }},
+    {%- if article.image %}
+    "image": {{ a_img | json }},
+    {%- endif %}
+    "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+    "dateModified": {{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' | json }},
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | default: shop.name | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": {{ hvc_base | append: '/#organization' | json }},
+      "name": {{ shop.name | json }}
+    },
+    "isPartOf": {
+      "@type": "Blog",
+      "name": {{ blog.title | replace: '&amp;', '&' | json }},
+      "url": {{ hvc_base | append: blog.url | json }}
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": {{ canonical_url | append: '#breadcrumb' | json }},
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ hvc_base | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ blog.title | replace: '&amp;', '&' | strip_html | json }},
+        "item": {{ hvc_base | append: blog.url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ a_name | json }},
+        "item": {{ canonical_url | json }}
+      }
+    ]
+  }
+  </script>
+
+{%- elsif hvc_ptype == 'page' and page != blank -%}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": {{ canonical_url | append: '#webpage' | json }},
+    "name": {{ page.title | replace: '&amp;', '&' | strip_html | json }},
+    "url": {{ canonical_url | json }},
+    {%- assign pg_desc = page.content | strip_html | replace: '&amp;', '&' | strip_newlines | truncate: 400 -%}
+    {%- if pg_desc != blank %}
+    "description": {{ pg_desc | json }},
+    {%- endif %}
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": {{ hvc_base | append: '/#website' | json }}
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": {{ canonical_url | append: '#breadcrumb' | json }},
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ hvc_base | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ page.title | replace: '&amp;', '&' | strip_html | json }},
+        "item": {{ canonical_url | json }}
+      }
+    ]
+  }
+  </script>
+{%- endif -%}

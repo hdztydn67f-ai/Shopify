@@ -17,8 +17,20 @@
 {%- endcomment -%}
 
 {%- comment -%} 1. Let Google show big images + full snippets for Havoc listings {%- endcomment -%}
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+{%- liquid
+  comment
+    Pages with no search value (internal search, cart, account, password, 404,
+    tag-filtered collection duplicates) get noindex,follow: Google still follows
+    their links to products but stops spending crawl budget indexing them.
+  endcomment
+  assign hvc_index = 'index'
+  if request.page_type == 'search' or request.page_type == 'cart' or request.page_type == 'password' or request.page_type == '404' or request.page_type contains 'customers'
+    assign hvc_index = 'noindex'
+  elsif request.page_type == 'collection' and current_tags
+    assign hvc_index = 'noindex'
+  endif
+-%}
+<meta name="robots" content="{{ hvc_index }}, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
 {%- comment -%} 2. Latency: warm up the connections the page always needs {%- endcomment -%}
 <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
@@ -140,6 +152,18 @@
         "Protective combat sports gear"
       ]
     },
+    {%- if request.page_type == 'index' %}
+    {
+      "@type": "WebPage",
+      "@id": {{ shop.url | append: '/#webpage' | json }},
+      "url": {{ shop.url | json }},
+      "name": {{ page_title | json }},
+      "description": {{ page_description | default: hvc_desc | json }},
+      "inLanguage": {{ request.locale.iso_code | default: 'en' | json }},
+      "isPartOf": { "@id": {{ shop.url | append: '/#website' | json }} },
+      "about": { "@id": {{ shop.url | append: '/#organization' | json }} }
+    },
+    {%- endif %}
     {
       "@type": "WebSite",
       "@id": {{ shop.url | append: '/#website' | json }},

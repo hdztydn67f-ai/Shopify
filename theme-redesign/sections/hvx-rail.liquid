@@ -1,3 +1,4 @@
+{%- comment -%} Products whose main photo is under 700px wide are skipped so blurry images never show. {%- endcomment -%}
 {%- liquid
   assign c = section.settings.collection
   assign list = section.settings.products
@@ -12,9 +13,9 @@
     </div>
     <div class="hvx-rail" role="list">
       {%- if list != blank -%}
-        {%- for p in list limit: section.settings.limit -%}<div role="listitem">{%- render 'hvx-card', product: p, prefix: section.id, badge: section.settings.badge -%}</div>{%- endfor -%}
+        {%- assign hvx_shown = 0 -%}{%- for p in list limit: 40 -%}{%- if hvx_shown >= section.settings.limit -%}{%- break -%}{%- endif -%}{%- assign hvx_fw = p.featured_media.preview_image.width | default: 0 -%}{%- if hvx_fw < 700 -%}{%- continue -%}{%- endif -%}<div role="listitem">{%- render 'hvx-card', product: p, prefix: section.id, badge: section.settings.badge -%}</div>{%- assign hvx_shown = hvx_shown | plus: 1 -%}{%- endfor -%}
       {%- else -%}
-        {%- for p in c.products limit: section.settings.limit -%}<div role="listitem">{%- render 'hvx-card', product: p, prefix: section.id, badge: section.settings.badge -%}</div>{%- endfor -%}
+        {%- assign hvx_shown = 0 -%}{%- for p in c.products limit: 40 -%}{%- if hvx_shown >= section.settings.limit -%}{%- break -%}{%- endif -%}{%- assign hvx_fw = p.featured_media.preview_image.width | default: 0 -%}{%- if hvx_fw < 700 -%}{%- continue -%}{%- endif -%}<div role="listitem">{%- render 'hvx-card', product: p, prefix: section.id, badge: section.settings.badge -%}</div>{%- assign hvx_shown = hvx_shown | plus: 1 -%}{%- endfor -%}
       {%- endif -%}
     </div>
   </div>

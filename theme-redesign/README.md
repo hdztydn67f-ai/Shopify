@@ -60,3 +60,12 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - Payment icons: added `color-scheme: only light` (meta and CSS) so Android/Samsung dark mode stops inverting the full-color icons. Each icon now sits on a white card.
 - Judge.me: the review widget moved out of the product info column into its own full-width "Customer reviews" section (sections/hvx-reviews.liquid) under the product details. It now shows real reviews instead of sample data.
 - Product cards show a star rating and count when a product has Judge.me reviews (reviews.rating metafields).
+
+## v8 (2026-10-02): image quality + crawlability
+- Homepage rows (rails, tabs) skip any product whose main photo is under 700px, so blurry photos never show. The hover image is used only if it is a real photo of 700px or more (never a size chart).
+- Hero now uses Nike Hyperko 1 Black/Gold (2098px photo). Best sellers: the White/Royal Blue (582px) was replaced by the Hyperko 2 Black/White.
+- Product data (Admin, not theme): sharpest photo moved first on Hyperko 1 Red/Blue (2168px) and White/Red USA (2048px). A mislabeled "Machomai 2" photo was removed from the Hyperko 1 Black/Gold gallery.
+- Homepage SEO title and meta description set (shop metafields global.title_tag / description_tag).
+- Robots meta: noindex,follow on search, cart, account, password, 404 and tag-filtered collections; index everywhere else.
+- Product JSON-LD return policy: was 30 days, free, AU only; now 14 days, customer pays, US/UK/CA/EU/AU, with merchantReturnLink.
+- Homepage WebPage node added to the brand @graph.

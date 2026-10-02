@@ -4,7 +4,14 @@
 {%- endcomment -%}
 {%- liquid
   assign img = product.featured_media.preview_image | default: product.featured_image
-  assign img2 = product.media[1].preview_image
+  assign img2 = nil
+  assign m1 = product.media[1]
+  if m1.media_type == 'image' and m1.preview_image.width >= 700
+    assign m1_alt = m1.alt | downcase
+    unless m1_alt contains 'chart'
+      assign img2 = m1.preview_image
+    endunless
+  endif
   assign loading = 'lazy'
   if eager
     assign loading = 'eager'
