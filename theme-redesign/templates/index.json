@@ -1,0 +1,541 @@
+{
+ "sections": {
+  "hero": {
+   "type": "hvx-hero",
+   "settings": {
+    "head_font": "oswald_n7",
+    "image": "shopify://shop_images/Gemini_Generated_Image_aqjixfaqjixfaqji.png",
+    "image_mobile": "shopify://shop_images/Gemini_Generated_Image_f8eoydf8eoydf8eo.png",
+    "image_alt": "Havoc Boxing professional boxing gloves and sparring gear",
+    "kicker": "Havoc Boxing · Pro fight gear",
+    "heading": "Boxing Gloves &",
+    "heading_accent": "Sparring Gear",
+    "sub": "Winning, Cleto Reyes and No Boxing No Life gloves in every weight from 6oz to 18oz, plus headgear, groin guards and complete sparring sets. Tracked shipping to the USA, UK, Europe and Canada.",
+    "cta1": "Shop boxing gloves",
+    "cta1_link": "shopify://collections/boxing-gloves",
+    "cta2": "Shop sparring sets",
+    "cta2_link": "shopify://collections/boxing-sets"
+   },
+   "blocks": {
+    "proof_1": {
+     "type": "proof",
+     "settings": {
+      "big": "150+",
+      "small": "countries shipped"
+     }
+    },
+    "proof_2": {
+     "type": "proof",
+     "settings": {
+      "big": "6–18oz",
+      "small": "every glove weight"
+     }
+    },
+    "proof_3": {
+     "type": "proof",
+     "settings": {
+      "big": "No MOQ",
+      "small": "on custom gear"
+     }
+    }
+   },
+   "block_order": [
+    "proof_1",
+    "proof_2",
+    "proof_3"
+   ]
+  },
+  "usp": {
+   "type": "hvx-usp",
+   "settings": {},
+   "blocks": {
+    "usp_1": {
+     "type": "usp",
+     "settings": {
+      "icon": "truck",
+      "title": "Tracked worldwide shipping",
+      "text": "Insured via DHL, FedEx and UPS"
+     }
+    },
+    "usp_2": {
+     "type": "usp",
+     "settings": {
+      "icon": "lock",
+      "title": "Secure checkout",
+      "text": "Shop Pay, Apple Pay, Google Pay and cards"
+     }
+    },
+    "usp_3": {
+     "type": "usp",
+     "settings": {
+      "icon": "scale",
+      "title": "Every glove weight",
+      "text": "Gloves from 6oz to 18oz, lace-up or velcro"
+     }
+    },
+    "usp_4": {
+     "type": "usp",
+     "settings": {
+      "icon": "star",
+      "title": "Custom gear, no minimum",
+      "text": "One pair or a full gym order"
+     }
+    }
+   },
+   "block_order": [
+    "usp_1",
+    "usp_2",
+    "usp_3",
+    "usp_4"
+   ]
+  },
+  "brands": {
+   "type": "hvx-brands",
+   "settings": {
+    "eyebrow": "Shop by brand",
+    "heading": "The brands fighters trust",
+    "text": "Three of the most sought-after names in boxing, each with its own feel on the hands."
+   },
+   "blocks": {
+    "brand_1": {
+     "type": "brand",
+     "settings": {
+      "collection": "winning-boxing-gloves",
+      "title": "Winning",
+      "text": "Prized for deep, protective padding in sparring."
+     }
+    },
+    "brand_2": {
+     "type": "brand",
+     "settings": {
+      "collection": "cleto-reyes-boxing-gloves",
+      "title": "Cleto Reyes",
+      "text": "The compact Mexican puncher’s glove."
+     }
+    },
+    "brand_3": {
+     "type": "brand",
+     "settings": {
+      "collection": "no-boxing-no-life-boxing-gloves",
+      "title": "No Boxing No Life",
+      "text": "Bold colorways, metallic finishes and bear editions."
+     }
+    }
+   },
+   "block_order": [
+    "brand_1",
+    "brand_2",
+    "brand_3"
+   ]
+  },
+  "rail_winning": {
+   "type": "hvx-rail",
+   "settings": {
+    "collection": "winning-boxing-gloves",
+    "eyebrow": "Best sellers",
+    "heading": "Winning boxing gloves",
+    "text": "Lace-up and velcro pairs from 6oz to 18oz.",
+    "link_text": "Shop all Winning",
+    "limit": 10,
+    "mist": false
+   }
+  },
+  "cats": {
+   "type": "hvx-categories",
+   "settings": {
+    "eyebrow": "Shop by category",
+    "heading": "Everything for the ring",
+    "link_text": "All products",
+    "link": "shopify://collections/all"
+   },
+   "blocks": {
+    "cat_1": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-gloves",
+      "title": "Boxing gloves"
+     }
+    },
+    "cat_2": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-sets",
+      "title": "Sparring sets"
+     }
+    },
+    "cat_3": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-head-guards",
+      "title": "Headgear"
+     }
+    },
+    "cat_4": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-groin-guards",
+      "title": "Groin guards"
+     }
+    },
+    "cat_5": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-focus-mitts-paddles",
+      "title": "Focus mitts"
+     }
+    },
+    "cat_6": {
+     "type": "cat",
+     "settings": {
+      "collection": "boxing-shoes",
+      "title": "Boxing shoes"
+     }
+    }
+   },
+   "block_order": [
+    "cat_1",
+    "cat_2",
+    "cat_3",
+    "cat_4",
+    "cat_5",
+    "cat_6"
+   ]
+  },
+  "weights": {
+   "type": "hvx-weights",
+   "settings": {
+    "collection": "boxing-gloves",
+    "eyebrow": "Glove weight finder",
+    "heading": "Shop by weight",
+    "text": "Glove weight is padding, not hand size. Pick the weight for how you train."
+   },
+   "blocks": {
+    "w_1": {
+     "type": "w",
+     "settings": {
+      "oz": "6oz",
+      "use": "Youth & speed"
+     }
+    },
+    "w_2": {
+     "type": "w",
+     "settings": {
+      "oz": "8oz",
+      "use": "Mitts & speed"
+     }
+    },
+    "w_3": {
+     "type": "w",
+     "settings": {
+      "oz": "10oz",
+      "use": "Pads & fitness"
+     }
+    },
+    "w_4": {
+     "type": "w",
+     "settings": {
+      "oz": "12oz",
+      "use": "Bag & classes"
+     }
+    },
+    "w_5": {
+     "type": "w",
+     "settings": {
+      "oz": "14oz",
+      "use": "All-round training"
+     }
+    },
+    "w_6": {
+     "type": "w",
+     "settings": {
+      "oz": "16oz",
+      "use": "Adult sparring"
+     }
+    },
+    "w_7": {
+     "type": "w",
+     "settings": {
+      "oz": "18oz",
+      "use": "Heavyweight sparring"
+     }
+    }
+   },
+   "block_order": [
+    "w_1",
+    "w_2",
+    "w_3",
+    "w_4",
+    "w_5",
+    "w_6",
+    "w_7"
+   ]
+  },
+  "rail_sets": {
+   "type": "hvx-rail",
+   "settings": {
+    "collection": "boxing-sets",
+    "eyebrow": "Complete kits",
+    "heading": "Sparring sets",
+    "text": "Gloves, headgear and groin guard in one matching colorway.",
+    "link_text": "Shop all sets",
+    "limit": 10,
+    "mist": true
+   }
+  },
+  "guide": {
+   "type": "hvx-guide",
+   "settings": {
+    "eyebrow": "Buying guide",
+    "heading": "Gear for how you train",
+    "text": "Not sure what to buy first? Start with how you train most."
+   },
+   "blocks": {
+    "g_1": {
+     "type": "g",
+     "settings": {
+      "title": "Sparring",
+      "rec": "16oz · lace-up",
+      "text": "Protects you and your partner. Add headgear and a groin guard, or get all three in a matching sparring set.",
+      "link": "shopify://collections/boxing-sets",
+      "link_text": "Shop sparring sets"
+     }
+    },
+    "g_2": {
+     "type": "g",
+     "settings": {
+      "title": "Heavy bag",
+      "rec": "12oz – 14oz",
+      "text": "Enough padding to protect your knuckles on hard, repeated shots. Velcro makes solo sessions faster.",
+      "link": "shopify://collections/boxing-gloves",
+      "link_text": "Shop bag gloves"
+     }
+    },
+    "g_3": {
+     "type": "g",
+     "settings": {
+      "title": "Pads & speed",
+      "rec": "8oz – 10oz",
+      "text": "Lighter gloves for sharp combinations on the mitts. Pair them with curved focus mitts for your coach.",
+      "link": "shopify://collections/boxing-focus-mitts-paddles",
+      "link_text": "Shop focus mitts"
+     }
+    }
+   },
+   "block_order": [
+    "g_1",
+    "g_2",
+    "g_3"
+   ]
+  },
+  "rail_cleto": {
+   "type": "hvx-rail",
+   "settings": {
+    "collection": "cleto-reyes-boxing-gloves",
+    "eyebrow": "Puncher’s choice",
+    "heading": "Cleto Reyes boxing gloves",
+    "link_text": "Shop all Cleto Reyes",
+    "limit": 10,
+    "mist": false
+   }
+  },
+  "custom": {
+   "type": "hvx-split",
+   "settings": {
+    "collection": "winning-boxing-sets",
+    "image_alt": "Custom boxing gloves and sparring kit",
+    "eyebrow": "Custom fight gear",
+    "heading": "Your colors. Your name. Your gear.",
+    "text": "<p>Choose leathers, colors and finishes, add names and logos, and we handcraft gloves, headguards, groin protectors and team kits to your specification.</p>",
+    "cta": "Start a custom order",
+    "cta_link": "shopify://pages/contact",
+    "dark": true,
+    "flip": false
+   },
+   "blocks": {
+    "tick_1": {
+     "type": "tick",
+     "settings": {
+      "text": "No minimum order: one pair or a full gym"
+     }
+    },
+    "tick_2": {
+     "type": "tick",
+     "settings": {
+      "text": "Top-grain leather, matte or metallic finishes"
+     }
+    },
+    "tick_3": {
+     "type": "tick",
+     "settings": {
+      "text": "Names, graphics and logos placed where you want"
+     }
+    },
+    "tick_4": {
+     "type": "tick",
+     "settings": {
+      "text": "Bulk rates for gyms, clubs and events"
+     }
+    }
+   },
+   "block_order": [
+    "tick_1",
+    "tick_2",
+    "tick_3",
+    "tick_4"
+   ]
+  },
+  "rail_shoes": {
+   "type": "hvx-rail",
+   "settings": {
+    "collection": "boxing-shoes",
+    "eyebrow": "Footwork",
+    "heading": "Boxing shoes",
+    "text": "Nike, Winning and Mizuno boxing boots in US sizes.",
+    "link_text": "Shop all shoes",
+    "limit": 10,
+    "mist": true
+   }
+  },
+  "story": {
+   "type": "hvx-split",
+   "settings": {
+    "collection": "no-boxing-no-life-boxing-gloves",
+    "image_alt": "Havoc Boxing gear",
+    "eyebrow": "Why Havoc",
+    "heading": "Built for the gym, the ring and fight night",
+    "text": "<p>Havoc Boxing was born out of a passion for combat sports. We supply professional-grade gloves and protective gear to boxers, coaches and gyms, and every order ships fully tracked and insured.</p>",
+    "cta": "About Havoc Boxing",
+    "cta_link": "shopify://pages/about-us",
+    "dark": false,
+    "flip": true
+   },
+   "blocks": {
+    "stat_1": {
+     "type": "stat",
+     "settings": {
+      "big": "150+",
+      "small": "countries we ship to"
+     }
+    },
+    "stat_2": {
+     "type": "stat",
+     "settings": {
+      "big": "3",
+      "small": "couriers: DHL, FedEx, UPS"
+     }
+    },
+    "stat_3": {
+     "type": "stat",
+     "settings": {
+      "big": "0",
+      "small": "minimum on custom orders"
+     }
+    }
+   },
+   "block_order": [
+    "stat_1",
+    "stat_2",
+    "stat_3"
+   ]
+  },
+  "blog": {
+   "type": "hvx-blog",
+   "settings": {
+    "blog": "news",
+    "eyebrow": "Fight smarter",
+    "heading": "Boxing gear guides"
+   }
+  },
+  "faq": {
+   "type": "hvx-faq",
+   "settings": {
+    "eyebrow": "FAQ",
+    "heading": "Questions before you buy"
+   },
+   "blocks": {
+    "qa_1": {
+     "type": "qa",
+     "settings": {
+      "q": "Which boxing glove brands do you sell?",
+      "a": "<p>We stock Winning, Cleto Reyes and No Boxing No Life (NBNL) boxing gloves and sparring sets, plus Nike, Winning and Mizuno boxing shoes.</p>"
+     }
+    },
+    "qa_2": {
+     "type": "qa",
+     "settings": {
+      "q": "What size boxing gloves should I buy?",
+      "a": "<p>Choose 8oz–10oz for pads and speed, 12oz–14oz for heavy bag and general training, 16oz for adult sparring and 18oz for heavier boxers. See our <a href=\"/blogs/news/what-size-boxing-gloves-should-i-buy\">glove size guide</a>.</p>"
+     }
+    },
+    "qa_3": {
+     "type": "qa",
+     "settings": {
+      "q": "Do you ship to the USA, UK, Europe and Canada?",
+      "a": "<p>Yes. Every order ships tracked and insured with DHL, FedEx or UPS. The exact shipping cost is shown at checkout before you pay. Local import duties or VAT may apply in some countries.</p>"
+     }
+    },
+    "qa_4": {
+     "type": "qa",
+     "settings": {
+      "q": "How fast will my order arrive?",
+      "a": "<p>Standard stock ships in 1–3 business days, then transit usually takes 3–5 business days. Custom gear timelines are confirmed with you before production starts.</p>"
+     }
+    },
+    "qa_5": {
+     "type": "qa",
+     "settings": {
+      "q": "Lace-up or velcro: which closure should I choose?",
+      "a": "<p>Lace-up gives the tightest wrist support and suits sparring. Velcro (hook and loop) lets you glove up alone in seconds and suits bag work and classes. Read <a href=\"/blogs/news/lace-up-vs-hook-and-loop-boxing-gloves\">lace-up vs hook and loop</a>.</p>"
+     }
+    },
+    "qa_6": {
+     "type": "qa",
+     "settings": {
+      "q": "Can I order custom boxing gloves?",
+      "a": "<p>Yes, with no minimum order. Tell us your colors, materials, names and logos through our <a href=\"/pages/contact\">contact page</a> and we will confirm the design and price.</p>"
+     }
+    },
+    "qa_7": {
+     "type": "qa",
+     "settings": {
+      "q": "What is your return policy?",
+      "a": "<p>Unused stock items in their original packaging can be returned; custom-made items cannot be returned unless faulty. Full details are in our <a href=\"/policies/refund-policy\">refund policy</a>.</p>"
+     }
+    },
+    "qa_8": {
+     "type": "qa",
+     "settings": {
+      "q": "Which payment methods do you accept?",
+      "a": "<p>Major credit and debit cards, Shop Pay, Apple Pay and Google Pay, all through Shopify’s secure checkout.</p>"
+     }
+    }
+   },
+   "block_order": [
+    "qa_1",
+    "qa_2",
+    "qa_3",
+    "qa_4",
+    "qa_5",
+    "qa_6",
+    "qa_7",
+    "qa_8"
+   ]
+  }
+ },
+ "order": [
+  "hero",
+  "usp",
+  "brands",
+  "rail_winning",
+  "cats",
+  "weights",
+  "rail_sets",
+  "guide",
+  "rail_cleto",
+  "custom",
+  "rail_shoes",
+  "story",
+  "blog",
+  "faq"
+ ]
+}

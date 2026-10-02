@@ -1,0 +1,24 @@
+{%- assign im = section.settings.image | default: section.settings.collection.image | default: section.settings.collection.products.first.featured_image -%}
+<section class="hvx hvx-sec{% if section.settings.dark %} hvx-sec--dark{% endif %}">
+  <div class="hvx-wrap hvx-split{% if section.settings.flip %} hvx-split--flip{% endif %}">
+    <div class="hvx-split__media">
+      {%- if im -%}{{ im | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '600,900,1200', sizes: '(min-width:900px) 50vw, 100vw', alt: section.settings.image_alt | default: section.settings.heading }}{%- endif -%}
+    </div>
+    <div>
+      {%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="hvx-h2">{{ section.settings.heading }}</h2>
+      <div class="hvx-lead">{{ section.settings.text }}</div>
+      {%- assign ticks = section.blocks | where: 'type', 'tick' -%}
+      {%- if ticks.size > 0 -%}<ul class="hvx-ticks">{%- for b in ticks -%}<li {{ b.shopify_attributes }}>{{ b.settings.text }}</li>{%- endfor -%}</ul>{%- endif -%}
+      {%- assign stats = section.blocks | where: 'type', 'stat' -%}
+      {%- if stats.size > 0 -%}<div class="hvx-stats">{%- for b in stats -%}<div class="hvx-stat" {{ b.shopify_attributes }}><b>{{ b.settings.big }}</b><span>{{ b.settings.small }}</span></div>{%- endfor -%}</div>{%- endif -%}
+      {%- if section.settings.cta != blank -%}<p style="margin:28px 0 0"><a class="hvx-btn {% if section.settings.dark %}hvx-btn--red{% else %}hvx-btn--dark{% endif %}" href="{{ section.settings.cta_link }}">{{ section.settings.cta }}</a></p>{%- endif -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Havoc image + text","tag":"div","class":"hvx-s-split",
+"settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"collection","id":"collection","label":"Or use collection image"},{"type":"text","id":"image_alt","label":"Image alt"},{"type":"text","id":"eyebrow","label":"Eyebrow"},{"type":"text","id":"heading","label":"Heading"},{"type":"richtext","id":"text","label":"Text"},{"type":"text","id":"cta","label":"Button"},{"type":"url","id":"cta_link","label":"Button link"},{"type":"checkbox","id":"dark","label":"Dark background","default":false},{"type":"checkbox","id":"flip","label":"Image on right","default":false}],
+"blocks":[{"type":"tick","name":"Checklist item","settings":[{"type":"text","id":"text","label":"Text"}]},{"type":"stat","name":"Stat","settings":[{"type":"text","id":"big","label":"Big"},{"type":"text","id":"small","label":"Small"}]}],
+"presets":[{"name":"Havoc image + text"}]}
+{% endschema %}

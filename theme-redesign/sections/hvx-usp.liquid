@@ -1,0 +1,21 @@
+<div class="hvx hvx-usp">
+  <ul>
+    {%- for b in section.blocks -%}
+      <li {{ b.shopify_attributes }}>
+        {%- case b.settings.icon -%}
+          {%- when 'truck' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+          {%- when 'lock' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          {%- when 'scale' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M5 7h14M5 7l-3 7a4 4 0 0 0 6 0zM19 7l-3 7a4 4 0 0 0 6 0z"/></svg>
+          {%- when 'star' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>
+          {%- else -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>
+        {%- endcase -%}
+        <span><b>{{ b.settings.title }}</b>{{ b.settings.text }}</span>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+{% schema %}
+{"name":"Havoc trust bar","tag":"section","class":"hvx-s-usp",
+"blocks":[{"type":"usp","name":"Trust point","settings":[{"type":"select","id":"icon","label":"Icon","options":[{"value":"truck","label":"Shipping"},{"value":"lock","label":"Secure"},{"value":"scale","label":"Sizes"},{"value":"star","label":"Quality"},{"value":"return","label":"Returns"}],"default":"truck"},{"type":"text","id":"title","label":"Title"},{"type":"text","id":"text","label":"Text"}]}],
+"presets":[{"name":"Havoc trust bar"}]}
+{% endschema %}

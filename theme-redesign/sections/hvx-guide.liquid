@@ -1,0 +1,21 @@
+<section class="hvx hvx-sec hvx-sec--mist">
+  <div class="hvx-wrap">
+    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
+    <div class="hvx-guide">
+      {%- for b in section.blocks -%}
+        <div class="hvx-guide__item" {{ b.shopify_attributes }}>
+          <h3>{{ b.settings.title }}</h3>
+          <span class="hvx-guide__rec">{{ b.settings.rec }}</span>
+          <p>{{ b.settings.text }}</p>
+          {%- if b.settings.link != blank -%}<a class="hvx-link" href="{{ b.settings.link }}">{{ b.settings.link_text | default: 'Shop now' }}</a>{%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Havoc training guide","tag":"div","class":"hvx-s-guide",
+"settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Buying guide"},{"type":"text","id":"heading","label":"Heading","default":"Gear for how you train"},{"type":"textarea","id":"text","label":"Text"}],
+"blocks":[{"type":"g","name":"Guide card","limit":6,"settings":[{"type":"text","id":"title","label":"Title"},{"type":"text","id":"rec","label":"Recommendation tag"},{"type":"textarea","id":"text","label":"Text"},{"type":"url","id":"link","label":"Link"},{"type":"text","id":"link_text","label":"Link text"}]}],
+"presets":[{"name":"Havoc training guide"}]}
+{% endschema %}

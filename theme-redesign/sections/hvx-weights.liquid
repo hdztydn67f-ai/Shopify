@@ -1,0 +1,17 @@
+{%- assign base = section.settings.collection.url | default: '/collections/boxing-gloves' -%}
+<section class="hvx hvx-sec hvx-sec--dark">
+  <div class="hvx-wrap">
+    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
+    <div class="hvx-weights">
+      {%- for b in section.blocks -%}
+        <a class="hvx-weight" href="{{ base }}?filter.v.option.size={{ b.settings.oz | url_encode }}" rel="nofollow" {{ b.shopify_attributes }}><b>{{ b.settings.oz }}</b><span>{{ b.settings.use }}</span></a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Havoc shop by weight","tag":"div","class":"hvx-s-weights",
+"settings":[{"type":"collection","id":"collection","label":"Glove collection"},{"type":"text","id":"eyebrow","label":"Eyebrow","default":"Glove weight finder"},{"type":"text","id":"heading","label":"Heading","default":"Shop by weight"},{"type":"textarea","id":"text","label":"Text"}],
+"blocks":[{"type":"w","name":"Weight","settings":[{"type":"text","id":"oz","label":"Size value (must match variant, e.g. 16oz)"},{"type":"text","id":"use","label":"Best for"}]}],
+"presets":[{"name":"Havoc shop by weight"}]}
+{% endschema %}

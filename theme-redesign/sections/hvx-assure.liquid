@@ -1,0 +1,49 @@
+{%- comment -%} Product page: trust row + size guide. Sits under the main product section. {%- endcomment -%}
+{%- liquid
+  assign t = product.type | downcase
+  assign is_glove = false
+  if t contains 'glove' or t contains 'set' or t contains 'kit'
+    assign is_glove = true
+  endif
+-%}
+<section class="hvx hvx-sec hvx-sec--tight">
+  <div class="hvx-wrap">
+    <div class="hvx-assure">
+      {%- for b in section.blocks -%}
+        <div class="hvx-assure__i" {{ b.shopify_attributes }}>
+          {%- case b.settings.icon -%}
+            {%- when 'truck' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+            {%- when 'lock' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            {%- when 'chat' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>
+            {%- else -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/></svg>
+          {%- endcase -%}
+          <div><b>{{ b.settings.title }}</b><span>{{ b.settings.text }}</span></div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if is_glove and section.settings.show_sizes -%}
+      <div class="hvx-faq" style="max-width:none;margin-top:18px">
+        <details><summary>Glove size guide: which weight should I buy?</summary>
+          <div class="hvx-faq__a">
+            <table class="hvx-sizes">
+              <thead><tr><th>Weight</th><th>Best for</th><th>Typical user</th></tr></thead>
+              <tbody>
+                <tr><td>6oz – 10oz</td><td>Speed, pad and mitt work</td><td>Youth and smaller hands; experienced boxers on pads</td></tr>
+                <tr><td>12oz – 14oz</td><td>Heavy bag and general training</td><td>Most beginners and all-round training</td></tr>
+                <tr><td>16oz</td><td>Sparring</td><td>Standard adult sparring weight</td></tr>
+                <tr><td>18oz</td><td>Sparring, extra protection</td><td>Heavier boxers, roughly 90kg / 200lb and up</td></tr>
+              </tbody>
+            </table>
+            <p style="margin:14px 0 0">Between sizes? Go heavier for sparring and lighter for pads. Read the full <a href="/blogs/news/what-size-boxing-gloves-should-i-buy">boxing glove size guide</a>.</p>
+          </div>
+        </details>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+{% schema %}
+{"name":"Havoc buy with confidence","tag":"div","class":"hvx-s-assure",
+"settings":[{"type":"checkbox","id":"show_sizes","label":"Show glove size guide on gloves and sets","default":true}],
+"blocks":[{"type":"i","name":"Trust point","limit":4,"settings":[{"type":"select","id":"icon","label":"Icon","options":[{"value":"truck","label":"Shipping"},{"value":"lock","label":"Secure"},{"value":"return","label":"Returns"},{"value":"chat","label":"Support"}],"default":"truck"},{"type":"text","id":"title","label":"Title"},{"type":"text","id":"text","label":"Text"}]}],
+"presets":[{"name":"Havoc buy with confidence"}]}
+{% endschema %}
