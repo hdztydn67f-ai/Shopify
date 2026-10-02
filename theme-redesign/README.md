@@ -47,3 +47,10 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - Header/footer copy cleaned: honest free-shipping threshold ($250, from shipping settings), removed "50% OFF flash sale",
   "24 Hour Customer Service", demo menu labels, PayPal/Bitcoin/Maestro icons; fixed tel: link.
 - Homepage trimmed to 11 sections, plainer copy, no scroll animations or hover lifts.
+
+## v5 (2026-10-02)
+- Countdown text: "Black Friday: up to 40% off · starts in / ends in". It runs for the fixed Nov 23–30 window only and does not auto-restart (no fake urgency).
+- Popup: replaced invalid `font:` shorthands; on phones it is a bottom sheet with a full-width 16px email field (no iOS zoom) and 54px tap targets.
+- Store email set to havocboxingstore@gmail.com (footer, contact section).
+- Returns are now 14 days everywhere: product tab, trust list, homepage FAQ, product FAQ schema. MerchantReturnPolicy JSON-LD: 14 days, customer pays return shipping, US/UK/CA/EU/AU.
+- Mobile: 16px quick-add selects, 44px chips, hover-swap image hidden on touch devices, compact countdown on phones.

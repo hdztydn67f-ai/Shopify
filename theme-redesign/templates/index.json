@@ -1,490 +1,499 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
- "sections": {
-  "hero": {
-   "type": "hvx-hero",
-   "settings": {
-    "head_font": "oswald_n7",
-    "product": "nike-hyperko-1-boxing-boots-black-metallic-silver-us6-12",
-    "image_alt": "Nike Hyperko 1 boxing boots in black and metallic silver",
-    "tag_label": "Best seller",
-    "kicker": "",
-    "heading": "Boxing gloves, boots",
-    "heading_accent": "& sparring gear",
-    "sub": "Nike Hyperko boots, plus Winning, Cleto Reyes and No Boxing No Life gloves from 6oz to 18oz. Free tracked shipping on orders over $250 to the US, UK, Europe and Canada.",
-    "cta1": "Shop best sellers",
-    "cta1_link": "shopify://collections/boxing-shoes",
-    "cta2": "Shop gloves",
-    "cta2_link": "shopify://collections/boxing-gloves"
-   }
-  },
-  "usp": {
-   "type": "hvx-usp",
-   "settings": {},
-   "blocks": {
-    "usp_1": {
-     "type": "usp",
-     "settings": {
-      "icon": "truck",
-      "title": "Free shipping over $250",
-      "text": "Tracked with DHL, FedEx or UPS"
-     }
+  "sections": {
+    "hero": {
+      "type": "hvx-hero",
+      "settings": {
+        "head_font": "oswald_n7",
+        "product": "nike-hyperko-1-boxing-boots-black-metallic-silver-us6-12",
+        "image_alt": "Nike Hyperko 1 boxing boots in black and metallic silver",
+        "tag_label": "Best seller",
+        "kicker": "",
+        "heading": "Boxing gloves, boots",
+        "heading_accent": "& sparring gear",
+        "sub": "Nike Hyperko boots, plus Winning, Cleto Reyes and No Boxing No Life gloves from 6oz to 18oz. Free tracked shipping on orders over $250 to the US, UK, Europe and Canada.",
+        "cta1": "Shop best sellers",
+        "cta1_link": "shopify://collections/boxing-shoes",
+        "cta2": "Shop gloves",
+        "cta2_link": "shopify://collections/boxing-gloves"
+      }
     },
-    "usp_2": {
-     "type": "usp",
-     "settings": {
-      "icon": "lock",
-      "title": "Secure checkout",
-      "text": "Card, Shop Pay, Apple Pay, Google Pay"
-     }
+    "usp": {
+      "type": "hvx-usp",
+      "settings": {},
+      "blocks": {
+        "usp_1": {
+          "type": "usp",
+          "settings": {
+            "icon": "truck",
+            "title": "Free shipping over $250",
+            "text": "Tracked with DHL, FedEx or UPS"
+          }
+        },
+        "usp_2": {
+          "type": "usp",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "Card, Shop Pay, Apple Pay, Google Pay"
+          }
+        },
+        "usp_3": {
+          "type": "usp",
+          "settings": {
+            "icon": "scale",
+            "title": "6oz to 18oz",
+            "text": "Lace-up or velcro on most gloves"
+          }
+        },
+        "usp_4": {
+          "type": "usp",
+          "settings": {
+            "icon": "star",
+            "title": "Custom orders",
+            "text": "One pair or a whole gym"
+          }
+        }
+      },
+      "block_order": [
+        "usp_1",
+        "usp_2",
+        "usp_3",
+        "usp_4"
+      ]
     },
-    "usp_3": {
-     "type": "usp",
-     "settings": {
-      "icon": "scale",
-      "title": "6oz to 18oz",
-      "text": "Lace-up or velcro on most gloves"
-     }
+    "best": {
+      "type": "hvx-rail",
+      "settings": {
+        "products": [
+          "nike-hyperko-1-boxing-boots-black-metallic-silver-us6-12",
+          "nike-hyperko-1-boxing-shoes-white-red-usa",
+          "nike-hyperko-1-boxing-boots-red-white-us6-12",
+          "nike-hyperko-1-boxing-shoes-white-gold",
+          "nike-hyperko-2-boxing-shoes-royal-blue-us6-12",
+          "nike-hyperko-1-boxing-shoes-black-gold",
+          "nike-hyperko-1-boxing-boots-red-blue-us6-12",
+          "cleto-reyes-3-piece-sparring-set-metallic-purple-8oz-16oz",
+          "nike-hyperko-2-boxing-shoes-white-bright-crimson-us6-12",
+          "nike-hyperko-1-boxing-boots-white-royal-blue-us6-12"
+        ],
+        "link": "shopify://collections/boxing-shoes",
+        "eyebrow": "",
+        "heading": "Best sellers",
+        "text": "What people have been ordering most this year.",
+        "link_text": "All boxing shoes",
+        "badge": "",
+        "limit": 10,
+        "mist": false
+      }
     },
-    "usp_4": {
-     "type": "usp",
-     "settings": {
-      "icon": "star",
-      "title": "Custom orders",
-      "text": "One pair or a whole gym"
-     }
+    "brands": {
+      "type": "hvx-brands",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Shop by brand",
+        "text": ""
+      },
+      "blocks": {
+        "brand_1": {
+          "type": "brand",
+          "settings": {
+            "collection": "boxing-shoes",
+            "product": "nike-hyperko-1-boxing-boots-red-blue-us6-12",
+            "title": "Nike",
+            "text": "Hyperko, Machomai and Tawa boots."
+          }
+        },
+        "brand_2": {
+          "type": "brand",
+          "settings": {
+            "collection": "winning-boxing-gloves",
+            "product": "winning-boxing-gloves-metallic-gold",
+            "title": "Winning",
+            "text": "Soft, thick padding. Popular for sparring."
+          }
+        },
+        "brand_3": {
+          "type": "brand",
+          "settings": {
+            "collection": "cleto-reyes-boxing-gloves",
+            "product": "cleto-reyes-red-boxing-gloves-8oz-16oz",
+            "title": "Cleto Reyes",
+            "text": "Compact, firm gloves made for punching."
+          }
+        },
+        "brand_4": {
+          "type": "brand",
+          "settings": {
+            "collection": "no-boxing-no-life-boxing-gloves",
+            "product": "metallic-red-gold-leather-boxing-gloves",
+            "title": "No Boxing No Life",
+            "text": "Bold colors and metallic finishes."
+          }
+        }
+      },
+      "block_order": [
+        "brand_1",
+        "brand_2",
+        "brand_3",
+        "brand_4"
+      ]
+    },
+    "tabs": {
+      "type": "hvx-tabs",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Browse the range",
+        "text": "",
+        "limit": 8,
+        "mist": true
+      },
+      "blocks": {
+        "tab_1": {
+          "type": "tab",
+          "settings": {
+            "collection": "boxing-gloves",
+            "title": "Gloves"
+          }
+        },
+        "tab_2": {
+          "type": "tab",
+          "settings": {
+            "collection": "boxing-sets",
+            "title": "Sparring sets"
+          }
+        },
+        "tab_3": {
+          "type": "tab",
+          "settings": {
+            "collection": "boxing-shoes",
+            "title": "Boxing shoes"
+          }
+        },
+        "tab_4": {
+          "type": "tab",
+          "settings": {
+            "collection": "boxing-head-guards",
+            "title": "Headgear"
+          }
+        },
+        "tab_5": {
+          "type": "tab",
+          "settings": {
+            "collection": "boxing-groin-guards",
+            "title": "Groin guards"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3",
+        "tab_4",
+        "tab_5"
+      ]
+    },
+    "spot": {
+      "type": "hvx-spotlight",
+      "settings": {
+        "product": "nike-hyperko-1-boxing-shoes-white-red-usa",
+        "eyebrow": "Popular right now",
+        "heading": "Nike HyperKO 1 in White/Red",
+        "text": "",
+        "mist": false
+      },
+      "blocks": {
+        "perk_1": {
+          "type": "perk",
+          "settings": {
+            "text": "Free tracked shipping on orders over $250"
+          }
+        },
+        "perk_2": {
+          "type": "perk",
+          "settings": {
+            "text": "Pick your US size, then add to cart"
+          }
+        }
+      },
+      "block_order": [
+        "perk_1",
+        "perk_2"
+      ]
+    },
+    "mosaic": {
+      "type": "hvx-mosaic",
+      "settings": {
+        "eyebrow": "",
+        "heading": "More colorways",
+        "text": "A few of our favorite gloves from Cleto Reyes, Winning and No Boxing No Life.",
+        "link_text": "Shop all gloves",
+        "link": "shopify://collections/boxing-gloves"
+      },
+      "blocks": {
+        "tile_1": {
+          "type": "tile",
+          "settings": {
+            "product": "cleto-reyes-gold-metallic-boxing-gloves-8oz-16oz",
+            "label": "Cleto Reyes Gold Metallic"
+          }
+        },
+        "tile_2": {
+          "type": "tile",
+          "settings": {
+            "product": "winning-boxing-gloves-pink",
+            "label": "Winning Pink"
+          }
+        },
+        "tile_3": {
+          "type": "tile",
+          "settings": {
+            "product": "flag-bear-boxing-gloves-black-gold",
+            "label": "NBNL Flag Design"
+          }
+        },
+        "tile_4": {
+          "type": "tile",
+          "settings": {
+            "product": "blue-silver-bear-boxing-gloves",
+            "label": "NBNL Blue & Silver Bear"
+          }
+        },
+        "tile_5": {
+          "type": "tile",
+          "settings": {
+            "product": "winning-fg2900-boxing-headgear-classic-red",
+            "label": "Winning FG-2900 Red"
+          }
+        }
+      },
+      "block_order": [
+        "tile_1",
+        "tile_2",
+        "tile_3",
+        "tile_4",
+        "tile_5"
+      ]
+    },
+    "weights": {
+      "type": "hvx-weights",
+      "settings": {
+        "collection": "boxing-gloves",
+        "eyebrow": "",
+        "heading": "Not sure which weight?",
+        "text": "8–10oz for pads, 12–14oz for the bag, 16oz for sparring. Tap a weight to see gloves in that size."
+      },
+      "blocks": {
+        "w_1": {
+          "type": "w",
+          "settings": {
+            "oz": "6oz",
+            "use": "Youth & speed"
+          }
+        },
+        "w_2": {
+          "type": "w",
+          "settings": {
+            "oz": "8oz",
+            "use": "Mitts & speed"
+          }
+        },
+        "w_3": {
+          "type": "w",
+          "settings": {
+            "oz": "10oz",
+            "use": "Pads & fitness"
+          }
+        },
+        "w_4": {
+          "type": "w",
+          "settings": {
+            "oz": "12oz",
+            "use": "Bag & classes"
+          }
+        },
+        "w_5": {
+          "type": "w",
+          "settings": {
+            "oz": "14oz",
+            "use": "All-round training"
+          }
+        },
+        "w_6": {
+          "type": "w",
+          "settings": {
+            "oz": "16oz",
+            "use": "Adult sparring"
+          }
+        },
+        "w_7": {
+          "type": "w",
+          "settings": {
+            "oz": "18oz",
+            "use": "Heavyweight sparring"
+          }
+        }
+      },
+      "block_order": [
+        "w_1",
+        "w_2",
+        "w_3",
+        "w_4",
+        "w_5",
+        "w_6",
+        "w_7"
+      ]
+    },
+    "custom": {
+      "type": "hvx-split",
+      "settings": {
+        "collection": "winning-boxing-sets",
+        "image_alt": "Custom boxing gloves and sparring kit",
+        "eyebrow": "",
+        "heading": "Custom gloves and team kits",
+        "text": "<p>Send us your colors, names or gym logo and we'll quote you. There's no minimum, so one pair is fine.</p>",
+        "cta": "Ask about custom",
+        "cta_link": "shopify://pages/contact",
+        "dark": true,
+        "flip": false,
+        "cover": true
+      },
+      "blocks": {
+        "tick_1": {
+          "type": "tick",
+          "settings": {
+            "text": "No minimum order"
+          }
+        },
+        "tick_2": {
+          "type": "tick",
+          "settings": {
+            "text": "Choose leather, matte or metallic finishes"
+          }
+        },
+        "tick_3": {
+          "type": "tick",
+          "settings": {
+            "text": "Add names, flags or logos"
+          }
+        },
+        "tick_4": {
+          "type": "tick",
+          "settings": {
+            "text": "Bulk pricing for gyms and clubs"
+          }
+        }
+      },
+      "block_order": [
+        "tick_1",
+        "tick_2",
+        "tick_3",
+        "tick_4"
+      ]
+    },
+    "blog": {
+      "type": "hvx-blog",
+      "settings": {
+        "blog": "news",
+        "eyebrow": "",
+        "heading": "Guides"
+      }
+    },
+    "faq": {
+      "type": "hvx-faq",
+      "settings": {
+        "eyebrow": "",
+        "heading": "FAQ"
+      },
+      "blocks": {
+        "qa_1": {
+          "type": "qa",
+          "settings": {
+            "q": "Which boxing brands do you sell?",
+            "a": "<p>We stock Nike boxing shoes (Hyperko, Machomai and Tawa), Winning, Cleto Reyes and No Boxing No Life (NBNL) boxing gloves and sparring sets, plus headgear, groin guards and focus mitts.</p>"
+          }
+        },
+        "qa_2": {
+          "type": "qa",
+          "settings": {
+            "q": "What size boxing gloves should I buy?",
+            "a": "<p>Choose 8oz–10oz for pads and speed, 12oz–14oz for heavy bag and general training, 16oz for adult sparring and 18oz for heavier boxers. See our <a href=\"/blogs/news/what-size-boxing-gloves-should-i-buy\">glove size guide</a>.</p>"
+          }
+        },
+        "qa_3": {
+          "type": "qa",
+          "settings": {
+            "q": "Do you ship to the USA, UK, Europe and Canada?",
+            "a": "<p>Yes. Orders ship tracked with DHL, FedEx or UPS, and shipping is free on orders over $250. Under that, the cost for your address is shown at checkout before you pay. Import duties or VAT may apply in some countries.</p>"
+          }
+        },
+        "qa_4": {
+          "type": "qa",
+          "settings": {
+            "q": "How fast will my order arrive?",
+            "a": "<p>Standard stock ships in 1–3 business days, then transit usually takes 3–5 business days. Custom gear timelines are confirmed with you before production starts.</p>"
+          }
+        },
+        "qa_5": {
+          "type": "qa",
+          "settings": {
+            "q": "Lace-up or velcro: which closure should I choose?",
+            "a": "<p>Lace-up gives the tightest wrist support and suits sparring. Velcro (hook and loop) lets you glove up alone in seconds and suits bag work and classes. Read <a href=\"/blogs/news/lace-up-vs-hook-and-loop-boxing-gloves\">lace-up vs hook and loop</a>.</p>"
+          }
+        },
+        "qa_6": {
+          "type": "qa",
+          "settings": {
+            "q": "Can I order custom boxing gloves?",
+            "a": "<p>Yes, with no minimum order. Tell us your colors, materials, names and logos through our <a href=\"/pages/contact\">contact page</a> and we will confirm the design and price.</p>"
+          }
+        },
+        "qa_7": {
+          "type": "qa",
+          "settings": {
+            "q": "What is your return policy?",
+            "a": "<p>You can return unused stock items in their original packaging within 14 days of delivery. Custom-made items can only be returned if they are faulty. Full details are in our <a href=\"/policies/refund-policy\">refund policy</a>.</p>"
+          }
+        },
+        "qa_8": {
+          "type": "qa",
+          "settings": {
+            "q": "Which payment methods do you accept?",
+            "a": "<p>Major credit and debit cards, Shop Pay, Apple Pay and Google Pay, all through Shopify’s secure checkout.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "qa_1",
+        "qa_2",
+        "qa_3",
+        "qa_4",
+        "qa_5",
+        "qa_6",
+        "qa_7",
+        "qa_8"
+      ]
     }
-   },
-   "block_order": [
-    "usp_1",
-    "usp_2",
-    "usp_3",
-    "usp_4"
-   ]
   },
-  "best": {
-   "type": "hvx-rail",
-   "settings": {
-    "products": [
-     "nike-hyperko-1-boxing-boots-black-metallic-silver-us6-12",
-     "nike-hyperko-1-boxing-shoes-white-red-usa",
-     "nike-hyperko-1-boxing-boots-red-white-us6-12",
-     "nike-hyperko-1-boxing-shoes-white-gold",
-     "nike-hyperko-2-boxing-shoes-royal-blue-us6-12",
-     "nike-hyperko-1-boxing-shoes-black-gold",
-     "nike-hyperko-1-boxing-boots-red-blue-us6-12",
-     "cleto-reyes-3-piece-sparring-set-metallic-purple-8oz-16oz",
-     "nike-hyperko-2-boxing-shoes-white-bright-crimson-us6-12",
-     "nike-hyperko-1-boxing-boots-white-royal-blue-us6-12"
-    ],
-    "link": "shopify://collections/boxing-shoes",
-    "eyebrow": "",
-    "heading": "Best sellers",
-    "text": "What people have been ordering most this year.",
-    "link_text": "All boxing shoes",
-    "badge": "",
-    "limit": 10,
-    "mist": false
-   }
-  },
-  "brands": {
-   "type": "hvx-brands",
-   "settings": {
-    "eyebrow": "",
-    "heading": "Shop by brand",
-    "text": ""
-   },
-   "blocks": {
-    "brand_1": {
-     "type": "brand",
-     "settings": {
-      "collection": "boxing-shoes",
-      "product": "nike-hyperko-1-boxing-boots-red-blue-us6-12",
-      "title": "Nike",
-      "text": "Hyperko, Machomai and Tawa boots."
-     }
-    },
-    "brand_2": {
-     "type": "brand",
-     "settings": {
-      "collection": "winning-boxing-gloves",
-      "product": "winning-boxing-gloves-metallic-gold",
-      "title": "Winning",
-      "text": "Soft, thick padding. Popular for sparring."
-     }
-    },
-    "brand_3": {
-     "type": "brand",
-     "settings": {
-      "collection": "cleto-reyes-boxing-gloves",
-      "product": "cleto-reyes-red-boxing-gloves-8oz-16oz",
-      "title": "Cleto Reyes",
-      "text": "Compact, firm gloves made for punching."
-     }
-    },
-    "brand_4": {
-     "type": "brand",
-     "settings": {
-      "collection": "no-boxing-no-life-boxing-gloves",
-      "product": "metallic-red-gold-leather-boxing-gloves",
-      "title": "No Boxing No Life",
-      "text": "Bold colors and metallic finishes."
-     }
-    }
-   },
-   "block_order": [
-    "brand_1",
-    "brand_2",
-    "brand_3",
-    "brand_4"
-   ]
-  },
-  "tabs": {
-   "type": "hvx-tabs",
-   "settings": {
-    "eyebrow": "",
-    "heading": "Browse the range",
-    "text": "",
-    "limit": 8,
-    "mist": true
-   },
-   "blocks": {
-    "tab_1": {
-     "type": "tab",
-     "settings": {
-      "collection": "boxing-gloves",
-      "title": "Gloves"
-     }
-    },
-    "tab_2": {
-     "type": "tab",
-     "settings": {
-      "collection": "boxing-sets",
-      "title": "Sparring sets"
-     }
-    },
-    "tab_3": {
-     "type": "tab",
-     "settings": {
-      "collection": "boxing-shoes",
-      "title": "Boxing shoes"
-     }
-    },
-    "tab_4": {
-     "type": "tab",
-     "settings": {
-      "collection": "boxing-head-guards",
-      "title": "Headgear"
-     }
-    },
-    "tab_5": {
-     "type": "tab",
-     "settings": {
-      "collection": "boxing-groin-guards",
-      "title": "Groin guards"
-     }
-    }
-   },
-   "block_order": [
-    "tab_1",
-    "tab_2",
-    "tab_3",
-    "tab_4",
-    "tab_5"
-   ]
-  },
-  "spot": {
-   "type": "hvx-spotlight",
-   "settings": {
-    "product": "nike-hyperko-1-boxing-shoes-white-red-usa",
-    "eyebrow": "Popular right now",
-    "heading": "Nike HyperKO 1 in White/Red",
-    "text": "",
-    "mist": false
-   },
-   "blocks": {
-    "perk_1": {
-     "type": "perk",
-     "settings": {
-      "text": "Free tracked shipping on orders over $250"
-     }
-    },
-    "perk_2": {
-     "type": "perk",
-     "settings": {
-      "text": "Pick your US size, then add to cart"
-     }
-    }
-   },
-   "block_order": [
-    "perk_1",
-    "perk_2"
-   ]
-  },
-  "mosaic": {
-   "type": "hvx-mosaic",
-   "settings": {
-    "eyebrow": "",
-    "heading": "More colorways",
-    "text": "A few of our favorite gloves from Cleto Reyes, Winning and No Boxing No Life.",
-    "link_text": "Shop all gloves",
-    "link": "shopify://collections/boxing-gloves"
-   },
-   "blocks": {
-    "tile_1": {
-     "type": "tile",
-     "settings": {
-      "product": "cleto-reyes-gold-metallic-boxing-gloves-8oz-16oz",
-      "label": "Cleto Reyes Gold Metallic"
-     }
-    },
-    "tile_2": {
-     "type": "tile",
-     "settings": {
-      "product": "winning-boxing-gloves-pink",
-      "label": "Winning Pink"
-     }
-    },
-    "tile_3": {
-     "type": "tile",
-     "settings": {
-      "product": "flag-bear-boxing-gloves-black-gold",
-      "label": "NBNL Flag Design"
-     }
-    },
-    "tile_4": {
-     "type": "tile",
-     "settings": {
-      "product": "blue-silver-bear-boxing-gloves",
-      "label": "NBNL Blue & Silver Bear"
-     }
-    },
-    "tile_5": {
-     "type": "tile",
-     "settings": {
-      "product": "winning-fg2900-boxing-headgear-classic-red",
-      "label": "Winning FG-2900 Red"
-     }
-    }
-   },
-   "block_order": [
-    "tile_1",
-    "tile_2",
-    "tile_3",
-    "tile_4",
-    "tile_5"
-   ]
-  },
-  "weights": {
-   "type": "hvx-weights",
-   "settings": {
-    "collection": "boxing-gloves",
-    "eyebrow": "",
-    "heading": "Not sure which weight?",
-    "text": "8–10oz for pads, 12–14oz for the bag, 16oz for sparring. Tap a weight to see gloves in that size."
-   },
-   "blocks": {
-    "w_1": {
-     "type": "w",
-     "settings": {
-      "oz": "6oz",
-      "use": "Youth & speed"
-     }
-    },
-    "w_2": {
-     "type": "w",
-     "settings": {
-      "oz": "8oz",
-      "use": "Mitts & speed"
-     }
-    },
-    "w_3": {
-     "type": "w",
-     "settings": {
-      "oz": "10oz",
-      "use": "Pads & fitness"
-     }
-    },
-    "w_4": {
-     "type": "w",
-     "settings": {
-      "oz": "12oz",
-      "use": "Bag & classes"
-     }
-    },
-    "w_5": {
-     "type": "w",
-     "settings": {
-      "oz": "14oz",
-      "use": "All-round training"
-     }
-    },
-    "w_6": {
-     "type": "w",
-     "settings": {
-      "oz": "16oz",
-      "use": "Adult sparring"
-     }
-    },
-    "w_7": {
-     "type": "w",
-     "settings": {
-      "oz": "18oz",
-      "use": "Heavyweight sparring"
-     }
-    }
-   },
-   "block_order": [
-    "w_1",
-    "w_2",
-    "w_3",
-    "w_4",
-    "w_5",
-    "w_6",
-    "w_7"
-   ]
-  },
-  "custom": {
-   "type": "hvx-split",
-   "settings": {
-    "collection": "winning-boxing-sets",
-    "image_alt": "Custom boxing gloves and sparring kit",
-    "eyebrow": "",
-    "heading": "Custom gloves and team kits",
-    "text": "<p>Send us your colors, names or gym logo and we'll quote you. There's no minimum, so one pair is fine.</p>",
-    "cta": "Ask about custom",
-    "cta_link": "shopify://pages/contact",
-    "dark": true,
-    "flip": false,
-    "cover": true
-   },
-   "blocks": {
-    "tick_1": {
-     "type": "tick",
-     "settings": {
-      "text": "No minimum order"
-     }
-    },
-    "tick_2": {
-     "type": "tick",
-     "settings": {
-      "text": "Choose leather, matte or metallic finishes"
-     }
-    },
-    "tick_3": {
-     "type": "tick",
-     "settings": {
-      "text": "Add names, flags or logos"
-     }
-    },
-    "tick_4": {
-     "type": "tick",
-     "settings": {
-      "text": "Bulk pricing for gyms and clubs"
-     }
-    }
-   },
-   "block_order": [
-    "tick_1",
-    "tick_2",
-    "tick_3",
-    "tick_4"
-   ]
-  },
-  "blog": {
-   "type": "hvx-blog",
-   "settings": {
-    "blog": "news",
-    "eyebrow": "",
-    "heading": "Guides"
-   }
-  },
-  "faq": {
-   "type": "hvx-faq",
-   "settings": {
-    "eyebrow": "",
-    "heading": "FAQ"
-   },
-   "blocks": {
-    "qa_1": {
-     "type": "qa",
-     "settings": {
-      "q": "Which boxing brands do you sell?",
-      "a": "<p>We stock Nike boxing shoes (Hyperko, Machomai and Tawa), Winning, Cleto Reyes and No Boxing No Life (NBNL) boxing gloves and sparring sets, plus headgear, groin guards and focus mitts.</p>"
-     }
-    },
-    "qa_2": {
-     "type": "qa",
-     "settings": {
-      "q": "What size boxing gloves should I buy?",
-      "a": "<p>Choose 8oz–10oz for pads and speed, 12oz–14oz for heavy bag and general training, 16oz for adult sparring and 18oz for heavier boxers. See our <a href=\"/blogs/news/what-size-boxing-gloves-should-i-buy\">glove size guide</a>.</p>"
-     }
-    },
-    "qa_3": {
-     "type": "qa",
-     "settings": {
-      "q": "Do you ship to the USA, UK, Europe and Canada?",
-      "a": "<p>Yes. Orders ship tracked with DHL, FedEx or UPS, and shipping is free on orders over $250. Under that, the cost for your address is shown at checkout before you pay. Import duties or VAT may apply in some countries.</p>"
-     }
-    },
-    "qa_4": {
-     "type": "qa",
-     "settings": {
-      "q": "How fast will my order arrive?",
-      "a": "<p>Standard stock ships in 1–3 business days, then transit usually takes 3–5 business days. Custom gear timelines are confirmed with you before production starts.</p>"
-     }
-    },
-    "qa_5": {
-     "type": "qa",
-     "settings": {
-      "q": "Lace-up or velcro: which closure should I choose?",
-      "a": "<p>Lace-up gives the tightest wrist support and suits sparring. Velcro (hook and loop) lets you glove up alone in seconds and suits bag work and classes. Read <a href=\"/blogs/news/lace-up-vs-hook-and-loop-boxing-gloves\">lace-up vs hook and loop</a>.</p>"
-     }
-    },
-    "qa_6": {
-     "type": "qa",
-     "settings": {
-      "q": "Can I order custom boxing gloves?",
-      "a": "<p>Yes, with no minimum order. Tell us your colors, materials, names and logos through our <a href=\"/pages/contact\">contact page</a> and we will confirm the design and price.</p>"
-     }
-    },
-    "qa_7": {
-     "type": "qa",
-     "settings": {
-      "q": "What is your return policy?",
-      "a": "<p>Unused stock items in their original packaging can be returned; custom-made items cannot be returned unless faulty. Full details are in our <a href=\"/policies/refund-policy\">refund policy</a>.</p>"
-     }
-    },
-    "qa_8": {
-     "type": "qa",
-     "settings": {
-      "q": "Which payment methods do you accept?",
-      "a": "<p>Major credit and debit cards, Shop Pay, Apple Pay and Google Pay, all through Shopify’s secure checkout.</p>"
-     }
-    }
-   },
-   "block_order": [
-    "qa_1",
-    "qa_2",
-    "qa_3",
-    "qa_4",
-    "qa_5",
-    "qa_6",
-    "qa_7",
-    "qa_8"
-   ]
-  }
- },
- "order": [
-  "hero",
-  "usp",
-  "best",
-  "brands",
-  "tabs",
-  "spot",
-  "mosaic",
-  "weights",
-  "custom",
-  "blog",
-  "faq"
- ]
+  "order": [
+    "hero",
+    "usp",
+    "best",
+    "brands",
+    "tabs",
+    "spot",
+    "mosaic",
+    "weights",
+    "custom",
+    "blog",
+    "faq"
+  ]
 }

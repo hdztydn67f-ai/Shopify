@@ -1,0 +1,164 @@
+{%- comment -%}
+================================================================================
+  HAVOC BOXING — GLOBAL SEO / AEO HEAD BLOCK
+  Rendered once from layout/theme.liquid inside <head>.
+
+  1. Crawler directives that unlock large image previews in Google
+  2. Connection hints that shave latency off Largest Contentful Paint
+  3. The single authoritative Organization + WebSite entity for the brand
+     (schema.org @id nodes that every other block on the site points at)
+
+  2026-08-27 FIX — paymentAccepted no longer claims PayPal. The store's
+  active wallets are Shop Pay, Apple Pay and Google Pay only. Advertising a
+  payment method that is not actually offered at checkout is a Google
+  Merchant Center misrepresentation signal. Add PayPal back to the string
+  below ONLY after PayPal is live in Settings > Payments.
+================================================================================
+{%- endcomment -%}
+
+{%- comment -%} 1. Let Google show big images + full snippets for Havoc listings {%- endcomment -%}
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+{%- comment -%} 2. Latency: warm up the connections the page always needs {%- endcomment -%}
+<link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.shopify.com">
+<link rel="dns-prefetch" href="https://fonts.shopifycdn.com">
+<link rel="dns-prefetch" href="https://monorail-edge.shopifysvc.com">
+
+{%- if blog != blank and request.page_type contains 'blog' -%}
+  <link rel="alternate" type="application/rss+xml" title="{{ blog.title | escape }} RSS" href="{{ shop.url }}{{ blog.url }}.atom">
+{%- endif -%}
+
+{%- comment -%}
+  3. Brand entity.
+
+  VERIFIED PROFILES — this is the authoritative list Google and the AI engines
+  read as sameAs. Add a URL here the moment you create a new brand profile;
+  separate multiple URLs with |~| (e.g. 'https://a.com/x|~|https://b.com/y').
+{%- endcomment -%}
+{%- liquid
+  assign hvc_verified = 'https://www.instagram.com/havocboxinggears/'
+
+  assign hvc_same = ''
+  assign hvc_socials = hvc_verified | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_instagram_link | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_facebook_link  | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_tiktok_link    | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_youtube_link   | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_twitter_link   | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_pinterest_link | append: '|~|'
+  assign hvc_socials = hvc_socials | append: settings.social_snapchat_link  | append: '|~|'
+  assign hvc_social_list = hvc_socials | split: '|~|'
+
+  for s in hvc_social_list
+    assign st = s | strip
+    unless st == blank or st contains 'shopify' or st contains 'example.com' or hvc_same contains st
+      assign hvc_same = hvc_same | append: st | append: '|~|'
+    endunless
+  endfor
+  assign hvc_same = hvc_same | split: '|~|'
+
+  assign hvc_logo_src = shop.brand.logo | default: shop.brand.square_logo | default: settings.favicon
+  assign hvc_logo = ''
+  if hvc_logo_src != blank
+    assign hvc_logo = hvc_logo_src | image_url: width: 512
+    unless hvc_logo contains 'http'
+      assign hvc_logo = hvc_logo | prepend: 'https:'
+    endunless
+  endif
+
+  assign hvc_desc = shop.description | default: shop.brand.short_description | strip_html | strip_newlines
+
+  assign hvc_search = shop.url | append: routes.search_url | append: '?q={search_term_string}'
+-%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "OnlineStore",
+      "@id": {{ shop.url | append: '/#organization' | json }},
+      "name": {{ shop.name | json }},
+      "legalName": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "description": {{ hvc_desc | json }},
+      {%- if hvc_logo != blank %}
+      "logo": {
+        "@type": "ImageObject",
+        "url": {{ hvc_logo | json }},
+        "caption": {{ shop.name | json }}
+      },
+      "image": {{ hvc_logo | json }},
+      {%- endif %}
+      {%- if hvc_same.size > 0 %}
+      "sameAs": {{ hvc_same | json }},
+      {%- endif %}
+      "email": {{ shop.email | json }},
+      {%- if shop.phone != blank %}
+      "telephone": {{ shop.phone | json }},
+      {%- endif %}
+      {%- if shop.address.city != blank %}
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": {{ shop.address.street | json }},
+        "addressLocality": {{ shop.address.city | json }},
+        "addressRegion": {{ shop.address.province_code | default: shop.address.province | json }},
+        "postalCode": {{ shop.address.zip | json }},
+        "addressCountry": {{ shop.address.country_code | default: shop.address.country_upper | json }}
+      },
+      {%- endif %}
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": {{ shop.email | json }},
+        {%- if shop.phone != blank %}
+        "telephone": {{ shop.phone | json }},
+        {%- endif %}
+        "availableLanguage": ["en"],
+        "areaServed": "Worldwide"
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": ["US","GB","CA","IE","DE","FR","ES","IT","NL","BE","AT","PT","SE","DK","FI","PL","AU"],
+        "returnPolicyCountry": "AU",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 14,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/ReturnFeesCustomerResponsibility",
+        "merchantReturnLink": {{ shop.url | append: '/policies/refund-policy' | json }}
+      },
+      "currenciesAccepted": {{ shop.currency | json }},
+      "paymentAccepted": "Credit Card, Debit Card, Apple Pay, Google Pay, Shop Pay",
+      "knowsAbout": [
+        "Boxing gloves",
+        "Sparring gloves",
+        "Boxing headgear",
+        "Focus pads and mitts",
+        "Boxing boots",
+        "Custom boxing equipment",
+        "Protective combat sports gear"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": {{ shop.url | append: '/#website' | json }},
+      "name": {{ shop.name | json }},
+      "url": {{ shop.url | json }},
+      "description": {{ hvc_desc | json }},
+      "inLanguage": {{ request.locale.iso_code | default: 'en' | json }},
+      "publisher": {
+        "@id": {{ shop.url | append: '/#organization' | json }}
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": {{ hvc_search | json }}
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>
