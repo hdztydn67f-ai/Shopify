@@ -249,16 +249,6 @@
             "custom_liquid": "\n<style>\n  .havoc-timeline {\n    --ink: #111014;\n    --canvas: #F2ECDD;\n    --red: #D22D2D;\n    --gold: #D9A441;\n    --steel: #8A8578;\n\n    display: flex;\n    justify-content: space-between;\n    align-items: flex-start;\n    width: 100%;\n    max-width: 680px;\n    margin: 32px auto;\n    padding: 28px 20px 22px;\n    background: var(--ink);\n    border-radius: 6px;\n    position: relative;\n    box-sizing: border-box;\n    font-family: var(--hvx-head);\n    overflow: hidden;\n  }\n\n  /* corner-tape accent stripe */\n  .havoc-timeline::before {\n    content: '';\n    position: absolute;\n    top: 0; left: 0; right: 0;\n    height: 5px;\n    background: repeating-linear-gradient(\n      -45deg,\n      var(--red) 0 10px,\n      var(--gold) 10px 20px\n    );\n    transform: translateX(-100%);\n  }\n\n  .havoc-timeline.is-live::before {\n    animation: havoc-tape-slide 0.7s ease-out 0.05s forwards;\n  }\n\n  .havoc-step {\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    text-align: center;\n    flex: 1;\n    position: relative;\n    z-index: 2;\n    box-sizing: border-box;\n    padding: 0 6px;\n    opacity: 0;\n    transform: translateY(10px) scale(0.94);\n  }\n\n  .havoc-timeline.is-live .havoc-step {\n    animation: havoc-step-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;\n  }\n\n  .havoc-timeline.is-live .havoc-step:nth-child(1) { animation-delay: 0.15s; }\n  .havoc-timeline.is-live .havoc-step:nth-child(2) { animation-delay: 0.45s; }\n  .havoc-timeline.is-live .havoc-step:nth-child(3) { animation-delay: 0.75s; }\n\n  .havoc-round {\n    font-family: var(--hvx-head);\n    font-size: 12px;\n    letter-spacing: 2px;\n    color: var(--red);\n    margin-bottom: 8px;\n  }\n\n  /* dashed rope connecting steps, draws in behind the steps */\n  .havoc-step:not(:last-child)::after {\n    content: '';\n    position: absolute;\n    top: 51px;\n    left: 50%;\n    width: 100%;\n    height: 0;\n    border-top: 2px dashed var(--steel);\n    z-index: -1;\n    opacity: 0;\n    transform: scaleX(0);\n    transform-origin: left;\n  }\n\n  .havoc-timeline.is-live .havoc-step:nth-child(1)::after {\n    animation: havoc-rope-draw 0.4s ease-out 0.55s forwards;\n  }\n  .havoc-timeline.is-live .havoc-step:nth-child(2)::after {\n    animation: havoc-rope-draw 0.4s ease-out 0.85s forwards;\n  }\n\n  .havoc-icon {\n    width: 60px;\n    height: 60px;\n    border-radius: 50%;\n    border: 2px solid var(--red);\n    background: var(--canvas);\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    margin-bottom: 14px;\n    box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px var(--steel);\n    transition: box-shadow 0.25s ease, transform 0.25s ease;\n  }\n\n  .havoc-step:hover .havoc-icon {\n    transform: scale(1.06);\n    box-shadow: 0 0 0 4px var(--ink), 0 0 0 5px var(--gold);\n  }\n\n  .havoc-icon svg {\n    width: 26px;\n    height: 26px;\n  }\n\n  .havoc-date {\n    font-family: var(--hvx-head);\n    font-size: 17px;\n    letter-spacing: 0.5px;\n    color: var(--canvas);\n    margin-bottom: 4px;\n    white-space: nowrap;\n  }\n\n  .havoc-label {\n    font-size: 12px;\n    font-weight: 500;\n    letter-spacing: 1.5px;\n    text-transform: uppercase;\n    color: var(--gold);\n    margin: 0;\n  }\n\n  @keyframes havoc-tape-slide {\n    to { transform: translateX(0); }\n  }\n\n  @keyframes havoc-step-in {\n    from { opacity: 0; transform: translateY(10px) scale(0.94); }\n    to   { opacity: 1; transform: translateY(0) scale(1); }\n  }\n\n  @keyframes havoc-rope-draw {\n    from { opacity: 0; transform: scaleX(0); }\n    to   { opacity: 0.55; transform: scaleX(1); }\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .havoc-timeline::before,\n    .havoc-step,\n    .havoc-step:not(:last-child)::after {\n      animation: none !important;\n      opacity: 1 !important;\n      transform: none !important;\n    }\n  }\n\n  @media (max-width: 600px) {\n    .havoc-timeline { padding: 24px 10px 18px; }\n    .havoc-icon { width: 48px; height: 48px; margin-bottom: 10px; }\n    .havoc-icon svg { width: 20px; height: 20px; }\n    .havoc-step:not(:last-child)::after { top: 43px; }\n    .havoc-date { font-size: 13px; }\n    .havoc-label { font-size: 10px; letter-spacing: 1px; }\n    .havoc-round { font-size: 10px; }\n  }\n</style>\n\n<div class=\"havoc-timeline\" id=\"havoc-timeline\">\n  <div class=\"havoc-step\">\n    <div class=\"havoc-round\">ROUND 1</div>\n    <div class=\"havoc-icon\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#111014\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n        <path d=\"M7 11V7a3 3 0 0 1 6 0v1\"></path>\n        <path d=\"M13 8a2 2 0 0 1 4 0v2\"></path>\n        <path d=\"M17 9a2 2 0 0 1 4 0v5a6 6 0 0 1-6 6h-2a6 6 0 0 1-5.6-3.9L5 12l1.4-1.4a1.5 1.5 0 0 1 2.1 0L10 12\"></path>\n      </svg>\n    </div>\n    <div class=\"havoc-date\" id=\"havoc-date-ordered\">Loading...</div>\n    <p class=\"havoc-label\">Ordered</p>\n  </div>\n\n  <div class=\"havoc-step\">\n    <div class=\"havoc-round\">ROUND 2</div>\n    <div class=\"havoc-icon\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#111014\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n        <path d=\"M21 8L12 3 3 8l9 5 9-5z\"></path>\n        <path d=\"M3 8v8l9 5 9-5V8\"></path>\n        <path d=\"M12 13v8\"></path>\n      </svg>\n    </div>\n    <div class=\"havoc-date\" id=\"havoc-date-ready\">Loading...</div>\n    <p class=\"havoc-label\">Packed &amp; Ready</p>\n  </div>\n\n  <div class=\"havoc-step\">\n    <div class=\"havoc-round\">ROUND 3</div>\n    <div class=\"havoc-icon\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#111014\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n        <path d=\"M4 3v18\"></path>\n        <path d=\"M4 4h13l-2.5 4L17 12H4\"></path>\n      </svg>\n    </div>\n    <div class=\"havoc-date\" id=\"havoc-date-delivered\">Loading...</div>\n    <p class=\"havoc-label\">Delivered</p>\n  </div>\n</div>\n\n<script>\n(function () {\n  var MONTHS = [\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"];\n\n  function fmt(date) {\n    return MONTHS[date.getMonth()] + ' ' + date.getDate();\n  }\n  function addDays(date, days) {\n    var d = new Date(date);\n    d.setDate(d.getDate() + days);\n    return d;\n  }\n\n  var today = new Date();\n  var readyStart = addDays(today, 1);\n  var readyEnd = addDays(today, 3);\n  var deliveredStart = addDays(today, 4);\n  var deliveredEnd = addDays(today, 8);\n\n  var ids = {\n    'havoc-date-ordered': fmt(today),\n    'havoc-date-ready': fmt(readyStart) + ' - ' + fmt(readyEnd),\n    'havoc-date-delivered': fmt(deliveredStart) + ' - ' + fmt(deliveredEnd)\n  };\n\n  for (var id in ids) {\n    var el = document.getElementById(id);\n    if (el) el.innerText = ids[id];\n  }\n\n  // Trigger entrance animation once the widget scrolls into view\n  var wrap = document.getElementById('havoc-timeline');\n  if ('IntersectionObserver' in window && wrap) {\n    var observer = new IntersectionObserver(function (entries) {\n      entries.forEach(function (entry) {\n        if (entry.isIntersecting) {\n          wrap.classList.add('is-live');\n          observer.unobserve(wrap);\n        }\n      });\n    }, { threshold: 0.3 });\n    observer.observe(wrap);\n  } else if (wrap) {\n    wrap.classList.add('is-live');\n  }\n})();\n</script>"
           },
           "disabled": true
-        },
-        "judge_me_reviews_review_widget_zch8ER": {
-          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
-          "settings": {
-            "review_data": "sample_data",
-            "max_width": 1200,
-            "show_shop_reviews": true,
-            "empty_state": "empty_widget"
-          },
-          "disabled": true
         }
       },
       "block_order": [
@@ -282,8 +272,7 @@
         "b9d6eb19-10f4-41f8-bfdc-ea10e8b3182a",
         "custom_PGbDLb",
         "19ab1d9f-74b2-4c76-bf2e-1bc749e5c2a3",
-        "custom_liquid_peGLLC",
-        "judge_me_reviews_review_widget_zch8ER"
+        "custom_liquid_peGLLC"
       ],
       "settings": {
         "container": "1770",
@@ -1229,11 +1218,31 @@
         "i3",
         "i4"
       ]
+    },
+    "hvx_reviews": {
+      "type": "hvx-reviews",
+      "blocks": {
+        "jm_widget": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {
+            "max_width": 1200,
+            "show_shop_reviews": true,
+            "empty_state": "empty_widget"
+          }
+        }
+      },
+      "block_order": [
+        "jm_widget"
+      ],
+      "settings": {
+        "heading": "Customer reviews"
+      }
     }
   },
   "order": [
     "main",
     "hvx_assure",
+    "hvx_reviews",
     "custom_liquid_VEDiL7",
     "16523184820d078b27",
     "178647564398a610cb",

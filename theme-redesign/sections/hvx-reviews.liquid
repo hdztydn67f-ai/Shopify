@@ -1,0 +1,25 @@
+{%- comment -%}
+  Reviews section for the product page. Holds the Judge.me review widget (or any review app block).
+{%- endcomment -%}
+<section class="hvx hvx-reviews" id="reviews" aria-labelledby="hvx-rv-{{ section.id }}">
+  <div class="hvx-wrap">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hvx-h2" id="hvx-rv-{{ section.id }}">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- for block in section.blocks -%}
+      {% render block %}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Havoc reviews",
+  "tag": "div",
+  "settings": [
+    {"type":"text","id":"heading","label":"Heading","default":"Customer reviews"}
+  ],
+  "blocks": [{"type":"@app"}],
+  "presets": [{"name":"Havoc reviews"}]
+}
+{% endschema %}

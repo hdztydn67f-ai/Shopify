@@ -54,3 +54,9 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - Store email set to havocboxingstore@gmail.com (footer, contact section).
 - Returns are now 14 days everywhere: product tab, trust list, homepage FAQ, product FAQ schema. MerchantReturnPolicy JSON-LD: 14 days, customer pays return shipping, US/UK/CA/EU/AU.
 - Mobile: 16px quick-add selects, 44px chips, hover-swap image hidden on touch devices, compact countdown on phones.
+
+## v6 (2026-10-02)
+- Black Friday Sale bar: 14 days, Nov 17 00:00 to Nov 30 23:59 ET (ends on Cyber Monday). It shows a "starts in" teaser from Nov 14, then hides itself when the sale ends. It does not renew.
+- Payment icons: added `color-scheme: only light` (meta and CSS) so Android/Samsung dark mode stops inverting the full-color icons. Each icon now sits on a white card.
+- Judge.me: the review widget moved out of the product info column into its own full-width "Customer reviews" section (sections/hvx-reviews.liquid) under the product details. It now shows real reviews instead of sample data.
+- Product cards show a star rating and count when a product has Judge.me reviews (reviews.rating metafields).

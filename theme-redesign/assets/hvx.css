@@ -322,3 +322,13 @@
 .hvx-chips a{min-height:44px}
 @media (hover:none){.hvx-card__img img+img{display:none}}
 @media (max-width:480px){.hvx-cd__in{gap:6px 10px;padding:6px 12px}.hvx-cd__msg{width:100%;text-align:center;font-size:12px}.hvx-cd__cta{display:none}}
+/* v6: payment icons, ratings, reviews */
+:root{color-scheme:only light}
+.list-payment__item .icon,.hvx-pay__i{display:inline-block;background:#fff;border-radius:4px;color:#000;forced-color-adjust:none;filter:none!important;opacity:1}
+.list-payment__item .icon{height:26px}
+.hvx-card__rating{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--hvx-ink);margin:2px 0 4px}
+.hvx-card__rating b{color:#c9930a;font-weight:400}
+.hvx-card__rating span{color:var(--hvx-muted)}
+.hvx-reviews{padding:56px 0;border-top:1px solid var(--hvx-line)}
+.hvx-reviews .hvx-h2{margin-bottom:20px}
+@media (max-width:749px){.hvx-reviews{padding:40px 0}}

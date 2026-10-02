@@ -37,6 +37,10 @@
     <div class="hvx-card__body">
       <span class="hvx-card__brand">{{ product.vendor }}</span>
       <h3 class="hvx-card__title">{{ product.title }}</h3>
+      {%- assign hvx_rc = product.metafields.reviews.rating_count.value | plus: 0 -%}
+      {%- if hvx_rc > 0 -%}{%- assign hvx_rv = product.metafields.reviews.rating.value.rating | round: 1 -%}
+        <span class="hvx-card__rating" aria-label="Rated {{ hvx_rv }} out of 5 from {{ hvx_rc }} reviews"><b aria-hidden="true">★</b>{{ hvx_rv }} <span>({{ hvx_rc }})</span></span>
+      {%- endif -%}
       {%- if size_opt and size_opt.values.size > 1 -%}
         <span class="hvx-card__meta">{{ size_opt.name }}: {{ size_opt.values.first }} – {{ size_opt.values.last }}</span>
       {%- endif -%}
