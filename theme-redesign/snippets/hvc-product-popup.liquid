@@ -1,0 +1,100 @@
+{%- comment -%}
+  Product page email signup with HAVOC10 (10% off). Restyled 2026-10 to match the Havoc theme.
+  Opens once after 12 seconds or when the shopper scrolls halfway; stays hidden for 14 days after closing.
+  Remove by deleting the render tag at the end of snippets/global-script-2.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign hvc_show = false
+  if request.page_type == 'product'
+    assign hvc_show = true
+  endif
+  if customer and customer.accepts_marketing
+    assign hvc_show = false
+  endif
+  assign hvc_code = 'HAVOC10'
+-%}
+{%- if hvc_show -%}
+<div id="HvcPopup" class="hvcp" hidden data-code="{{ hvc_code }}">
+  <div class="hvcp__scrim" data-hvc-close></div>
+  <div class="hvcp__box" role="dialog" aria-modal="true" aria-labelledby="HvcPopTitle" tabindex="-1">
+    <button type="button" class="hvcp__x" data-hvc-close aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+    </button>
+    {%- form 'customer', id: 'HvcPopupForm', class: 'hvcp__form' -%}
+      {%- assign hvc_posted = form.posted_successfully? -%}
+      {%- if form.posted_successfully? -%}
+        <p class="hvcp__kicker">You're signed up</p>
+        <h2 id="HvcPopTitle" class="hvcp__title">Here's your 10% off</h2>
+        <p class="hvcp__sub">Enter this code at checkout.</p>
+        <div class="hvcp__codewrap">
+          <span class="hvcp__code">{{ hvc_code }}</span>
+          <button type="button" class="hvcp__btn" data-hvc-copy>Copy code</button>
+        </div>
+        <button type="button" class="hvcp__ghost" data-hvc-close>Back to shopping</button>
+      {%- else -%}
+        <p class="hvcp__kicker">Havoc Boxing</p>
+        <h2 id="HvcPopTitle" class="hvcp__title">Get 10% off your order</h2>
+        <p class="hvcp__sub">Join our email list for new arrivals and restocks. Your code shows up straight away.</p>
+        <input type="hidden" name="contact[tags]" value="newsletter, product-page-popup">
+        <label class="hvx-sr" for="HvcPopupEmail">Email address</label>
+        <div class="hvcp__row">
+          <input type="email" name="contact[email]" id="HvcPopupEmail" class="hvcp__input" placeholder="Your email address" autocomplete="email" autocapitalize="off" spellcheck="false" required>
+          <button type="submit" class="hvcp__btn">Get my code</button>
+        </div>
+        {%- if form.errors -%}<p class="hvcp__error">{{ form.errors.messages['email'] | default: 'Please enter a valid email address.' }}</p>{%- endif -%}
+        <p class="hvcp__fine">You can unsubscribe at any time.</p>
+        <button type="button" class="hvcp__ghost" data-hvc-close>No thanks</button>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</div>
+<style>
+#HvcPopup{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:16px}
+#HvcPopup.is-open{display:flex}
+.hvcp *{box-sizing:border-box}
+.hvcp__scrim{position:absolute;inset:0;background:rgba(11,11,12,.55);opacity:0;transition:opacity .25s}
+.hvcp.is-in .hvcp__scrim{opacity:1}
+.hvcp__box{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 32px);overflow-y:auto;background:#fff;color:#0b0b0c;border-radius:8px;border-top:4px solid #d4111e;padding:36px 30px 26px;text-align:left;box-shadow:0 24px 60px rgba(0,0,0,.25);opacity:0;transform:translateY(12px);transition:opacity .25s,transform .25s;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.hvcp.is-in .hvcp__box{opacity:1;transform:none}
+.hvcp__x{position:absolute;top:10px;right:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:0;background:none;color:#5c5c5c;cursor:pointer;border-radius:50%}
+.hvcp__x:hover{background:#f4f4f2;color:#0b0b0c}
+.hvcp__form{margin:0}
+.hvcp__kicker{margin:0 0 8px;font:700 11px/1 inherit;letter-spacing:.16em;text-transform:uppercase;color:#d4111e}
+.hvcp__title{margin:0 0 10px;font-family:var(--hvx-head,"Arial Narrow",Arial,sans-serif);font-weight:700;text-transform:uppercase;font-size:30px;line-height:1.05;color:#0b0b0c}
+.hvcp__sub{margin:0 0 20px;font-size:15px;line-height:1.55;color:#5c5c5c}
+.hvcp__row{display:flex;gap:8px}
+.hvcp__input{flex:1;min-width:0;height:50px;padding:0 14px;border:1px solid #cfcfcb;border-radius:6px;font:16px inherit;color:#0b0b0c;background:#fff}
+.hvcp__input:focus{outline:none;border-color:#0b0b0c}
+.hvcp__btn{flex:0 0 auto;height:50px;padding:0 20px;border:0;border-radius:6px;background:#d4111e;color:#fff;font:700 13px/1 inherit;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.hvcp__btn:hover{background:#a50c16}
+.hvcp__codewrap{display:flex;gap:8px}
+.hvcp__code{flex:1;display:flex;align-items:center;justify-content:center;height:50px;border:2px dashed #0b0b0c;border-radius:6px;font-weight:800;font-size:20px;letter-spacing:.14em}
+.hvcp__fine{margin:10px 0 0;font-size:12px;color:#8a8a8a}
+.hvcp__error{margin:10px 0 0;font-size:13px;color:#a50c16}
+.hvcp__ghost{display:block;margin:16px 0 0;padding:6px 0;border:0;background:none;color:#5c5c5c;font:500 13px inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+@media (max-width:480px){.hvcp__box{padding:32px 20px 22px}.hvcp__title{font-size:26px}.hvcp__row,.hvcp__codewrap{flex-direction:column}.hvcp__btn{width:100%}}
+@media (prefers-reduced-motion:reduce){.hvcp__box,.hvcp__scrim{transition:none}}
+</style>
+<script>
+(function(){
+  var root=document.getElementById('HvcPopup'); if(!root)return;
+  var KEY='hvc_pp_v2', DAYS=14, posted={% if hvc_posted %}true{% else %}false{% endif %}, last=null, shown=false;
+  var design=!!(window.Shopify&&window.Shopify.designMode);
+  function read(){try{return localStorage.getItem(KEY)}catch(e){return null}}
+  function write(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function suppressed(){if(design)return false;var v=read();if(!v)return false;if(v==='sub')return true;var t=parseInt(v,10);return t&&(Date.now()-t)<DAYS*864e5;}
+  function open(){if(shown)return;shown=true;last=document.activeElement;root.hidden=false;root.classList.add('is-open');document.documentElement.style.overflow='hidden';requestAnimationFrame(function(){requestAnimationFrame(function(){root.classList.add('is-in')})});var b=root.querySelector('.hvcp__box');setTimeout(function(){b&&b.focus()},260);}
+  function close(){root.classList.remove('is-in');document.documentElement.style.overflow='';setTimeout(function(){root.classList.remove('is-open');root.hidden=true},250);write(posted?'sub':String(Date.now()));if(last&&last.focus){try{last.focus()}catch(e){}}}
+  root.addEventListener('click',function(e){if(e.target.closest('[data-hvc-close]')){e.preventDefault();close();}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&root.classList.contains('is-open'))close();});
+  var cp=root.querySelector('[data-hvc-copy]');
+  if(cp)cp.addEventListener('click',function(){var c=root.dataset.code,done=function(){cp.textContent='Copied';setTimeout(function(){cp.textContent='Copy code'},2000)};if(navigator.clipboard)navigator.clipboard.writeText(c).then(done,done);else done();});
+  var f=document.getElementById('HvcPopupForm'); if(f)f.addEventListener('submit',function(){write('sub')});
+  if(posted){write('sub');open();return;}
+  if(suppressed())return;
+  var timer=setTimeout(open,12000);
+  function onScroll(){var h=document.documentElement;if((h.scrollTop+innerHeight)/h.scrollHeight>.5){window.removeEventListener('scroll',onScroll);clearTimeout(timer);open();}}
+  window.addEventListener('scroll',onScroll,{passive:true});
+})();
+</script>
+{%- endif -%}

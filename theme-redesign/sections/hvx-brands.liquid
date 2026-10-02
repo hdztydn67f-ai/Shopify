@@ -1,6 +1,6 @@
 <section class="hvx hvx-sec hvx-sec--mist">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-reveal">
+    <div class="hvx-head">
       <div>{%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}<h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div>
     </div>
     <div class="hvx-brands">
@@ -8,7 +8,7 @@
         {%- assign c = b.settings.collection -%}
         {%- if c == blank -%}{%- continue -%}{%- endif -%}
         {%- assign im = b.settings.image | default: b.settings.product.featured_image | default: c.products.first.featured_image | default: c.image -%}
-        <a class="hvx-brand hvx-reveal" href="{{ c.url }}" {{ b.shopify_attributes }}>
+        <a class="hvx-brand" href="{{ c.url }}" {{ b.shopify_attributes }}>
           <span class="hvx-brand__img">{%- if im -%}{%- assign hvx_alt = im.alt | default: b.settings.product.title | default: b.settings.title | default: c.title -%}{{ im | image_url: width: 900 | image_tag: loading: 'lazy', widths: '360,540,720,900', sizes: '(min-width:750px) 33vw, 42vw', alt: hvx_alt }}{%- endif -%}</span>
           <span class="hvx-brand__txt">
             <span class="hvx-brand__name">{{ b.settings.title | default: c.title }}</span>

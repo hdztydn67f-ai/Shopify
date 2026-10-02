@@ -1,0 +1,56 @@
+<section class="hvx hvx-sec hvx-contact">
+  <div class="hvx-wrap hvx-contact__grid">
+    <div class="hvx-contact__info">
+      <h1 class="hvx-h2">{{ page.title | default: 'Contact us' }}</h1>
+      <div class="hvx-contact__intro">{{ section.settings.intro }}</div>
+      <dl class="hvx-contact__list">
+        {%- if section.settings.email != blank -%}<div><dt>Email</dt><dd><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></dd></div>{%- endif -%}
+        {%- if section.settings.phone != blank -%}<div><dt>Phone</dt><dd><a href="tel:{{ section.settings.phone | remove: ' ' }}">{{ section.settings.phone }}</a></dd></div>{%- endif -%}
+        {%- if section.settings.address != blank -%}<div><dt>Address</dt><dd>{{ section.settings.address }}</dd></div>{%- endif -%}
+      </dl>
+      <p class="hvx-contact__links">Quick answers: <a href="/policies/shipping-policy">Shipping</a> · <a href="/policies/refund-policy">Returns</a> · <a href="/blogs/news/what-size-boxing-gloves-should-i-buy">Glove sizes</a></p>
+    </div>
+    <div class="hvx-contact__card">
+      {%- form 'contact', id: 'HvxContactForm', class: 'hvx-form' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="hvx-form__ok" role="status" tabindex="-1" autofocus>
+            <h2>Thanks, your message is on its way.</h2>
+            <p>We'll reply to the email address you gave us, usually within one business day.</p>
+          </div>
+        {%- else -%}
+          <h2 class="hvx-form__h">Send us a message</h2>
+          {%- if form.errors -%}<div class="hvx-form__err" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+          <div class="hvx-form__row">
+            <label class="hvx-field"><span>Name</span><input type="text" name="contact[name]" autocomplete="name" value="{{ form.name | default: customer.name }}" required></label>
+            <label class="hvx-field"><span>Email</span><input type="email" name="contact[email]" autocomplete="email" autocapitalize="off" spellcheck="false" value="{{ form.email | default: customer.email }}" required></label>
+          </div>
+          <div class="hvx-form__row">
+            <label class="hvx-field"><span>Phone <em>(optional)</em></span><input type="tel" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}"></label>
+            <label class="hvx-field"><span>Order number <em>(optional)</em></span><input type="text" name="contact[order_number]" placeholder="#1001"></label>
+          </div>
+          <label class="hvx-field"><span>What's it about?</span>
+            <select name="contact[topic]">
+              <option>Sizing or product question</option>
+              <option>Order or delivery</option>
+              <option>Custom gloves or team order</option>
+              <option>Returns or exchange</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label class="hvx-field"><span>Message</span><textarea name="contact[body]" rows="6" required>{{ form.body }}</textarea></label>
+          <button type="submit" class="hvx-btn hvx-btn--red">Send message</button>
+          <p class="hvx-form__note">We only use your details to reply to you.</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Havoc contact form","tag":"div","class":"hvx-s-contact",
+"settings":[
+{"type":"richtext","id":"intro","label":"Intro","default":"<p>Questions about sizing, an order or custom gear? Send us a message and we'll get back to you by email.</p>"},
+{"type":"text","id":"email","label":"Email","default":"havocboxinggear@gmail.com"},
+{"type":"text","id":"phone","label":"Phone","default":"+61 424 007 568"},
+{"type":"text","id":"address","label":"Address","default":"2 McLean Street, Auburn NSW 2144, Australia"}],
+"presets":[{"name":"Havoc contact form"}]}
+{% endschema %}

@@ -6,7 +6,7 @@
 {%- if list != blank or c != blank -%}
 <section class="hvx hvx-sec{% if section.settings.mist %} hvx-sec--mist{% endif %}">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-reveal">
+    <div class="hvx-head">
       <div>{%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}<h2 class="hvx-h2">{{ section.settings.heading | default: c.title }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div>
       {%- if link != blank -%}<a class="hvx-link" href="{{ link }}">{{ section.settings.link_text | default: 'View all' }}</a>{%- endif -%}
     </div>

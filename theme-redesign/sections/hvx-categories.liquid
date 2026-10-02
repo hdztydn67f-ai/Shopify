@@ -1,12 +1,12 @@
 <section class="hvx hvx-sec">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-head--center hvx-reveal"><div>{%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}<h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
+    <div class="hvx-head hvx-head--center"><div>{%- if section.settings.eyebrow != blank -%}<p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}<h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
     <div class="hvx-cats">
       {%- for b in section.blocks -%}
         {%- assign c = b.settings.collection -%}
         {%- if c == blank -%}{%- continue -%}{%- endif -%}
         {%- assign im = b.settings.image | default: b.settings.product.featured_image | default: c.products.first.featured_image | default: c.image -%}
-        <a class="hvx-cat hvx-reveal" href="{{ c.url }}" {{ b.shopify_attributes }}>
+        <a class="hvx-cat" href="{{ c.url }}" {{ b.shopify_attributes }}>
           <span class="hvx-cat__img">{%- if im -%}{%- assign hvx_alt = b.settings.title | default: c.title -%}{{ im | image_url: width: 480 | image_tag: loading: 'lazy', widths: '200,320,480', sizes: '(min-width:990px) 180px, 31vw', alt: hvx_alt }}{%- endif -%}</span>
           <span class="hvx-cat__name">{{ b.settings.title | default: c.title }}</span>
           <span class="hvx-cat__count">{{ c.products_count }} products</span>

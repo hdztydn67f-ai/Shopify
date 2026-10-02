@@ -1,10 +1,10 @@
 <section class="hvx hvx-sec hvx-sec--mist">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
+    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2><p class="hvx-lead">{{ section.settings.text }}</p></div></div>
     <div class="hvx-guide">
       {%- for b in section.blocks -%}
         {%- assign im = b.settings.image | default: b.settings.product.featured_image -%}
-        <div class="hvx-guide__item hvx-reveal" {{ b.shopify_attributes }}>
+        <div class="hvx-guide__item" {{ b.shopify_attributes }}>
           {%- if im -%}<a class="hvx-guide__img" href="{{ b.settings.link | default: b.settings.product.url }}" tabindex="-1" aria-hidden="true" style="display:block">{{ im | image_url: width: 720 | image_tag: loading: 'lazy', widths: '360,540,720', sizes: '(min-width:750px) 33vw, 92vw', alt: '' }}</a>{%- endif -%}
           <div class="hvx-guide__body">
             <h3>{{ b.settings.title }}</h3>

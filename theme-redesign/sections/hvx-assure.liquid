@@ -1,6 +1,6 @@
 {%- comment -%}
   Product page extras (sits right under the main product): at-a-glance specs, trust row,
-  payment icons, WhatsApp help, size guide and helpful links. Minimal, no fake urgency.
+  payment icons, size guide and helpful links. Minimal, no fake urgency.
 {%- endcomment -%}
 {%- liquid
   assign t = product.type | downcase
@@ -22,13 +22,12 @@
       assign closure_opt = o
     endif
   endfor
-  assign wa = section.settings.whatsapp | remove: '+' | remove: ' ' | remove: '-'
 -%}
 <section class="hvx hvx-sec hvx-sec--tight hvx-pdp">
   <div class="hvx-wrap">
     <div class="hvx-pdp__grid">
       <div class="hvx-pdp__card">
-        <h2 class="hvx-pdp__h">At a glance</h2>
+        <h2 class="hvx-pdp__h">Details</h2>
         <dl class="hvx-specs">
           {%- if product.vendor != blank -%}<div><dt>Brand</dt><dd>{{ product.vendor }}</dd></div>{%- endif -%}
           {%- if product.type != blank -%}<div><dt>Category</dt><dd>{{ product.type }}</dd></div>{%- endif -%}
@@ -44,7 +43,7 @@
         {%- endif -%}
       </div>
       <div class="hvx-pdp__card">
-        <h2 class="hvx-pdp__h">Buy with confidence</h2>
+        <h2 class="hvx-pdp__h">Good to know</h2>
         <ul class="hvx-trust">
           {%- for b in section.blocks -%}
             <li {{ b.shopify_attributes }}>
@@ -58,13 +57,6 @@
             </li>
           {%- endfor -%}
         </ul>
-        {%- if wa != blank -%}
-          {%- capture wa_msg -%}Hi Havoc Boxing, I have a question about {{ product.title }} ({{ shop.url }}{{ product.url }}){%- endcapture -%}
-          <a class="hvx-wa" href="https://wa.me/{{ wa }}?text={{ wa_msg | url_encode }}" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2z"/></svg>
-            <span><b>Questions? Chat on WhatsApp</b>Sizing, custom orders or delivery to your country</span>
-          </a>
-        {%- endif -%}
       </div>
     </div>
 
@@ -112,8 +104,7 @@
 "settings":[
 {"type":"checkbox","id":"show_sizes","label":"Show size guide on gloves, sets and shoes","default":true},
 {"type":"text","id":"dispatch","label":"Dispatch line","default":"1–3 business days"},
-{"type":"text","id":"shipping","label":"Shipping line","default":"Tracked & insured: DHL, FedEx, UPS"},
-{"type":"text","id":"whatsapp","label":"WhatsApp number (international format)","default":"+61 424 007 568"}],
+{"type":"text","id":"shipping","label":"Shipping line","default":"Tracked & insured: DHL, FedEx, UPS"}],
 "blocks":[{"type":"i","name":"Trust point","limit":4,"settings":[{"type":"select","id":"icon","label":"Icon","options":[{"value":"truck","label":"Shipping"},{"value":"lock","label":"Secure"},{"value":"return","label":"Returns"},{"value":"chat","label":"Support"}],"default":"truck"},{"type":"text","id":"title","label":"Title"},{"type":"text","id":"text","label":"Text"}]}],
 "presets":[{"name":"Havoc product extras"}]}
 {% endschema %}

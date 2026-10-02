@@ -2,7 +2,7 @@
 {%- if bl.articles_count > 0 -%}
 <section class="hvx hvx-sec">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div><a class="hvx-link" href="{{ bl.url }}">All guides</a></div>
+    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div><a class="hvx-link" href="{{ bl.url }}">All guides</a></div>
     <div class="hvx-posts">
       {%- for a in bl.articles limit: 3 -%}
         <a class="hvx-post" href="{{ a.url }}">

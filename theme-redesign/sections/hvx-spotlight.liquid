@@ -3,9 +3,9 @@
 {%- assign imgs = p.media | where: 'media_type', 'image' -%}
 <section class="hvx hvx-sec{% if section.settings.mist %} hvx-sec--mist{% endif %}">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-head--center hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
+    <div class="hvx-head hvx-head--center"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2></div></div>
     <div class="hvx-spot" data-hvx-spot>
-      <div class="hvx-spot__gallery hvx-reveal">
+      <div class="hvx-spot__gallery">
         {%- for m in imgs limit: 5 -%}<input type="radio" name="spot-{{ section.id }}" id="spot-{{ section.id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>{%- endfor -%}
         <div class="hvx-spot__main">
           {%- for m in imgs limit: 5 -%}

@@ -1,12 +1,12 @@
 <section class="hvx hvx-sec">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div>{%- if section.settings.link != blank -%}<a class="hvx-link" href="{{ section.settings.link }}">{{ section.settings.link_text | default: 'Shop all' }}</a>{%- endif -%}</div>
+    <div class="hvx-head"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div>{%- if section.settings.link != blank -%}<a class="hvx-link" href="{{ section.settings.link }}">{{ section.settings.link_text | default: 'Shop all' }}</a>{%- endif -%}</div>
     <div class="hvx-mosaic">
       {%- for b in section.blocks -%}
         {%- assign p = b.settings.product -%}
         {%- if p == blank -%}{%- continue -%}{%- endif -%}
         {%- assign im = b.settings.image | default: p.featured_image -%}
-        <a class="hvx-tile hvx-reveal{% if forloop.first %} hvx-tile--big{% endif %}" href="{{ p.url }}" {{ b.shopify_attributes }}>
+        <a class="hvx-tile{% if forloop.first %} hvx-tile--big{% endif %}" href="{{ p.url }}" {{ b.shopify_attributes }}>
           <span class="hvx-tile__img">{%- if im -%}{%- if forloop.first -%}{%- assign hvx_alt = im.alt | default: p.title -%}{{ im | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '480,720,960,1200', sizes: '(min-width:750px) 50vw, 100vw', alt: hvx_alt }}{%- else -%}{%- assign hvx_alt = im.alt | default: p.title -%}{{ im | image_url: width: 640 | image_tag: loading: 'lazy', widths: '320,480,640', sizes: '(min-width:750px) 25vw, 50vw', alt: hvx_alt }}{%- endif -%}{%- endif -%}</span>
           <span class="hvx-tile__cap"><span>{{ b.settings.label | default: p.title }}</span><b>{% if p.price_varies %}From {% endif %}{{ p.price | money }}</b></span>
         </a>

@@ -35,3 +35,15 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - Mosaic: caption sits under the photo; mobile = big tile full width + 2x2 grid. Brands: 2 columns on mobile.
 - Product page extras: At-a-glance specs, accepted payment icons, trust list, WhatsApp help link (prefilled with product),
   glove size guide / shoe sizing tips, related-collection chips. Hid SKU + product type, disabled cluttered "Collection" tab.
+
+## v4 (2026-10-02)
+- Removed WhatsApp link and the "Round 1/2/3" delivery widget from product pages; disabled 4K stock video block on product pages.
+- New sections/hvx-countdown.liquid in the header group: counts down to a real sale window (default Black Friday
+  2026-11-23 00:00 to 2026-11-30 23:59 US Eastern), shows "starts in" 3 days before, hides itself afterwards. Does not auto-restart.
+- Hextom timer bar app embed disabled in config/settings_data.json (uninstall the app to remove it fully).
+- snippets/hvc-product-popup.liquid restyled (white card, red top rule, theme font), opens after 12s or 50% scroll,
+  14-day snooze, no "pay full price" confirmshaming. Still uses real code HAVOC10.
+- New templates/page.contact.json + sections/hvx-contact.liquid: Shopify contact form (name, email, phone, order #, topic, message).
+- Header/footer copy cleaned: honest free-shipping threshold ($250, from shipping settings), removed "50% OFF flash sale",
+  "24 Hour Customer Service", demo menu labels, PayPal/Bitcoin/Maestro icons; fixed tel: link.
+- Homepage trimmed to 11 sections, plainer copy, no scroll animations or hover lifts.

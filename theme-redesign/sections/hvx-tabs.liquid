@@ -1,7 +1,7 @@
 {%- if section.blocks.size > 0 -%}
 <section class="hvx hvx-sec{% if section.settings.mist %} hvx-sec--mist{% endif %}">
   <div class="hvx-wrap">
-    <div class="hvx-head hvx-head--center hvx-reveal"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div></div>
+    <div class="hvx-head hvx-head--center"><div><p class="hvx-eyebrow">{{ section.settings.eyebrow }}</p><h2 class="hvx-h2">{{ section.settings.heading }}</h2>{%- if section.settings.text != blank -%}<p class="hvx-lead">{{ section.settings.text }}</p>{%- endif -%}</div></div>
     <div class="hvx-tabs">
       {%- for b in section.blocks -%}<input type="radio" name="tabs-{{ section.id }}" id="tab-{{ section.id }}-{{ forloop.index }}"{% if forloop.first %} checked{% endif %}>{%- endfor -%}
       <nav class="hvx-tabs__nav" aria-label="{{ section.settings.heading | escape }}">
