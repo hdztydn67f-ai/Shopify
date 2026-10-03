@@ -24,12 +24,66 @@
         </ul>
       {%- endif -%}
     </div>
-    <div class="hvx-hero__media">
-      {%- if img -%}
-        {%- assign hvx_alt = section.settings.image_alt | default: img.alt | default: fp.title -%}{{ img | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,720,960,1200,1400', sizes: '(min-width:900px) 52vw, 92vw', alt: hvx_alt }}
+    <div class="hvx-hero__media" id="hvx-hm-{{ section.id }}">
+      <div class="hvx-hero__stage">
+        {%- if section.settings.watermark != blank -%}<span class="hvx-hero__word" aria-hidden="true">{{ section.settings.watermark }}</span>{%- endif -%}
+        {%- if fp != blank and fp.compare_at_price > fp.price -%}
+          {%- assign hvx_save = fp.compare_at_price | minus: fp.price | times: 100 | divided_by: fp.compare_at_price -%}
+          {%- if hvx_save >= 5 -%}<span class="hvx-hero__save"><small>Save</small>{{ hvx_save }}%</span>{%- endif -%}
+        {%- endif -%}
+        <div class="hvx-hero__float">
+          {%- if img -%}
+            {%- assign hvx_alt = section.settings.image_alt | default: img.alt | default: fp.title -%}{{ img | image_url: width: 1400 | image_tag: loading: 'eager', fetchpriority: 'high', widths: '480,720,960,1200,1400', sizes: '(min-width:900px) 48vw, 88vw', alt: hvx_alt, class: 'hvx-hero__main' }}
+          {%- endif -%}
+        </div>
+        <span class="hvx-hero__floor" aria-hidden="true"></span>
+      </div>
+      {%- liquid
+        assign thumbs = ''
+        assign tcount = 0
+        if section.settings.image == blank and fp != blank
+          for m in fp.media
+            if m.media_type != 'image'
+              continue
+            endif
+            assign malt = m.alt | downcase
+            if malt contains 'chart' or m.preview_image.width < 700
+              continue
+            endif
+            assign tcount = tcount | plus: 1
+            if tcount > 4
+              break
+            endif
+          endfor
+        endif
+      -%}
+      {%- if tcount > 1 -%}
+        <div class="hvx-hero__thumbs" role="group" aria-label="More angles">
+          {%- assign tn = 0 -%}
+          {%- for m in fp.media -%}
+            {%- if m.media_type != 'image' -%}{%- continue -%}{%- endif -%}
+            {%- assign malt = m.alt | downcase -%}
+            {%- if malt contains 'chart' or m.preview_image.width < 700 -%}{%- continue -%}{%- endif -%}
+            {%- assign tn = tn | plus: 1 -%}{%- if tn > 4 -%}{%- break -%}{%- endif -%}
+            {%- capture tset -%}{{ m.preview_image | image_url: width: 480 }} 480w, {{ m.preview_image | image_url: width: 720 }} 720w, {{ m.preview_image | image_url: width: 960 }} 960w, {{ m.preview_image | image_url: width: 1200 }} 1200w{%- endcapture -%}
+            <button type="button" class="hvx-hero__thumb{% if tn == 1 %} is-on{% endif %}" aria-label="Show angle {{ tn }}" aria-pressed="{% if tn == 1 %}true{% else %}false{% endif %}" data-src="{{ m.preview_image | image_url: width: 1200 }}" data-srcset="{{ tset | strip }}" data-alt="{{ m.alt | default: fp.title | escape }}">{{ m.preview_image | image_url: width: 160 | image_tag: loading: 'lazy', width: 80, height: 80, alt: '' }}</button>
+          {%- endfor -%}
+        </div>
+        <script>
+        (function(){
+          var r=document.getElementById('hvx-hm-{{ section.id }}');if(!r)return;
+          var main=r.querySelector('.hvx-hero__main');if(!main)return;
+          r.addEventListener('click',function(e){
+            var b=e.target.closest('.hvx-hero__thumb');if(!b)return;
+            r.querySelectorAll('.hvx-hero__thumb').forEach(function(t){t.classList.remove('is-on');t.setAttribute('aria-pressed','false')});
+            b.classList.add('is-on');b.setAttribute('aria-pressed','true');
+            main.srcset=b.dataset.srcset;main.src=b.dataset.src;main.alt=b.dataset.alt;
+          });
+        })();
+        </script>
       {%- endif -%}
       {%- if fp != blank -%}
-        <a class="hvx-hero__tag" href="{{ fp.url }}"><small>{{ section.settings.tag_label | default: 'Best seller' }}</small><b>{{ fp.title | split: ' | ' | first }}</b><span>{% if fp.price_varies %}From {% endif %}{{ fp.price | money }}</span></a>
+        <a class="hvx-hero__tag" href="{{ fp.url }}"><small>{{ section.settings.tag_label | default: 'Best seller' }}</small><b>{{ fp.title | split: ' | ' | first }}</b><span>{% if fp.price_varies %}From {% endif %}{{ fp.price | money }}{% if fp.compare_at_price > fp.price %} <s>{{ fp.compare_at_price | money }}</s>{% endif %}</span></a>
       {%- endif -%}
     </div>
   </div>
@@ -42,6 +96,7 @@
 {"type":"image_picker","id":"image","label":"Image override (use a white-background PNG)"},
 {"type":"text","id":"image_alt","label":"Image alt text"},
 {"type":"text","id":"tag_label","label":"Price tag label","default":"Best seller"},
+{"type":"text","id":"watermark","label":"Big outline word behind the product","default":"HYPERKO"},
 {"type":"text","id":"kicker","label":"Kicker","default":"Pro boxing gear"},
 {"type":"text","id":"heading","label":"Heading (H1)","default":"Boxing Gloves,"},
 {"type":"text","id":"heading_accent","label":"Heading accent (red)","default":"Boots & Sparring Gear"},

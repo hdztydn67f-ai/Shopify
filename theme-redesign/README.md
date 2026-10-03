@@ -75,3 +75,10 @@ Also fixed image alt text: removed "Authentic"/"handcrafted in Japan" claims, US
 - "Best-selling boxing shoes" row is now shoes only. The Cleto Reyes Metallic Purple set moved to a new "Best-selling gloves & sets" row built from real 12-month sales.
 - Collections audit: added Mizuno Metallic Silver boots to Boxing Shoes and Winning Brown/Black/Orange/White gloves to Boxing Gloves. 4 untitled draft products (rfd, bb, v-c, gfd) still sit in Boxing Shoes; they are hidden from shoppers.
 - Product page (hvx-assure): live free-shipping progress bar ($250, store currency only, updates after add to cart), plus "Complete your kit" cross-sell with quick add (gloves → headgear + groin guards, shoes → gloves, sets → shoes, and so on). It skips the current product, sold-out items and photos under 700px.
+
+## v10 (2026-10-03): hero "stage"
+- Product sits on a lit studio stage: soft radial light, red spotlight ring, a thin black-to-red accent stripe and a large outlined watermark word ("HYPERKO", set in the theme editor).
+- The product floats gently with a floor shadow (turned off for reduced-motion users). White product backgrounds blend into the stage with mix-blend-mode: multiply.
+- A real "Save X%" badge from compare-at vs price, shown only when the saving is 5% or more. The price tag shows the compare-at price struck through.
+- Up to 4 angle thumbnails from the product's own photos (skips size charts and anything under 700px); clicking one swaps the main image.
+- Applied to the duplicate theme "Havoc Live + new hero (preview)", because the redesign is now the live theme.
